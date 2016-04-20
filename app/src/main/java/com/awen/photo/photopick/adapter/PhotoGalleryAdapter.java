@@ -28,22 +28,22 @@ import java.util.List;
 /**
  * Created by Awen <Awentljs@gmail.com>
  */
-public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapter.ViewHolder>{
+public class PhotoGalleryAdapter extends RecyclerView.Adapter {
     private final String TAG = getClass().getSimpleName();
     private Context context;
     private int selected;
     private List<PhotoDirectory> directories = new ArrayList<>();
     private int imageSize;
 
-    public PhotoGalleryAdapter(Context context){
+    public PhotoGalleryAdapter(Context context) {
         this.context = context;
         DisplayMetrics metrics = new DisplayMetrics();
-        Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
+        Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
         display.getMetrics(metrics);
         this.imageSize = metrics.widthPixels / 6;
     }
 
-    public void refresh(List<PhotoDirectory> directories){
+    public void refresh(List<PhotoDirectory> directories) {
         this.directories.clear();
         this.directories.addAll(directories);
         notifyDataSetChanged();
@@ -51,13 +51,13 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo_gallery,null);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo_gallery, null);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.setData(getItem(position),position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        ((ViewHolder) holder).setData(getItem(position), position);
     }
 
     @Override
@@ -65,19 +65,19 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
         return directories.size();
     }
 
-    public PhotoDirectory getItem(int position){
+    public PhotoDirectory getItem(int position) {
         return this.directories.get(position);
     }
 
-    public void changeSelect(int position){
+    public void changeSelect(int position) {
         this.selected = position;
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private SimpleDraweeView imageView;
         private ImageView photo_gallery_select;
-        private TextView name,num;
+        private TextView name, num;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -90,21 +90,19 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
             itemView.setOnClickListener(this);
         }
 
-        public void setData(PhotoDirectory directory, int position){
-            if(directory == null){
+        public void setData(PhotoDirectory directory, int position) {
+            itemView.setTag(position);
+            if (directory == null || directory.getCoverPath() == null) {
                 return;
             }
-            if(selected==position){
+            if (selected == position) {
                 photo_gallery_select.setImageResource(R.mipmap.select_icon);
-            }else {
+            } else {
                 photo_gallery_select.setImageBitmap(null);
             }
             name.setText(directory.getName());
             num.setText(context.getString(R.string.gallery_num, String.valueOf(directory.getPhotoPaths().size())));
-            itemView.setTag(position);
-//            String url = "file://" + directory.getCoverPath();
             //不设置.setResizeOptions(new ResizeOptions(imageSize, imageSize))会显示有问题
-//            ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(url)).setLocalThumbnailPreviewsEnabled(true).setResizeOptions(new ResizeOptions(imageSize, imageSize)).build();
             ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.fromFile(new File(directory.getCoverPath())))
                     .setLocalThumbnailPreviewsEnabled(true)
                     .setResizeOptions(new ResizeOptions(imageSize, imageSize)).build();
@@ -118,9 +116,9 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
 
         @Override
         public void onClick(View v) {
-            switch (v.getId()){
+            switch (v.getId()) {
                 case R.id.photo_gallery_rl:
-                    if(onItemClickListener != null){
+                    if (onItemClickListener != null) {
                         int position = (int) v.getTag();
                         changeSelect(position);
                         onItemClickListener.onClick(getItem(position).getPhotos());
@@ -136,7 +134,7 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
         this.onItemClickListener = onItemClickListener;
     }
 
-    public interface OnItemClickListener{
+    public interface OnItemClickListener {
         void onClick(List<Photo> photos);
     }
 }

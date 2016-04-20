@@ -78,20 +78,7 @@ public class PhotoDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.image_detail_fragment, container, false);
-//        GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(getResources());
-//        GenericDraweeHierarchy hierarchy = builder
-//                .setFadeDuration(300)
-//                .setProgressBarImage(new CircleProgressDrawable())
-//                .build();
         mPhotoDraweeView = (PhotoDraweeView) v.findViewById(R.id.image);
-//        mPhotoDraweeView.setHierarchy(hierarchy);
-        // mPhotoDraweeView.setOnPhotoTapListener(new OnPhotoTapListener() {
-        //
-        // @Override
-        // public void onPhotoTap(View arg0, float arg1, float arg2) {
-        // getActivity().finish();
-        // }
-        // });
         mPhotoDraweeView.setOnViewTapListener(new OnViewTapListener() {
             @Override
             public void onViewTap(View view, float x, float y) {
@@ -104,7 +91,6 @@ public class PhotoDetailFragment extends Fragment {
                 @Override
                 public boolean onLongClick(View v) {
                     saveImageDialog();
-                    Log.e(TAG, "OnLongClickListener");
                     return true;
                 }
             });
@@ -169,73 +155,7 @@ public class PhotoDetailFragment extends Fragment {
                                  }
                              },
                 CallerThreadExecutor.getInstance());
-//        DataSource<CloseableReference<CloseableImage>> dataSource =
-//                imagePipeline.fetchImageFromBitmapCache(request, getActivity());
-//        dataSource.subscribe(new BaseDataSubscriber<CloseableReference<CloseableImage>>() {
-//            @Override
-//            protected void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-//                if (!dataSource.isFinished()) {
-//                    DLog.e("Not yet finished - this is just another progressive scan.");
-//                }
-//
-//                CloseableReference<CloseableImage> imageReference = dataSource.getResult();
-//                if (imageReference != null) {
-//                    try {
-//                        CloseableImage image = imageReference.get();
-//                        DLog.e(TAG,image == null ? "image == null" : "image != null");
-//                        // do something with the image
-//                        if (image instanceof CloseableBitmap) {
-//                            handleBitmap((CloseableBitmap) image);
-//                        } else if (image instanceof CloseableAnimatedImage) {
-//                            handleAnimateBitmap((CloseableAnimatedImage) image);
-//                        }
-//                    }catch (Exception e){
-//                        DLog.e(TAG,"imageReference exception = " + e.getMessage());
-//                        e.printStackTrace();
-//                    }finally {
-//                        DLog.e(TAG,"imageReference.close()");
-//                        imageReference.close();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-//
-//            }
-//        },CallerThreadExecutor.getInstance());
-//        dataSource.subscribe(new BaseBitmapDataSubscriber() {
-//            @Override
-//            protected void onNewResultImpl(Bitmap bitmap) {
-//                DLog.e(TAG,bitmap == null ? "bitmap == null" : "bitmap != null");
-//            }
-//
-//            @Override
-//            protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-//
-//            }
-//        },CallerThreadExecutor.getInstance());
         mPhotoDraweeView.setController(controller);
-    }
-
-    /**
-     * 由于facebook的bitmap会很快被回收，所以获取到它的缓存后再复制bitmap出来，用作保存到本地
-     * @param closeableBitmap CloseableBitmap
-     */
-    private void handleBitmap(CloseableBitmap closeableBitmap){
-        cacheBitmap.clear();
-        Bitmap bitmap = closeableBitmap.getUnderlyingBitmap();
-        cacheBitmap.put(mImageUrl,bitmap);
-    }
-
-    private void handleAnimateBitmap(CloseableAnimatedImage animatedImage){
-        cacheBitmap.clear();
-        AnimatedDrawableFactory animatedDrawableFactory =
-                Fresco.getImagePipelineFactory().getAnimatedDrawableFactory();
-        AnimatedDrawable drawable =
-                animatedDrawableFactory.create(animatedImage.getImageResult());
-        Bitmap bitmap = ImageUtils.drawable2Bitmap(drawable);
-        cacheBitmap.put(mImageUrl,bitmap);
     }
 
     private void saveImageDialog(){
@@ -251,9 +171,7 @@ public class PhotoDetailFragment extends Fragment {
                         //保存图片到本地
                         Bitmap bitmap = cacheBitmap.get(mImageUrl);
                         String fileName = mImageUrl.substring(mImageUrl.lastIndexOf("/") + 1, mImageUrl.length());
-                        if (fileName.contains(".jpg") || fileName.contains(".png") || fileName.contains(".jpeg")) {
-
-                        } else { //防止有些文件没有图片后缀名，比如聊天中发的图片，在保存到手机的时候在图库展现不出来，但是却是已经保存成功的
+                        if (!fileName.contains(".jpg") && !fileName.contains(".png") && !fileName.contains(".jpeg")) {
                             fileName = fileName + ".jpg";
                         }
                         String filePath = (saveImageLocalPath == null ? AppPathUtil.getBigBitmapCachePath() : saveImageLocalPath) + fileName;
@@ -265,40 +183,4 @@ public class PhotoDetailFragment extends Fragment {
                     }
                 }).show();
     }
-
-//    public void showSaveImageDialog(final PhotoViewAttacher attacher, final String savePath) {
-//        Builder builder = new Builder(getActivity()).setGravity(Gravity.BOTTOM).setCancel(true).setWidth(Device.screenWidth)
-//                .addSheetItem(getString(R.string.save_big_image), R.id.item_1)
-//                .setOnClickListener(new mOnClickListener() {
-//                    @Override
-//                    public void onclick(DialogMaster dialogMaster, View v) {
-//                        dialogMaster.dismiss();
-//                        switch (v.getId()) {
-//                            case R.id.item_1:
-//                                if (attacher == null || savePath == null) {
-//                                    return;
-//                                }
-//                                DLog.e(TAG, "sd card image path = " + AppPathUtil.getInstance().getBigBitmapCachePath());
-//                                //保存图片到本地
-//                                Bitmap bitmap = attacher.getVisibleRectangleBitmap();
-//                                String fileName = savePath.substring(savePath.lastIndexOf("/") + 1, savePath.length());
-//                                if (fileName.contains(".jpg") || fileName.contains(".png") || fileName.contains(".jpeg")) {
-//
-//                                } else { //防止有些文件没有图片后缀名，比如聊天中发的图片，在保存到手机的时候在图库展现不出来，但是却是已经保存成功的
-//                                    fileName = fileName + ".jpg";
-//                                }
-//                                String filePath = AppPathUtil.getInstance().getBigBitmapCachePath() + fileName;
-//                                DLog.e(TAG, "save image fileName = " + fileName);
-//                                DLog.e(TAG, "save image path = " + filePath);
-//                                boolean state = ImageUtils.saveImageToGallery(filePath, bitmap);
-//                                String tips = state ? getString(R.string.save_image_aready, filePath) : getString(R.string.saved_faild);
-//                                ToastUtil.showToastOfLong(tips);
-//                                break;
-//                            default:
-//                                break;
-//                        }
-//                    }
-//                });
-//        builder.create().show();
-//    }
 }

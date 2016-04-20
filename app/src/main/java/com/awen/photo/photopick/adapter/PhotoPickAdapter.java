@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Created by Awen <Awentljs@gmail.com>
  */
-public class PhotoPickAdapter extends RecyclerView.Adapter<PhotoPickAdapter.ViewHolder> {
+public class PhotoPickAdapter extends RecyclerView.Adapter{
     private final String TAG = getClass().getSimpleName();
     private Context context;
     private ArrayList<Photo> photos = new ArrayList<>();
@@ -73,8 +73,8 @@ public class PhotoPickAdapter extends RecyclerView.Adapter<PhotoPickAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.setData(position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        ((ViewHolder)holder).setData(position);
     }
 
     @Override

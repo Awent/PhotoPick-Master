@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * 图片选择器<br>
- *     还可以扩展更多，暂时没时间扩展了<br>
+ * 还可以扩展更多，暂时没时间扩展了<br>
  * 使用方法：<br><code>
  * new PickConfig.Builder(this)<br>
  * .pickMode(PickConfig.MODE_MULTIP_PICK)<br>
@@ -103,46 +103,33 @@ public class PhotoPickActivity extends BaseActivity {
         dialog.setCancelable(false);
         dialog.show();
         final long start = System.currentTimeMillis();
-        MediaStoreHelper.getPhotoDirs(this, bundle, new MediaStoreHelper.PhotosResultCallback() {
-            @Override
-            public void onResultCallback(List<PhotoDirectory> directories) {
-                Log.e(TAG,"use time = " + (System.currentTimeMillis() - start));
-                dialog.dismiss();
-                adapter.refresh(directories.get(0).getPhotos());
-                galleryAdapter.refresh(directories);
-            }
-        });
-//        MediaStoreHelper.getPhotoDirs(this, new MediaStoreHelper.PhotosResultCallback() {
+//        MediaStoreHelper.getPhotoDirs(this, bundle, new MediaStoreHelper.PhotosResultCallback() {
 //            @Override
-//            public void onResultCallback(final List<PhotoDirectory> directories) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                            Log.e(TAG,"use time = " + (System.currentTimeMillis() - start));
-//                        dialog.dismiss();
-//                        adapter.refresh(directories.get(0).getPhotos());
-//                        galleryAdapter.refresh(directories);
-//                    }
-//                });
-//
+//            public void onResultCallback(List<PhotoDirectory> directories) {
+//                Log.e(TAG,"use time = " + (System.currentTimeMillis() - start));
+//                dialog.dismiss();
+//                adapter.refresh(directories.get(0).getPhotos());
+//                galleryAdapter.refresh(directories);
 //            }
 //        });
+        MediaStoreHelper.getPhotoDirs(this, new MediaStoreHelper.PhotosResultCallback() {
+            @Override
+            public void onResultCallback(final List<PhotoDirectory> directories) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e(TAG, "use time = " + (System.currentTimeMillis() - start));
+                        dialog.dismiss();
+                        adapter.refresh(directories.get(0).getPhotos());
+                        galleryAdapter.refresh(directories);
+                    }
+                });
+
+            }
+        });
 
         slidingUpPanelLayout = (SlidingUpPanelLayout) this.findViewById(R.id.slidingUpPanelLayout);
         slidingUpPanelLayout.setAnchorPoint(0.5f);
-
-//                    if (slidingUpPanelLayout.getPanelState() != SlidingUpPanelLayout.PanelState.HIDDEN) {
-//                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-//                    } else {
-//                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-//                    }
-//                    if (slidingUpPanelLayout.getAnchorPoint() == 1.0f) {
-//                        slidingUpPanelLayout.setAnchorPoint(0.5f);
-//                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
-//                    } else {
-//                        slidingUpPanelLayout.setAnchorPoint(1.0f);
-//                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-//                    }
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
@@ -180,7 +167,7 @@ public class PhotoPickActivity extends BaseActivity {
                     intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, adapter.getSelectPhotos());
                     setResult(Activity.RESULT_OK, intent);
                     String s = "已选择的图片大小 = " + adapter.getSelectPhotos().size() + "\n" + adapter.getSelectPhotos().toString();
-                    Toast.makeText(this,s,Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, s, Toast.LENGTH_LONG).show();
                     finish();
                 }
             }
@@ -217,13 +204,13 @@ public class PhotoPickActivity extends BaseActivity {
                     Intent intent = new Intent();
                     intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, pic);
                     setResult(Activity.RESULT_OK, intent);
-                    Toast.makeText(this,"已裁剪的图片地址 = \n" + photPath,Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "已裁剪的图片地址 = \n" + photPath, Toast.LENGTH_LONG).show();
                     finish();
                 } else {
-                    Toast.makeText(this,R.string.unable_find_pic,Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
                 }
             } else {
-                Toast.makeText(this,R.string.unable_find_pic,Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -241,7 +228,7 @@ public class PhotoPickActivity extends BaseActivity {
             } else {
                 File file = new File(uri.getPath());
                 if (!file.exists()) {
-                    Toast.makeText(this,R.string.unable_find_pic,Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
                     return;
                 }
                 picturePath = uri.getPath();
@@ -254,7 +241,7 @@ public class PhotoPickActivity extends BaseActivity {
             }
         }
         if (picturePath == null) {
-            Toast.makeText(this,R.string.unable_find_pic,Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
         } else {
             if (clipPhoto) {//拍完照之后，如果要启动头像裁剪，则去裁剪再吧地址传回来
                 startClipPic(picturePath);
@@ -264,7 +251,7 @@ public class PhotoPickActivity extends BaseActivity {
                 Intent intent = new Intent();
                 intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, pic);
                 setResult(Activity.RESULT_OK, intent);
-                Toast.makeText(this,"已返回的拍照图片地址 = \n" + picturePath,Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "已返回的拍照图片地址 = \n" + picturePath, Toast.LENGTH_LONG).show();
                 finish();
             }
 

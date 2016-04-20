@@ -68,7 +68,7 @@ public class PhotoPickConfig {
 
         public Builder(Activity context) {
             if (context == null) {
-                throw new NullPointerException("A non-null Context must be provided");
+                throw new NullPointerException("context is null");
             }
             this.context = context;
         }
