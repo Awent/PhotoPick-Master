@@ -99,7 +99,7 @@ public class PhotoPickActivity extends BaseActivity {
             }
         });
         final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage(getString(R.string.clip));
+        dialog.setMessage(getString(R.string.loading));
         dialog.setCancelable(false);
         dialog.show();
         final long start = System.currentTimeMillis();
