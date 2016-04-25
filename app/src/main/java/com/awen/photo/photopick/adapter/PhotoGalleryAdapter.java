@@ -91,7 +91,6 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
         }
 
         public void setData(PhotoDirectory directory, int position) {
-            itemView.setTag(position);
             if (directory == null || directory.getCoverPath() == null) {
                 return;
             }
@@ -116,10 +115,10 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
 
         @Override
         public void onClick(View v) {
+            int position = getAdapterPosition();
             switch (v.getId()) {
                 case R.id.photo_gallery_rl:
                     if (onItemClickListener != null) {
-                        int position = (int) v.getTag();
                         changeSelect(position);
                         onItemClickListener.onClick(getItem(position).getPhotos());
                     }

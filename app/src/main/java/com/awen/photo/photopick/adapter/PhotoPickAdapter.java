@@ -116,7 +116,6 @@ public class PhotoPickAdapter extends RecyclerView.Adapter{
                 } else {
                     checkbox.setChecked(false);
                 }
-                checkbox.setTag(position);
                 url = photo.getPath();
                 uri = Uri.fromFile(new File(url));
             }
@@ -132,9 +131,9 @@ public class PhotoPickAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onClick(View v) {
+            int position = getAdapterPosition();
             switch (v.getId()) {
                 case R.id.checkbox:
-                    int position = (int) v.getTag();
                     if (selectPhotos.contains(getItem(position).getPath())) {
                         checkbox.setChecked(false);
                         selectPhotos.remove(getItem(position).getPath());
