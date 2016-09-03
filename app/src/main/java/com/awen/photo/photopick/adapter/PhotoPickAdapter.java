@@ -1,5 +1,6 @@
 package com.awen.photo.photopick.adapter;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,6 +30,8 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import kr.co.namee.permissiongen.PermissionGen;
 
 /**
  * Created by Awen <Awentljs@gmail.com>
@@ -94,8 +97,8 @@ public class PhotoPickAdapter extends RecyclerView.Adapter{
             super(itemView);
             imageView = (SimpleDraweeView) itemView.findViewById(R.id.imageView);
             checkbox = (CheckBox) itemView.findViewById(R.id.checkbox);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(imageSize, imageSize);
-            imageView.setLayoutParams(params);
+            imageView.getLayoutParams().height = imageSize;
+            imageView.getLayoutParams().width = imageSize;
             checkbox.setOnClickListener(this);
         }
 
@@ -151,7 +154,8 @@ public class PhotoPickAdapter extends RecyclerView.Adapter{
                     }
                     break;
                 case R.id.photo_pick_rl:
-                    selectPicFromCamera();
+                    //以下操作会回调Activity中的#selectPicFromCameraSuccess()或selectPicFromCameraFaild()
+                    PermissionGen.needPermission((Activity) context, 100, Manifest.permission.CAMERA);
                     break;
             }
         }
@@ -160,7 +164,7 @@ public class PhotoPickAdapter extends RecyclerView.Adapter{
     /**
      * 启动Camera拍照
      */
-    private void selectPicFromCamera() {
+    public void selectPicFromCamera() {
         if (!android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
             Toast.makeText(context,R.string.cannot_take_pic,Toast.LENGTH_SHORT).show();
             return;

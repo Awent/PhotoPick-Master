@@ -85,8 +85,8 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
             name = (TextView) itemView.findViewById(R.id.name);
             num = (TextView) itemView.findViewById(R.id.num);
             photo_gallery_select = (ImageView) itemView.findViewById(R.id.photo_gallery_select);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(imageSize, imageSize);
-            imageView.setLayoutParams(params);
+            imageView.getLayoutParams().height = imageSize;
+            imageView.getLayoutParams().width = imageSize;
             itemView.setOnClickListener(this);
         }
 

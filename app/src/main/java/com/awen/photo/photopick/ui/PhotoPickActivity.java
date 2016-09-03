@@ -1,11 +1,15 @@
 package com.awen.photo.photopick.ui;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,13 +25,19 @@ import com.awen.photo.photopick.adapter.PhotoGalleryAdapter;
 import com.awen.photo.photopick.adapter.PhotoPickAdapter;
 import com.awen.photo.photopick.bean.Photo;
 import com.awen.photo.photopick.bean.PhotoDirectory;
+import com.awen.photo.photopick.bean.PhotoPickBean;
 import com.awen.photo.photopick.loader.MediaStoreHelper;
+import com.awen.photo.photopick.util.PermissionUtil;
 import com.awen.photo.photopick.util.PhotoPickConfig;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import kr.co.namee.permissiongen.PermissionFail;
+import kr.co.namee.permissiongen.PermissionGen;
+import kr.co.namee.permissiongen.PermissionSuccess;
 
 /**
  * 图片选择器<br>
@@ -49,35 +59,37 @@ public class PhotoPickActivity extends BaseActivity {
     private static final int REQUEST_CODE_CLIPIC = 1;//裁剪头像
 
     private SlidingUpPanelLayout slidingUpPanelLayout;
-    private RecyclerView recyclerView, gallery_rv;
     private PhotoGalleryAdapter galleryAdapter;
     private PhotoPickAdapter adapter;
-    private Bundle bundle;
-    private int maxPickSize, pickMode, spanCount;
-    private boolean showCamera, clipPhoto;
+    private PhotoPickBean pickBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_pick);
+        //以下操作会回调这两个方法:#selectPicFromCameraSuccess(), #selectPicFromCameraFaild()
+        PermissionGen.needPermission(this, 200, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
+
+    private void startInit() {
         //you can set some configs in bundle
-        bundle = getIntent().getBundleExtra(PhotoPickConfig.EXTRA_PICK_BUNDLE);
+        Bundle bundle = getIntent().getBundleExtra(PhotoPickConfig.EXTRA_PICK_BUNDLE);
         if (bundle == null) {
             throw new NullPointerException("bundle is null,please init it");
         }
-        spanCount = bundle.getInt(PhotoPickConfig.EXTRA_SPAN_COUNT, PhotoPickConfig.DEFAULT_SPANCOUNT);
-        pickMode = bundle.getInt(PhotoPickConfig.EXTRA_PICK_MODE, PhotoPickConfig.MODE_SINGLE_PICK);
-        maxPickSize = bundle.getInt(PhotoPickConfig.EXTRA_MAX_SIZE, PhotoPickConfig.DEFAULT_PICKSIZE);
-        showCamera = bundle.getBoolean(PhotoPickConfig.EXTAR_SHOW_CAMERA, PhotoPickConfig.DEFAULT_SHOW_CAMERA);
-        clipPhoto = bundle.getBoolean(PhotoPickConfig.EXTAR_START_CLIP, PhotoPickConfig.DEFAULT_START_CLIP);
+        pickBean = (PhotoPickBean) bundle.get(PhotoPickConfig.EXTRA_PICK_BEAN);
+        if (pickBean == null) {
+            finish();
+            return;
+        }
 
         toolbar.setTitle(R.string.select_photo);
-        recyclerView = (RecyclerView) this.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
-        adapter = new PhotoPickAdapter(this, spanCount, maxPickSize, pickMode, showCamera);
+        RecyclerView recyclerView = (RecyclerView) this.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, pickBean.getSpanCount()));
+        adapter = new PhotoPickAdapter(this, pickBean.getSpanCount(), pickBean.getMaxPickSize(), pickBean.getPickMode(), pickBean.isShowCamera());
         recyclerView.setAdapter(adapter);
 
-        gallery_rv = (RecyclerView) this.findViewById(R.id.gallery_rv);
+        RecyclerView gallery_rv = (RecyclerView) this.findViewById(R.id.gallery_rv);
         gallery_rv.setLayoutManager(new LinearLayoutManager(this));
         galleryAdapter = new PhotoGalleryAdapter(this);
         gallery_rv.setAdapter(galleryAdapter);
@@ -98,16 +110,16 @@ public class PhotoPickActivity extends BaseActivity {
                 }
             }
         });
-        final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage(getString(R.string.loading));
-        dialog.setCancelable(false);
-        dialog.show();
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.loading));
+        progressDialog.setCancelable(false);
+        progressDialog.show();
         final long start = System.currentTimeMillis();
 //        MediaStoreHelper.getPhotoDirs(this, bundle, new MediaStoreHelper.PhotosResultCallback() {
 //            @Override
 //            public void onResultCallback(List<PhotoDirectory> directories) {
-//                Log.e(TAG,"use time = " + (System.currentTimeMillis() - start));
-//                dialog.dismiss();
+//                DLog.e(TAG,"use time = " + (System.currentTimeMillis() - start));
+//                dismissProgressDialog();
 //                adapter.refresh(directories.get(0).getPhotos());
 //                galleryAdapter.refresh(directories);
 //            }
@@ -119,7 +131,7 @@ public class PhotoPickActivity extends BaseActivity {
                     @Override
                     public void run() {
                         Log.e(TAG, "use time = " + (System.currentTimeMillis() - start));
-                        dialog.dismiss();
+                        progressDialog.dismiss();
                         adapter.refresh(directories.get(0).getPhotos());
                         galleryAdapter.refresh(directories);
                     }
@@ -130,6 +142,19 @@ public class PhotoPickActivity extends BaseActivity {
 
         slidingUpPanelLayout = (SlidingUpPanelLayout) this.findViewById(R.id.slidingUpPanelLayout);
         slidingUpPanelLayout.setAnchorPoint(0.5f);
+
+//                    if (slidingUpPanelLayout.getPanelState() != SlidingUpPanelLayout.PanelState.HIDDEN) {
+//                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+//                    } else {
+//                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+//                    }
+//                    if (slidingUpPanelLayout.getAnchorPoint() == 1.0f) {
+//                        slidingUpPanelLayout.setAnchorPoint(0.5f);
+//                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
+//                    } else {
+//                        slidingUpPanelLayout.setAnchorPoint(1.0f);
+//                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+//                    }
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
@@ -147,7 +172,49 @@ public class PhotoPickActivity extends BaseActivity {
                 slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
             }
         });
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.e(TAG, "notifyPermissionsChange");
+        PermissionGen.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    @PermissionSuccess(requestCode = 100)
+    private void selectPicFromCameraSuccess() {
+        Log.e(TAG, "selectPicFromCameraSuccess");
+        adapter.selectPicFromCamera();
+    }
+
+    @PermissionFail(requestCode = 100)
+    private void selectPicFromCameraFaild() {
+        Log.e(TAG, "selectPicFromCameraFaild");
+        PermissionUtil.showSystemSettingDialog(this, getString(R.string.permission_tip_camera));
+    }
+
+    @PermissionSuccess(requestCode = 200)
+    private void startPermissionSDSuccess() {
+        startInit();
+        Log.e(TAG, "startPermissionSuccess");
+    }
+
+    @PermissionFail(requestCode = 200)
+    private void startPermissionSDFaild() {
+        new AlertDialog.Builder(this)
+                .setMessage(getString(R.string.permission_tip_SD))
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                }).setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                PermissionUtil.startSystemSettingActivity(PhotoPickActivity.this);
+                finish();
+            }
+        }).setCancelable(false).show();
+        Log.e(TAG, "startPermissionFaild");
     }
 
     @Override
@@ -160,7 +227,7 @@ public class PhotoPickActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.ok) {
             if (adapter != null && !adapter.getSelectPhotos().isEmpty()) {
-                if (clipPhoto) {//如果开启了图片裁剪，跳到裁剪界面
+                if (pickBean.isClipPhoto()) {//如果开启了图片裁剪，跳到裁剪界面
                     startClipPic(adapter.getSelectPhotos().get(0));
                 } else {
                     Intent intent = new Intent();
@@ -243,7 +310,7 @@ public class PhotoPickActivity extends BaseActivity {
         if (picturePath == null) {
             Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
         } else {
-            if (clipPhoto) {//拍完照之后，如果要启动头像裁剪，则去裁剪再吧地址传回来
+            if (pickBean.isClipPhoto()) {//拍完照之后，如果要启动头像裁剪，则去裁剪再吧地址传回来
                 startClipPic(picturePath);
             } else {
                 ArrayList<String> pic = new ArrayList<>();

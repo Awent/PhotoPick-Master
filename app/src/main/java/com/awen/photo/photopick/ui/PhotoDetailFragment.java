@@ -25,12 +25,8 @@ import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.imagepipeline.animated.base.AnimatedDrawable;
-import com.facebook.imagepipeline.animated.factory.AnimatedDrawableFactory;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
-import com.facebook.imagepipeline.image.CloseableAnimatedImage;
-import com.facebook.imagepipeline.image.CloseableBitmap;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
@@ -48,16 +44,18 @@ import java.util.Map;
 public class PhotoDetailFragment extends Fragment {
     private final String TAG = getClass().getSimpleName();
 
-    private String mImageUrl = "";
+    private String bigImgUrl = "";//大图
+    private String lowImgUrl;//小图，可在大图前进行展示
     private PhotoDraweeView mPhotoDraweeView;
-    private Map<String,Bitmap> cacheBitmap = new HashMap<>();
+    private Map<String, Bitmap> cacheBitmap = new HashMap<>();
     private boolean saveImage;
     private String saveImageLocalPath;
 
-    public static PhotoDetailFragment newInstance(String imageUrl,boolean saveImage,String saveImageLocalPath) {
+    public static PhotoDetailFragment newInstance(String bigImgUrl, String lowImgUrl, boolean saveImage, String saveImageLocalPath) {
         final PhotoDetailFragment f = new PhotoDetailFragment();
         final Bundle args = new Bundle();
-        args.putString("url", imageUrl);
+        args.putString("bigImgUrl", bigImgUrl);
+        args.putString("lowImgUrl", lowImgUrl);
         args.putBoolean("saveImage", saveImage);
         args.putString("saveImageLocalPath", saveImageLocalPath);
         f.setArguments(args);
@@ -68,10 +66,13 @@ public class PhotoDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
-        if(bundle != null){
-            mImageUrl = bundle.getString("url");
+        if (bundle != null) {
+            bigImgUrl = bundle.getString("bigImgUrl");
+            lowImgUrl = bundle.getString("lowImgUrl");
             saveImage = bundle.getBoolean("saveImage");
             saveImageLocalPath = bundle.getString("saveImageLocalPath");
+            Log.e(TAG, "bigImgUrl = " + bigImgUrl);
+            Log.e(TAG, "lowImgUrl = " + lowImgUrl);
         }
     }
 
@@ -86,7 +87,7 @@ public class PhotoDetailFragment extends Fragment {
             }
         });
 
-        if(saveImage) {
+        if (saveImage) {
             mPhotoDraweeView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -102,28 +103,29 @@ public class PhotoDetailFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Uri uri;
-        if(mImageUrl.contains("file://")){
-            String splitUrl = mImageUrl.substring(7,mImageUrl.length());
+        if (bigImgUrl.contains("file://")) {
+            String splitUrl = bigImgUrl.substring(7, bigImgUrl.length());
             uri = Uri.fromFile(new File(splitUrl));
-            Log.e(TAG,"file path = " + splitUrl);
-        }else if(mImageUrl.contains("#")){
-            uri = Uri.fromFile(new File(mImageUrl));
-            Log.e(TAG,"file path = " + mImageUrl);
-        }else{
-            uri = Uri.parse(mImageUrl);
+            Log.e(TAG, "file path = " + splitUrl);
+        } else if (bigImgUrl.contains("#")) {//图片路径带有"#"符号的显示不出这张图片来,我已报告给fb,已确认是bug,不知道现在修复了没有
+            uri = Uri.fromFile(new File(bigImgUrl));
+            Log.e(TAG, "file path = " + bigImgUrl);
+        } else {
+            uri = Uri.parse(bigImgUrl);
         }
         ImageRequest request = ImageRequestBuilder
                 .newBuilderWithSource(uri)
                 .setProgressiveRenderingEnabled(true)
                 .build();
         DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setImageRequest(request)
+                .setImageRequest(request)//原图，大图
+                .setLowResImageRequest(ImageRequest.fromUri(lowImgUrl))//低分辨率的图
                 .setControllerListener(new BaseControllerListener<ImageInfo>() {
                     @Override
                     public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
                         super.onFinalImageSet(id, imageInfo, animatable);
                         if (imageInfo == null || mPhotoDraweeView == null) {
-                            Log.e(TAG,"imageInfo = null");
+                            Log.e(TAG, "imageInfo = null");
                             return;
                         }
                         mPhotoDraweeView.update(imageInfo.getWidth(), imageInfo.getHeight());
@@ -133,7 +135,7 @@ public class PhotoDetailFragment extends Fragment {
                 .build();
         ImagePipeline imagePipeline = Fresco.getImagePipeline();
         DataSource<CloseableReference<CloseableImage>>
-                dataSource = imagePipeline.fetchDecodedImage(request,null);
+                dataSource = imagePipeline.fetchDecodedImage(request, null);
 
         dataSource.subscribe(new BaseBitmapDataSubscriber() {
 
@@ -141,11 +143,11 @@ public class PhotoDetailFragment extends Fragment {
                                  public void onNewResultImpl(@Nullable Bitmap bitmap) {
                                      // You can use the bitmap in only limited ways
                                      // No need to do any cleanup.
-                                     if(bitmap != null){
-                                         Log.e(TAG,"bitmap != null,mImageUrl = " +mImageUrl);
-                                         cacheBitmap.put(mImageUrl,bitmap);
-                                     }else{
-                                         Log.e(TAG,"bitmap == null,mImageUrl = " +mImageUrl);
+                                     if (bitmap != null) {
+                                         Log.e(TAG, "bitmap != null,mImageUrl = " + bigImgUrl);
+                                         cacheBitmap.put(bigImgUrl, bitmap);
+                                     } else {
+                                         Log.e(TAG, "bitmap == null,mImageUrl = " + bigImgUrl);
                                      }
                                  }
 
@@ -158,19 +160,19 @@ public class PhotoDetailFragment extends Fragment {
         mPhotoDraweeView.setController(controller);
     }
 
-    private void saveImageDialog(){
+    private void saveImageDialog() {
         new AlertDialog.Builder(getActivity())
                 .setItems(new String[]{getString(R.string.save_big_image)}, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (cacheBitmap == null || cacheBitmap.isEmpty()) {
-                            Toast.makeText(getActivity(),R.string.saved_faild,Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), R.string.saved_faild, Toast.LENGTH_SHORT).show();
                             return;
                         }
                         Log.e(TAG, "sd card image path = " + (saveImageLocalPath == null ? AppPathUtil.getBigBitmapCachePath() : saveImageLocalPath));
                         //保存图片到本地
-                        Bitmap bitmap = cacheBitmap.get(mImageUrl);
-                        String fileName = mImageUrl.substring(mImageUrl.lastIndexOf("/") + 1, mImageUrl.length());
+                        Bitmap bitmap = cacheBitmap.get(bigImgUrl);
+                        String fileName = bigImgUrl.substring(bigImgUrl.lastIndexOf("/") + 1, bigImgUrl.length());
                         if (!fileName.contains(".jpg") && !fileName.contains(".png") && !fileName.contains(".jpeg")) {
                             fileName = fileName + ".jpg";
                         }
@@ -179,7 +181,7 @@ public class PhotoDetailFragment extends Fragment {
                         Log.e(TAG, "save image path = " + filePath);
                         boolean state = ImageUtils.saveImageToGallery(filePath, bitmap);
                         String tips = state ? getString(R.string.save_image_aready, filePath) : getString(R.string.saved_faild);
-                        Toast.makeText(getActivity(),tips,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), tips, Toast.LENGTH_SHORT).show();
                     }
                 }).show();
     }

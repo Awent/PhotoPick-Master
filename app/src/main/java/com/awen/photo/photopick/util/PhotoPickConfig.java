@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.awen.photo.photopick.bean.PhotoPickBean;
 import com.awen.photo.photopick.ui.PhotoPickActivity;
 
 /**
@@ -33,21 +34,15 @@ public class PhotoPickConfig {
 
     public final static String EXTRA_STRING_ARRAYLIST = "extra_string_array_list";
     public final static String EXTRA_PICK_BUNDLE = "extra_pick_bundle";
-    public final static String EXTRA_SPAN_COUNT = "extra_span_count";
-    public final static String EXTRA_PICK_MODE = "extra_pick_mode";
-    public final static String EXTRA_MAX_SIZE = "extra_max_size";
-    public final static String EXTAR_SHOW_CAMERA = "extra_show_camera";
-    public final static String EXTAR_START_CLIP = "extra_start_clip";
-
+    public final static String EXTRA_PICK_BEAN = "extra_pick_bean";
     public final static int PICK_REQUEST_CODE = 10507;
 
     public PhotoPickConfig(Activity context, PhotoPickConfig.Builder builder) {
+        if(builder.pickBean == null){
+            throw new NullPointerException("builder#pickBean is null");
+        }
         Bundle bundle = new Bundle();
-        bundle.putInt(EXTRA_SPAN_COUNT, builder.spanCount);
-        bundle.putInt(EXTRA_PICK_MODE, builder.pickMode);
-        bundle.putInt(EXTRA_MAX_SIZE, builder.maxPickSize);
-        bundle.putBoolean(EXTAR_SHOW_CAMERA, builder.showCamera);
-        bundle.putBoolean(EXTAR_START_CLIP, builder.clipPhoto);
+        bundle.putSerializable(EXTRA_PICK_BEAN,builder.pickBean);
         startPick(context, bundle);
     }
 
@@ -60,17 +55,19 @@ public class PhotoPickConfig {
 
     public static class Builder {
         private Activity context;
-        private int spanCount = DEFAULT_SPANCOUNT;
-        private int pickMode = MODE_SINGLE_PICK;
-        private int maxPickSize = DEFAULT_PICKSIZE;
-        private boolean showCamera = DEFAULT_SHOW_CAMERA;
-        private boolean clipPhoto = DEFAULT_START_CLIP;
+        private PhotoPickBean pickBean;
 
         public Builder(Activity context) {
             if (context == null) {
                 throw new NullPointerException("context is null");
             }
             this.context = context;
+            pickBean = new PhotoPickBean();
+            pickBean.setSpanCount(DEFAULT_SPANCOUNT);//gridview列数
+            pickBean.setMaxPickSize(DEFAULT_PICKSIZE);//默认可以选择的图片数目
+            pickBean.setPickMode(MODE_SINGLE_PICK);
+            pickBean.setShowCamera(DEFAULT_SHOW_CAMERA);//默认展示拍照那个icon
+            pickBean.setClipPhoto(DEFAULT_START_CLIP);//默认不开启图片裁剪
         }
 
         /**
@@ -80,9 +77,9 @@ public class PhotoPickConfig {
          * @return
          */
         public PhotoPickConfig.Builder spanCount(int spanCount) {
-            this.spanCount = spanCount;
-            if (this.spanCount == 0) {
-                this.spanCount = DEFAULT_SPANCOUNT;
+            pickBean.setSpanCount(spanCount);
+            if (pickBean.getSpanCount() == 0) {
+                pickBean.setSpanCount(DEFAULT_SPANCOUNT);
             }
             return this;
         }
@@ -94,15 +91,13 @@ public class PhotoPickConfig {
          * @return
          */
         public PhotoPickConfig.Builder pickMode(int pickMode) {
-            this.pickMode = pickMode;
-            if (this.pickMode == 1) {
-                this.maxPickSize = 1;
-                this.pickMode = MODE_SINGLE_PICK;
-            } else if (this.pickMode == 2) {
-                this.clipPhoto = false;
-                this.pickMode = MODE_MULTIP_PICK;
+            pickBean.setPickMode(pickMode);
+            if (pickMode == MODE_SINGLE_PICK) {
+                pickBean.setMaxPickSize(1);
+            } else if (pickMode == MODE_MULTIP_PICK) {
+                pickBean.setClipPhoto(false);
             } else {
-                throw new IllegalArgumentException("unkonw pickMod : " + this.pickMode);
+                throw new IllegalArgumentException("unkonw pickMod : " + pickMode);
             }
             return this;
         }
@@ -114,13 +109,13 @@ public class PhotoPickConfig {
          * @return
          */
         public PhotoPickConfig.Builder maxPickSize(int maxPickSize) {
-            this.maxPickSize = maxPickSize;
-            if (this.maxPickSize == 0) {
-                this.maxPickSize = 1;
-                this.pickMode = MODE_SINGLE_PICK;
-            } else if (this.pickMode == MODE_SINGLE_PICK) {
-                this.maxPickSize = 1;
-                this.clipPhoto = DEFAULT_START_CLIP;
+            pickBean.setMaxPickSize(maxPickSize);
+            if (maxPickSize == 0) {
+                pickBean.setMaxPickSize(1);
+                pickBean.setPickMode(MODE_SINGLE_PICK);
+            } else if (pickBean.getPickMode() == MODE_SINGLE_PICK) {
+                pickBean.setMaxPickSize(1);
+                pickBean.setClipPhoto(DEFAULT_START_CLIP);
             }
             return this;
         }
@@ -132,7 +127,7 @@ public class PhotoPickConfig {
          * @return
          */
         public PhotoPickConfig.Builder showCamera(boolean showCamera) {
-            this.showCamera = showCamera;
+            pickBean.setShowCamera(showCamera);
             return this;
         }
 
@@ -144,14 +139,19 @@ public class PhotoPickConfig {
          * @return
          */
         public PhotoPickConfig.Builder clipPhoto(boolean clipPhoto) {
-            this.clipPhoto = clipPhoto;
+            pickBean.setClipPhoto(clipPhoto);
+            return this;
+        }
+
+        public PhotoPickConfig.Builder setPhotoPickBean(PhotoPickBean bean){
+            this.pickBean = bean;
             return this;
         }
 
         public PhotoPickConfig build() {
-            if (clipPhoto) {
-                this.maxPickSize = 1;
-                this.pickMode = MODE_SINGLE_PICK;
+            if (pickBean.isClipPhoto()) {
+                pickBean.setMaxPickSize(1);
+                pickBean.setPickMode(MODE_SINGLE_PICK);
             }
             return new PhotoPickConfig(context, this);
         }

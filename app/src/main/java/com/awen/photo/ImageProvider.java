@@ -18,18 +18,34 @@ public class ImageProvider {
         list.add("http://pic1.win4000.com/pic/6/da/50bc520323.jpg");
         list.add("http://www.wmpic.me/wp-content/uploads/2014/02/20140218150739227.jpg");
         list.add("http://www.bz55.com/uploads/allimg/140904/138-140Z4092036.jpg");
-        list.add("http://image.hiapk.com/pic/2012/01/10/and_pbpic_qunjie20120110_14.jpg");
-        list.add("http://img.article.pchome.net/game/00/11/14/22/pic_lib/wm/Yuurimorishita16.jpg");
-        list.add("http://beiwoo.cn/uploads/allimg/120621/1106001S4-3.jpg");
-        list.add("http://pic2.qnpic.com/doimg/meiyuanguan/9bda3e55/");
-        list.add("http://img.weibonvren.com/meinv/qita/senxia/36.jpg");
-        list.add("http://www.winddesktop.com/Wallpaper/01563/Original/01563_001_3Ik8vH1i.jpg");
-        list.add("http://img.yxbao.com/news/image/201503/23/61ebe76486.jpg");
-        list.add("http://img1.gtimg.com/ent/pics/hv1/142/234/1470/95646562.jpg");
-        list.add("http://www.weimeitupian.com/wp-content/uploads/2015/02/20150215145914389.jpg");
-        list.add("http://d.3987.com/xglsnymnipadzmbz.120906/005.jpg");
-        list.add("http://www.7zhan.com/uploads/allimg/131007/8-13100F91118.jpg");
-        list.add("http://pic2.qnpic.com/doimg/meiyuanguan/9bda3e55/");
+        list.add("http://pic18.nipic.com/20111223/5252423_182312570000_2.jpg");
+        list.add("http://pic15.nipic.com/20110621/6632244_101716433621_2.jpg");
+        list.add("http://pic18.nipic.com/20111223/5252423_185908474000_2.jpg");
+        list.add("http://pic18.nipic.com/20120207/9040008_163401147000_2.jpg");
+        list.add("http://file2.desktx.com/pc/wallpaper/scenery/20110720/mait_2.jpg");
+        list.add("http://file2.desktx.com/pc/wallpaper/scenery/20130227/30_12158_koodianCom_Zoj.jpg");
+        return list;
+    }
+
+    /**
+     * 大图
+     * @return
+     */
+    public static ArrayList<String> getBigImgUrls(){
+        ArrayList<String> list = new ArrayList<>();
+        list.add("http://120.27.113.153/frogdrfs/2016/08/22/0ac279d511de46a0858a1812efe9a1ce.jpg");
+        list.add("http://120.27.113.153/frogdrfs/2016/08/29/62e2cd190a174e6c83ea3e948ecba66a.jpg");
+        return list;
+    }
+
+    /**
+     * 小图
+     * @return
+     */
+    public static ArrayList<String> getLowImgUrls(){
+        ArrayList<String> list = new ArrayList<>();
+        list.add("http://120.27.113.153/frogdrfs/2016/08/22/0ac279d511de46a0858a1812efe9a1ce.jpg&64X64.jpg");
+        list.add("http://120.27.113.153/frogdrfs/2016/08/29/62e2cd190a174e6c83ea3e948ecba66a.jpg&64X64.jpg");
         return list;
     }
 }
