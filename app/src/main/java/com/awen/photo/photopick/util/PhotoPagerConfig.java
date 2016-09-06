@@ -32,9 +32,11 @@ public class PhotoPagerConfig {
         PhotoPagerBean photoPagerBean = builder.photoPagerBean;
         if (photoPagerBean == null) {
             throw new NullPointerException("Builder#photoPagerBean is null");
-        } else if (photoPagerBean.getBigImgUrls() == null || photoPagerBean.getBigImgUrls().isEmpty()) {
+        }
+        if (photoPagerBean.getBigImgUrls() == null || photoPagerBean.getBigImgUrls().isEmpty()) {
             throw new NullPointerException("bigImageUrls is null or size is 0");
-        } else if (photoPagerBean.getPagePosition() > photoPagerBean.getBigImgUrls().size()) {
+        }
+        if (photoPagerBean.getPagePosition() > photoPagerBean.getBigImgUrls().size()) {
             throw new IndexOutOfBoundsException("show position out bigImageUrls size,position = " + photoPagerBean.getPagePosition() + ",bigImageUrls size = " + photoPagerBean.getBigImgUrls().size());
         }
         Bundle bundle = new Bundle();
@@ -130,31 +132,34 @@ public class PhotoPagerConfig {
 
         /**
          * 一张一张大图add进ArrayList
+         *
          * @param bigImageUrl 大图url
          * @return Builder
          */
-        public Builder addSingleBigImageUrl(String bigImageUrl){
+        public Builder addSingleBigImageUrl(String bigImageUrl) {
             photoPagerBean.addSingleBigImageUrl(bigImageUrl);
             return this;
         }
 
         /**
          * 一张一张小图add进ArrayList
+         *
          * @param lowImageUrl 小图url
          * @return Builder
          */
-        public Builder addSingleLowImageUrl(String lowImageUrl){
+        public Builder addSingleLowImageUrl(String lowImageUrl) {
             photoPagerBean.addSingleLowImageUrl(lowImageUrl);
             return this;
         }
 
         /**
          * 你也可以不设置任何参数，除了此参数以为，{@link PhotoPagerBean}是参数配置的一个实体，你可以直接传个实体进来也可以
+         *
          * @param photoPagerBean PhotoPagerBean
          * @return Builder
          */
-        public Builder setPhotoPagerBean(PhotoPagerBean photoPagerBean){
-            if(photoPagerBean == null){
+        public Builder setPhotoPagerBean(PhotoPagerBean photoPagerBean) {
+            if (photoPagerBean == null) {
                 throw new NullPointerException("photoPagerBean is null");
             }
             this.photoPagerBean = photoPagerBean;
