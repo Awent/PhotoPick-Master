@@ -33,8 +33,6 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 单张图片显示Fragment
@@ -47,7 +45,7 @@ public class PhotoDetailFragment extends Fragment {
     private String bigImgUrl = "";//大图
     private String lowImgUrl;//小图，可在大图前进行展示
     private PhotoDraweeView mPhotoDraweeView;
-    private Map<String, Bitmap> cacheBitmap = new HashMap<>();
+    private Bitmap mBitmap;
     private boolean saveImage;
     private String saveImageLocalPath;
 
@@ -145,7 +143,7 @@ public class PhotoDetailFragment extends Fragment {
                                      // No need to do any cleanup.
                                      if (bitmap != null) {
                                          Log.e(TAG, "bitmap != null,mImageUrl = " + bigImgUrl);
-                                         cacheBitmap.put(bigImgUrl, bitmap);
+                                         mBitmap = bitmap;
                                      } else {
                                          Log.e(TAG, "bitmap == null,mImageUrl = " + bigImgUrl);
                                      }
@@ -165,13 +163,12 @@ public class PhotoDetailFragment extends Fragment {
                 .setItems(new String[]{getString(R.string.save_big_image)}, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (cacheBitmap == null || cacheBitmap.isEmpty()) {
+                        if (mBitmap == null) {
                             Toast.makeText(getActivity(), R.string.saved_faild, Toast.LENGTH_SHORT).show();
                             return;
                         }
                         Log.e(TAG, "sd card image path = " + (saveImageLocalPath == null ? AppPathUtil.getBigBitmapCachePath() : saveImageLocalPath));
                         //保存图片到本地
-                        Bitmap bitmap = cacheBitmap.get(bigImgUrl);
                         String fileName = bigImgUrl.substring(bigImgUrl.lastIndexOf("/") + 1, bigImgUrl.length());
                         if (!fileName.contains(".jpg") && !fileName.contains(".png") && !fileName.contains(".jpeg")) {
                             fileName = fileName + ".jpg";
@@ -179,10 +176,11 @@ public class PhotoDetailFragment extends Fragment {
                         String filePath = (saveImageLocalPath == null ? AppPathUtil.getBigBitmapCachePath() : saveImageLocalPath) + fileName;
                         Log.e(TAG, "save image fileName = " + fileName);
                         Log.e(TAG, "save image path = " + filePath);
-                        boolean state = ImageUtils.saveImageToGallery(filePath, bitmap);
+                        boolean state = ImageUtils.saveImageToGallery(filePath, mBitmap);
                         String tips = state ? getString(R.string.save_image_aready, filePath) : getString(R.string.saved_faild);
                         Toast.makeText(getActivity(), tips, Toast.LENGTH_SHORT).show();
                     }
                 }).show();
     }
+
 }

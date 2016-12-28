@@ -15,81 +15,36 @@ import com.awen.photo.R;
  */
 public class ToolBarHelper {
 
-    private Context mContext;
-
     /*base view*/
     private LinearLayout mContentView;
-
-    /*用户定义的view*/
-    private View mUserView;
 
     /*toolbar*/
     private Toolbar mToolBar;
 
-    /*视图构造器*/
-    private LayoutInflater mInflater;
-
-    /*
-    * 两个属性
-    * 1、toolbar是否悬浮在窗口之上
-    * 2、toolbar的高度获取
-    * */
-    private static int[] ATTRS = {
-            R.attr.windowActionBarOverlay,
-            R.attr.actionBarSize
-    };
-
     public ToolBarHelper(Context context, int layoutId) {
-        this.mContext = context;
-        mInflater = LayoutInflater.from(mContext);
-        /*初始化整个内容*/
-        initContentView();
-        /*初始化toolbar*/
-        initToolBar(R.layout.toolbar_layout);
-        /*初始化用户定义的布局*/
-        initUserView(layoutId);
+        init(context,R.layout.toolbar_layout,layoutId);
     }
 
     public ToolBarHelper(Context context, int toolBarId, int layoutId) {
-        this.mContext = context;
-        mInflater = LayoutInflater.from(mContext);
-        /*初始化整个内容*/
-        initContentView();
-        /*初始化toolbar*/
-        initToolBar(toolBarId);
-        /*初始化用户定义的布局*/
-        initUserView(layoutId);
+        init(context,toolBarId,layoutId);
     }
 
-    private void initContentView() {
-        /*直接创建一个帧布局，作为视图容器的父容器*/
-        mContentView = new LinearLayout(mContext);
+    private void init(Context context,int toolBarId, int layoutId){
+        LayoutInflater mInflater = LayoutInflater.from(context);
+        /*初始化整个内容-直接创建一个帧布局，作为视图容器的父容器*/
+        mContentView = new LinearLayout(context);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         mContentView.setOrientation(LinearLayout.VERTICAL);
         mContentView.setLayoutParams(params);
 
-    }
-
-    private void initToolBar(int id) {
-        /*通过inflater获取toolbar的布局文件*/
-        View toolbar = mInflater.inflate(id, mContentView);
+        /*初始化toolbar-通过inflater获取toolbar的布局文件*/
+        View toolbar = mInflater.inflate(toolBarId, mContentView);
         mToolBar = (Toolbar) toolbar.findViewById(R.id.toolbar);
-    }
 
-    private void initUserView(int id) {
-        mUserView = mInflater.inflate(id, null);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        TypedArray typedArray = mContext.getTheme().obtainStyledAttributes(ATTRS);
-        /*获取主题中定义的悬浮标志*/
-        boolean overly = typedArray.getBoolean(0, false);
-        /*获取主题中定义的toolbar的高度*/
-        int toolBarSize = (int) typedArray.getDimension(1,(int) mContext.getResources().getDimension(R.dimen.abc_action_bar_default_height_material));
-        typedArray.recycle();
-        /*如果是悬浮状态，则不需要设置间距*/
-        params.topMargin = overly ? 0 : toolBarSize;
-        mContentView.addView(mUserView, params);
-
+        /**初始化用户定义的布局*/
+        View mUserView = mInflater.inflate(layoutId, null);
+        mContentView.addView(mUserView,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     public LinearLayout getContentView() {

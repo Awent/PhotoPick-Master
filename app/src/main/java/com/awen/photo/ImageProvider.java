@@ -33,19 +33,19 @@ public class ImageProvider {
      */
     public static ArrayList<String> getBigImgUrls(){
         ArrayList<String> list = new ArrayList<>();
-        list.add("http://120.27.113.153/frogdrfs/2016/08/22/0ac279d511de46a0858a1812efe9a1ce.jpg");
-        list.add("http://120.27.113.153/frogdrfs/2016/08/29/62e2cd190a174e6c83ea3e948ecba66a.jpg");
+        list.add("http://pic18.nipic.com/20120103/8783405_180811375100_2.jpg");
+        list.add("http://pic25.nipic.com/20121201/10258080_144012468179_2.jpg");
         return list;
     }
 
     /**
-     * 小图
+     * 小图，这里随便找两张小图的
      * @return
      */
     public static ArrayList<String> getLowImgUrls(){
         ArrayList<String> list = new ArrayList<>();
-        list.add("http://120.27.113.153/frogdrfs/2016/08/22/0ac279d511de46a0858a1812efe9a1ce.jpg&64X64.jpg");
-        list.add("http://120.27.113.153/frogdrfs/2016/08/29/62e2cd190a174e6c83ea3e948ecba66a.jpg&64X64.jpg");
+        list.add("http://img.qq745.com/uploads/hzbimg/0907/hzb33617.png");
+        list.add("http://img.qq745.com/uploads/hzbimg/0907/hzb33616.png");
         return list;
     }
 }
