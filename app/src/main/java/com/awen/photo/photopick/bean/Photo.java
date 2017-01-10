@@ -1,9 +1,14 @@
 package com.awen.photo.photopick.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * Created by Awen <Awentljs@gmail.com>
  */
-public class Photo {
+public class Photo implements Serializable{
 
     private int id;
     private String path;
@@ -14,6 +19,11 @@ public class Photo {
     }
 
     public Photo() {
+    }
+
+    protected Photo(Parcel in) {
+        id = in.readInt();
+        path = in.readString();
     }
 
     @Override
@@ -46,5 +56,4 @@ public class Photo {
     public void setId(int id) {
         this.id = id;
     }
-
 }

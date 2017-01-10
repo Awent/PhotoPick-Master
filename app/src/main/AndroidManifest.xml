@@ -23,6 +23,7 @@
         <activity android:name=".photopick.ui.ClipPictureActivity"/>
         <activity android:name=".photopick.ui.PhotoPagerActivity"/>
         <activity android:name=".photopick.ui.PhotoPickActivity"/>
+        <activity android:name=".photopick.ui.PhotoPreviewActivity"/>
     </application>
 
 </manifest>

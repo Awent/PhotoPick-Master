@@ -5,7 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
+
 import com.awen.photo.App;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -93,8 +95,9 @@ public class ImageUtils {
 
     /**
      * 保存图片，并且可以再手机的图库中看到
+     *
      * @param filePath 图片的本地保存路径，包括图片名
-     * @param bmp Bitmap
+     * @param bmp      Bitmap
      * @return true:保存成功，false:保存失败
      */
     public static boolean saveImageToGallery(String filePath, Bitmap bmp) {
@@ -140,8 +143,59 @@ public class ImageUtils {
             }
             return isSuccesse;
         }
-
-
         return false;
     }
+
+    /**
+     * 保存图片，并且可以再手机的图库中看到
+     *
+     * @param filePath 图片的本地保存路径，包括图片名
+     * @return true:保存成功，false:保存失败
+     */
+    public static boolean saveImageToGallery(String filePath, byte[] b) {
+        // 首先保存图片
+        if (b == null)
+            return false;
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete(); // 删除原图片
+        }
+        String dir;
+        if (!file.isFile()) {
+            dir = filePath.substring(0, filePath.lastIndexOf("/"));
+            File dirFile = new File(dir);
+            if (!dirFile.exists()) {
+                if (!dirFile.mkdirs()) {
+                    return false;
+                }
+            }
+            FileOutputStream fOut = null;
+            boolean isSuccesse = false;
+            try {
+                file.createNewFile();
+                fOut = new FileOutputStream(file);
+                fOut.write(b);
+                // 最后通知图库更新
+                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri uri = Uri.fromFile(file);
+                intent.setData(uri);
+                App.getContext().sendBroadcast(intent);
+                isSuccesse = true;
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            } finally {
+                if (fOut != null) {
+                    try {
+                        fOut.flush();
+                        fOut.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return isSuccesse;
+        }
+        return false;
+    }
+
 }

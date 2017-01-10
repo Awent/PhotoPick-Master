@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.awen.photo.R;
 import com.awen.photo.photopick.bean.Photo;
@@ -65,21 +64,21 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
         return directories.size();
     }
 
-    public PhotoDirectory getItem(int position) {
+    private PhotoDirectory getItem(int position) {
         return this.directories.get(position);
     }
 
-    public void changeSelect(int position) {
+    private void changeSelect(int position) {
         this.selected = position;
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private SimpleDraweeView imageView;
         private ImageView photo_gallery_select;
         private TextView name, num;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             imageView = (SimpleDraweeView) itemView.findViewById(R.id.imageView);
             name = (TextView) itemView.findViewById(R.id.name);
@@ -90,7 +89,7 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
             itemView.setOnClickListener(this);
         }
 
-        public void setData(PhotoDirectory directory, int position) {
+        void setData(PhotoDirectory directory, int position) {
             if (directory == null || directory.getCoverPath() == null) {
                 return;
             }

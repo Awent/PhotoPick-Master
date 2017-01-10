@@ -15,6 +15,9 @@
     <string name="loading">加载中&#8230;</string>
     <string name="unable_find_pic">找不到图片</string>
     <string name="cancel">取消</string>
+    <string name="selected">选择</string>
+    <string name="send">发送</string>
+    <string name="sends" formatted="false">发送(%s/%s)</string>
 
     <!-- android 6.0权限-->
     <string name="permission_tip_camera">缺少(相机)权限，无法使用该功能，点击"设置"去开启此权限\n您可在“设置”>“应用”>“权限”中配置权限</string>

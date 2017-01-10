@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.awen.photo.photopick.bean.PhotoPagerBean;
@@ -112,6 +113,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             case PhotoPickConfig.PICK_REQUEST_CODE://图片
                 ArrayList<String> photoLists = data.getStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST);
                 if (photoLists != null && !photoLists.isEmpty()) {
+                    Log.i("MainActivity","selected photos = " + photoLists.toString());
                     File file = new File(photoLists.get(0));
                     if (file.exists()) {
                         //you can do something

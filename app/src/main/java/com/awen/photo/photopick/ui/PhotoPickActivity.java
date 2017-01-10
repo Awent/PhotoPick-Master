@@ -29,6 +29,7 @@ import com.awen.photo.photopick.bean.PhotoPickBean;
 import com.awen.photo.photopick.loader.MediaStoreHelper;
 import com.awen.photo.photopick.util.PermissionUtil;
 import com.awen.photo.photopick.util.PhotoPickConfig;
+import com.awen.photo.photopick.util.PhotoPreviewConfig;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.File;
@@ -56,7 +57,7 @@ import kr.co.namee.permissiongen.PermissionSuccess;
 public class PhotoPickActivity extends BaseActivity {
     private final String TAG = getClass().getSimpleName();
     public static final int REQUEST_CODE_CAMERA = 0;// 拍照
-    private static final int REQUEST_CODE_CLIPIC = 1;//裁剪头像
+    public static final int REQUEST_CODE_CLIPIC = 1;//裁剪头像
 
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private PhotoGalleryAdapter galleryAdapter;
@@ -86,7 +87,7 @@ public class PhotoPickActivity extends BaseActivity {
         toolbar.setTitle(R.string.select_photo);
         RecyclerView recyclerView = (RecyclerView) this.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, pickBean.getSpanCount()));
-        adapter = new PhotoPickAdapter(this, pickBean.getSpanCount(), pickBean.getMaxPickSize(), pickBean.getPickMode(), pickBean.isShowCamera());
+        adapter = new PhotoPickAdapter(this, pickBean.getSpanCount(), pickBean.getMaxPickSize(), pickBean.getPickMode(), pickBean.isShowCamera(), pickBean.isClipPhoto());
         recyclerView.setAdapter(adapter);
 
         RecyclerView gallery_rv = (RecyclerView) this.findViewById(R.id.gallery_rv);
@@ -142,19 +143,6 @@ public class PhotoPickActivity extends BaseActivity {
 
         slidingUpPanelLayout = (SlidingUpPanelLayout) this.findViewById(R.id.slidingUpPanelLayout);
         slidingUpPanelLayout.setAnchorPoint(0.5f);
-
-//                    if (slidingUpPanelLayout.getPanelState() != SlidingUpPanelLayout.PanelState.HIDDEN) {
-//                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-//                    } else {
-//                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-//                    }
-//                    if (slidingUpPanelLayout.getAnchorPoint() == 1.0f) {
-//                        slidingUpPanelLayout.setAnchorPoint(0.5f);
-//                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
-//                    } else {
-//                        slidingUpPanelLayout.setAnchorPoint(1.0f);
-//                        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-//                    }
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
@@ -172,6 +160,7 @@ public class PhotoPickActivity extends BaseActivity {
                 slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
             }
         });
+
     }
 
     @Override
@@ -219,7 +208,9 @@ public class PhotoPickActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_ok, menu);
+        if(!pickBean.isClipPhoto()){
+            getMenuInflater().inflate(R.menu.menu_ok, menu);
+        }
         return true;
     }
 
@@ -227,16 +218,12 @@ public class PhotoPickActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.ok) {
             if (adapter != null && !adapter.getSelectPhotos().isEmpty()) {
-                if (pickBean.isClipPhoto()) {//如果开启了图片裁剪，跳到裁剪界面
-                    startClipPic(adapter.getSelectPhotos().get(0));
-                } else {
-                    Intent intent = new Intent();
-                    intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, adapter.getSelectPhotos());
-                    setResult(Activity.RESULT_OK, intent);
-                    String s = "已选择的图片大小 = " + adapter.getSelectPhotos().size() + "\n" + adapter.getSelectPhotos().toString();
-                    Toast.makeText(this, s, Toast.LENGTH_LONG).show();
-                    finish();
-                }
+                Intent intent = new Intent();
+                intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, adapter.getSelectPhotos());
+                setResult(Activity.RESULT_OK, intent);
+                String s = "已选择的图片大小 = " + adapter.getSelectPhotos().size() + "\n" + adapter.getSelectPhotos().toString();
+                Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+                finish();
             }
             return true;
         }
@@ -260,25 +247,32 @@ public class PhotoPickActivity extends BaseActivity {
         if (resultCode != RESULT_OK) {
             return;
         }
-        if (requestCode == REQUEST_CODE_CAMERA) {//相机
-            findPhoto();
-        } else if (requestCode == REQUEST_CODE_CLIPIC) {//头像裁剪
-            if (data != null) {
-                String photPath = data.getStringExtra(ClipPictureActivity.CLIPED_PHOTO_PATH);
-                if (photPath != null) {
-                    ArrayList<String> pic = new ArrayList<>();
-                    pic.add(photPath);
-                    Intent intent = new Intent();
-                    intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, pic);
-                    setResult(Activity.RESULT_OK, intent);
-                    Toast.makeText(this, "已裁剪的图片地址 = \n" + photPath, Toast.LENGTH_LONG).show();
-                    finish();
+        switch (requestCode){
+            case REQUEST_CODE_CAMERA://相机
+                findPhoto();
+                break;
+            case REQUEST_CODE_CLIPIC://头像裁剪
+                if (data != null) {
+                    String photPath = data.getStringExtra(ClipPictureActivity.CLIPED_PHOTO_PATH);
+                    if (photPath != null) {
+                        ArrayList<String> pic = new ArrayList<>();
+                        pic.add(photPath);
+                        Intent intent = new Intent();
+                        intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, pic);
+                        setResult(Activity.RESULT_OK, intent);
+                        Toast.makeText(this, "已裁剪的图片地址 = \n" + photPath, Toast.LENGTH_LONG).show();
+                        finish();
+                    } else {
+                        Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
                 }
-            } else {
-                Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
-            }
+                break;
+            case PhotoPreviewConfig.REQUEST_CODE:
+                setResult(Activity.RESULT_OK, data);
+                finish();
+                break;
         }
     }
 
@@ -311,7 +305,7 @@ public class PhotoPickActivity extends BaseActivity {
             Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
         } else {
             if (pickBean.isClipPhoto()) {//拍完照之后，如果要启动头像裁剪，则去裁剪再吧地址传回来
-                startClipPic(picturePath);
+                adapter.startClipPic(picturePath);
             } else {
                 ArrayList<String> pic = new ArrayList<>();
                 pic.add(picturePath);
@@ -321,13 +315,7 @@ public class PhotoPickActivity extends BaseActivity {
                 Toast.makeText(this, "已返回的拍照图片地址 = \n" + picturePath, Toast.LENGTH_LONG).show();
                 finish();
             }
-
         }
     }
 
-    private void startClipPic(String picPath) {
-        Intent intent = new Intent(this, ClipPictureActivity.class);
-        intent.putExtra(ClipPictureActivity.USER_PHOTO_PATH, picPath);
-        startActivityForResult(intent, REQUEST_CODE_CLIPIC);
-    }
 }

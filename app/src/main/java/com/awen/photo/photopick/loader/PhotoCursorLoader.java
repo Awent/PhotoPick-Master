@@ -27,7 +27,7 @@ public class PhotoCursorLoader {
 
     public PhotoCursorLoader(){
         //default ，默认配置
-        setShowGif(false);
+        setShowGif(true);//展示gif
         setUri(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         setProjection(IMAGE_PROJECTION);
         setSelection(MIME_TYPE + "=? or " + MIME_TYPE + "=? " + (showGif ? ("or " + MIME_TYPE + "=?") : ""));
@@ -115,5 +115,10 @@ public class PhotoCursorLoader {
 
     public void setShowGif(boolean showGif) {
         this.showGif = showGif;
+        if (showGif) {
+            selectionArgs = new String[]{IMAGE_JPEG, IMAGE_PNG, IMAGE_GIF};
+        } else {
+            selectionArgs = new String[]{IMAGE_JPEG, IMAGE_PNG};
+        }
     }
 }
