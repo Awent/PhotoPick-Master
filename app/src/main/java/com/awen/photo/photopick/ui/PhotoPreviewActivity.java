@@ -122,6 +122,9 @@ public class PhotoPreviewActivity extends BaseActivity {
         checkbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(selectPhotos == null){
+                    selectPhotos = new ArrayList<>();
+                }
                 String path = photos.get(pos).getPath();
                 if (selectPhotos.contains(path)) {
                     selectPhotos.remove(path);

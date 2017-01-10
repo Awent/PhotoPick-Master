@@ -35,7 +35,7 @@ public class PhotoPreviewConfig {
             throw new NullPointerException("Builder#photoPagerBean is null");
         }
         if (photoPreviewBean.getPhotos() == null || photoPreviewBean.getPhotos().isEmpty()) {
-            throw new NullPointerException("bigImageUrls is null or size is 0");
+            throw new NullPointerException("photos is null or size is 0");
         }
         if (photoPreviewBean.getPosition() > photoPreviewBean.getMaxPickSize()) {
             throw new IndexOutOfBoundsException("show position out maxPickSize size,position = " + photoPreviewBean.getPosition() + ",maxPickSize size = " + photoPreviewBean.getMaxPickSize());
@@ -85,9 +85,6 @@ public class PhotoPreviewConfig {
         }
 
         public Builder setSelectPhotos(ArrayList<String> selectPhotos) {
-            if (selectPhotos == null || selectPhotos.isEmpty()) {
-                throw new NullPointerException("selectPhotos is null or size is 0");
-            }
             bean.setSelectPhotos(selectPhotos);
             return this;
         }
