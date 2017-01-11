@@ -28,8 +28,8 @@ import com.awen.photo.photopick.bean.PhotoDirectory;
 import com.awen.photo.photopick.bean.PhotoPickBean;
 import com.awen.photo.photopick.loader.MediaStoreHelper;
 import com.awen.photo.photopick.util.PermissionUtil;
-import com.awen.photo.photopick.util.PhotoPickConfig;
-import com.awen.photo.photopick.util.PhotoPreviewConfig;
+import com.awen.photo.photopick.controller.PhotoPickConfig;
+import com.awen.photo.photopick.controller.PhotoPreviewConfig;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.File;

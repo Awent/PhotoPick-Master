@@ -1,4 +1,4 @@
-package com.awen.photo.photopick.util;
+package com.awen.photo.photopick.controller;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.awen.photo.R;
 import com.awen.photo.photopick.bean.PhotoPagerBean;
 import com.awen.photo.photopick.ui.PhotoPagerActivity;
+import com.awen.photo.photopick.util.AppPathUtil;
 
 import java.util.ArrayList;
 

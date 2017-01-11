@@ -35,7 +35,8 @@ public class ClipPictureActivity extends BaseActivity {
             return;
         }
         int start = photoPath.lastIndexOf("/");
-        photoName = photoPath.substring(start + 1, photoPath.length());
+//        photoName = photoPath.substring(start + 1, photoPath.length());
+        photoName = String.valueOf(System.currentTimeMillis());
         bitmap = ImageUtils.getBitmap(photoPath, 480, 480);
 
         mClipImageLayout = (ClipImageLayout) findViewById(R.id.id_clipImageLayout);

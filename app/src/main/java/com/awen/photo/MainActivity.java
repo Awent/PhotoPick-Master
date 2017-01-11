@@ -2,15 +2,14 @@ package com.awen.photo;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
-import com.awen.photo.photopick.bean.PhotoPagerBean;
-import com.awen.photo.photopick.bean.PhotoPickBean;
-import com.awen.photo.photopick.util.PhotoPagerConfig;
-import com.awen.photo.photopick.util.PhotoPickConfig;
+import com.awen.photo.photopick.controller.PhotoPagerConfig;
+import com.awen.photo.photopick.controller.PhotoPickConfig;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -120,6 +119,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
                     } else {
                         //toast error
+
                     }
                 }
                 break;

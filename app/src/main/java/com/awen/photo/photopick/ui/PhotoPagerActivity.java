@@ -23,7 +23,7 @@ import com.awen.photo.photopick.bean.PhotoPagerBean;
 import com.awen.photo.photopick.util.AppPathUtil;
 import com.awen.photo.photopick.util.ImageUtils;
 import com.awen.photo.photopick.util.PermissionUtil;
-import com.awen.photo.photopick.util.PhotoPagerConfig;
+import com.awen.photo.photopick.controller.PhotoPagerConfig;
 import com.awen.photo.photopick.widget.HackyViewPager;
 import com.awen.photo.photopick.widget.RoundProgressBar;
 import com.awen.photo.photopick.widget.photodraweeview.OnViewTapListener;

@@ -1,4 +1,4 @@
-package com.awen.photo.photopick.util;
+package com.awen.photo.photopick.controller;
 
 import android.app.Activity;
 import android.content.Intent;
