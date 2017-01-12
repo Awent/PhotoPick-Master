@@ -68,11 +68,6 @@ public class PhotoPickActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_pick);
-        //以下操作会回调这两个方法:#selectPicFromCameraSuccess(), #selectPicFromCameraFaild()
-        PermissionGen.needPermission(this, 200, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-    }
-
-    private void startInit() {
         //you can set some configs in bundle
         Bundle bundle = getIntent().getBundleExtra(PhotoPickConfig.EXTRA_PICK_BUNDLE);
         if (bundle == null) {
@@ -83,7 +78,11 @@ public class PhotoPickActivity extends BaseActivity {
             finish();
             return;
         }
+        //以下操作会回调这两个方法:#selectPicFromCameraSuccess(), #selectPicFromCameraFaild()
+        PermissionGen.needPermission(this, 200, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
 
+    private void startInit() {
         toolbar.setTitle(R.string.select_photo);
         RecyclerView recyclerView = (RecyclerView) this.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, pickBean.getSpanCount()));
