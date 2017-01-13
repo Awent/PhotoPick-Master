@@ -34,6 +34,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import kr.co.namee.permissiongen.PermissionFail;
@@ -207,7 +208,7 @@ public class PhotoPickActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(!pickBean.isClipPhoto()){
+        if (!pickBean.isClipPhoto()) {
             getMenuInflater().inflate(R.menu.menu_ok, menu);
         }
         return true;
@@ -246,7 +247,7 @@ public class PhotoPickActivity extends BaseActivity {
         if (resultCode != RESULT_OK) {
             return;
         }
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_CODE_CAMERA://相机
                 findPhoto();
                 break;
@@ -269,8 +270,36 @@ public class PhotoPickActivity extends BaseActivity {
                 }
                 break;
             case PhotoPreviewConfig.REQUEST_CODE:
-                setResult(Activity.RESULT_OK, data);
-                finish();
+                boolean isBackPressed = data.getBooleanExtra("isBackPressed", false);
+                if (!isBackPressed) {//如果上个activity不是按了返回键的，就是按了"发送"按钮
+                    setResult(Activity.RESULT_OK, data);
+                    finish();
+                } else {//用户按了返回键，合并用户选择的图片集合
+                    ArrayList<String> photoLists = data.getStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST);
+                    if (photoLists == null) {
+                        return;
+                    }
+                    ArrayList<String> selectedList = adapter.getSelectPhotos();//之前已经选了的图片
+                    List<String> deleteList = new ArrayList<>();//这是去图片预览界面需要删除的图片
+                    for (String s : selectedList) {
+                        if (!photoLists.contains(s)) {
+                            deleteList.add(s);
+                        }
+                    }
+                    selectedList.removeAll(deleteList);//删除预览界面取消选择的图片
+                    deleteList.clear();
+                    //合并相同的数据
+                    HashSet<String> set = new HashSet<>(photoLists);
+                    for (String s : selectedList) {
+                        set.add(s);
+                    }
+                    selectedList.clear();
+                    selectedList.addAll(set);
+                    adapter.notifyDataSetChanged();
+//                    for(String s: set){
+//                        Log.e(TAG,s);
+//                    }
+                }
                 break;
         }
     }

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.awen.photo.BaseActivity;
 import com.awen.photo.R;
 import com.awen.photo.photopick.util.AppPathUtil;
@@ -21,7 +22,7 @@ public class ClipPictureActivity extends BaseActivity {
     public static final String CLIPED_PHOTO_PATH = "cliped_photo_path"; // 已经裁剪的图片地址
     public static final String USER_PHOTO_PATH = "user_photo_path"; // 选择头像的本地地址
     private ClipImageLayout mClipImageLayout;
-    private String photoPath, photoName;
+    private String photoPath;
     private Bitmap bitmap;
 
     @Override
@@ -35,8 +36,6 @@ public class ClipPictureActivity extends BaseActivity {
             return;
         }
         int start = photoPath.lastIndexOf("/");
-//        photoName = photoPath.substring(start + 1, photoPath.length());
-        photoName = String.valueOf(System.currentTimeMillis());
         bitmap = ImageUtils.getBitmap(photoPath, 480, 480);
 
         mClipImageLayout = (ClipImageLayout) findViewById(R.id.id_clipImageLayout);
@@ -57,6 +56,8 @@ public class ClipPictureActivity extends BaseActivity {
         if (item.getItemId() == R.id.ok) {// 裁剪
             Bitmap bitmap = mClipImageLayout.clip();
             // 保存图片
+            String photoName = String.valueOf(System.currentTimeMillis());
+//            photoName = photoPath.substring(start + 1, photoPath.length());
             photoPath = AppPathUtil.getClipPhotoPath() + photoName;
             boolean isSaveStatu = ImageUtils.saveImage2(photoPath, bitmap);
             bitmap.recycle();

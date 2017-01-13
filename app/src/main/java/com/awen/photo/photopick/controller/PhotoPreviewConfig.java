@@ -37,8 +37,8 @@ public class PhotoPreviewConfig {
         if (photoPreviewBean.getPhotos() == null || photoPreviewBean.getPhotos().isEmpty()) {
             throw new NullPointerException("photos is null or size is 0");
         }
-        if (photoPreviewBean.getPosition() > photoPreviewBean.getMaxPickSize()) {
-            throw new IndexOutOfBoundsException("show position out maxPickSize size,position = " + photoPreviewBean.getPosition() + ",maxPickSize size = " + photoPreviewBean.getMaxPickSize());
+        if (photoPreviewBean.getSelectPhotos() != null && (photoPreviewBean.getSelectPhotos().size() > photoPreviewBean.getMaxPickSize())) {
+            throw new IndexOutOfBoundsException("seleced photo size out maxPickSize size,select photo size = " + photoPreviewBean.getSelectPhotos().size() + ",maxPickSize size = " + photoPreviewBean.getMaxPickSize());
         }
         Bundle bundle = new Bundle();
         bundle.putSerializable(EXTRA_BEAN, photoPreviewBean);

@@ -120,7 +120,7 @@ public class PhotoPreviewActivity extends BaseActivity {
         checkbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(selectPhotos == null){
+                if (selectPhotos == null) {
                     selectPhotos = new ArrayList<>();
                 }
                 String path = photos.get(pos).getPath();
@@ -169,8 +169,25 @@ public class PhotoPreviewActivity extends BaseActivity {
             setResult(Activity.RESULT_OK, intent);
             finish();
             return true;
+        }else if(item.getItemId() == android.R.id.home){
+            backTo();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void backTo(){
+        Intent intent = new Intent();
+        intent.putExtra("isBackPressed", true);
+        intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, selectPhotos);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        backTo();
+        super.onBackPressed();
     }
 
     private boolean toolBarStatus = true;
@@ -234,6 +251,12 @@ public class PhotoPreviewActivity extends BaseActivity {
             return view == object;
         }
 
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.image_pager_exit_animation);
     }
 
 }

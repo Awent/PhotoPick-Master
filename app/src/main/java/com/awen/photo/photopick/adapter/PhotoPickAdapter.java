@@ -65,9 +65,6 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
     }
 
     public void refresh(List<Photo> photos) {
-        if (this.photos == null) {
-            photos = new ArrayList<>();
-        }
         this.photos.clear();
         this.photos.addAll(photos);
         notifyDataSetChanged();
