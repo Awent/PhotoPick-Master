@@ -3,7 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PhotoPick-Master.iml" filepath="$PROJECT_DIR$/PhotoPick-Master.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/photoLibrary/photoLibrary.iml" filepath="$PROJECT_DIR$/photoLibrary/photoLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/simaple/simaple.iml" filepath="$PROJECT_DIR$/simaple/simaple.iml" />
     </modules>
   </component>
 </project>

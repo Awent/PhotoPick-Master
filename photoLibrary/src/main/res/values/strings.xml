@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">PhotoPick-Master</string>
+    <string name="app_root_name">PhotoPickLibrary</string>
+
+    <string name="gallery_num">%sphoto</string>
+    <string name="cannot_take_pic">SD card does not exist, can not take pictures</string>
+    <string name="all_photo">All pictures</string>
+    <string name="select_photo">Select Image</string>
+    <string name="clip">cut</string>
+    <string name="ok">ok</string>
+    <string name="save_big_image">save picture</string>
+    <string name="saved_faild">save failed</string>
+    <string name="save_image_aready">Saved -> gallery view, picture address: \n %s</string>
+    <string name="gallery">gallery</string>
+    <string name="loading">loading&#8230;</string>
+    <string name="unable_find_pic">Can not find picture</string>
+    <string name="cancel">cancel</string>
+    <string name="selected">selected</string>
+    <string name="send">send</string>
+    <string name="sends" formatted="false">send(%s/%s)</string>
+    <string name="image_size">original picture(%s)</string>
+
+    <!-- android 6.0权限-->
+    <string name="permission_tip_camera">Missing (camera) permissions, can not use this feature, click "Settings" to open this privilege \n You can configure permissions in "Settings"> "Applications"> "Permissions"</string>
+    <string name="permission_tip_audio">Missing (microphone) permission, can not use this feature, click "Settings" to open this privilege \n You can configure permissions in "Settings"> "Applications"> "Permissions"</string>
+    <string name="permission_tip_video">Missing (microphone or camera) permission, can not use this feature, click "Settings" to open this privilege \n You can configure permissions in "Settings"> "Applications"> "Permissions"</string>
+    <string name="permission_tip_location">Missing (read location) permission, can not use this feature, click "Settings" to open this privilege \n You can configure permissions in "Settings"> "Applications"> "Permissions"</string>
+    <string name="permission_tip_SD_IMEI">This app needs to use the (store) and (read native ID) permissions, do you agree? Click "Settings" to open this permission \n You can configure permissions in "Settings"> "Applications"> "Permissions"</string>
+    <string name="permission_tip_SD">This app needs to use the (storage) permission, do you agree? Click "Settings" to open this privilege \n You can configure permissions in "Settings"> "Applications"> "Permissions"</string>
+    <string name="settings">setting</string>
+</resources>

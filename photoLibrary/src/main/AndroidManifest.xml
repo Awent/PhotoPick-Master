@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.awen.photo">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <activity
+        android:theme="@style/PhoAppTheme.AppTheme"
+        android:name="com.awen.photo.photopick.ui.ClipPictureActivity" />
+    <activity
+        android:theme="@style/PhoAppTheme.AppTheme"
+        android:name="com.awen.photo.photopick.ui.PhotoPagerActivity" />
+    <activity
+        android:theme="@style/PhoAppTheme.AppTheme"
+        android:name="com.awen.photo.photopick.ui.PhotoPickActivity" />
+    <activity
+        android:theme="@style/PhoAppTheme.AppTheme"
+        android:name="com.awen.photo.photopick.ui.PhotoPreviewActivity" />
+
+</manifest>
