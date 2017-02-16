@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.awen.photo.Awen;
 import com.awen.photo.BaseActivity;
 import com.awen.photo.R;
 import com.awen.photo.photopick.bean.PhotoPagerBean;
@@ -276,7 +277,10 @@ public class PhotoPagerActivity extends BaseActivity {
             //防止有些图片没有后缀名
             fileName = fileName + ".jpg";
         }
-        String filePath = (saveImageLocalPath == null ? AppPathUtil.getBigBitmapCachePath() : saveImageLocalPath) + fileName;
+        String filePath = (Awen.getSaveImageLocalPath() == null ? AppPathUtil.getBigBitmapCachePath() : Awen.getSaveImageLocalPath()) + fileName;
+        if(saveImageLocalPath != null){
+            filePath = saveImageLocalPath + fileName;
+        }
         Log.e(TAG, "save image fileName = " + fileName);
         Log.e(TAG, "save image path = " + filePath);
         boolean state = false;

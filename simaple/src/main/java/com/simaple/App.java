@@ -14,7 +14,8 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         Awen.init(this);
-        //下面这个是配置toolbar颜色的
+        //下面是配置toolbar颜色和存储图片地址的
 //        Awen.init(this,android.R.color.holo_blue_light);
+//        Awen.init(this,android.R.color.holo_blue_light,"/storage/xxxx/xxx");
     }
 }
