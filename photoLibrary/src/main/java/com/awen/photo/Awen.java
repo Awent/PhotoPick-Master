@@ -65,6 +65,14 @@ public final class Awen {
         return path;
     }
 
+    public static void setToolbarBackGround(@ColorRes int toolbarBackGroundId) {
+        toolbarBackGround = toolbarBackGroundId;
+    }
+
+    public static void setSaveImageLocalPath(String saveImageLocalPath){
+        path = saveImageLocalPath;
+    }
+
     public static void checkInit() {
         if (mContext == null) {
             throw new NullPointerException("photoLibrary was not initialized,please init in your Application");

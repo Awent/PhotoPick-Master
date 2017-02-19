@@ -16,14 +16,14 @@ import java.util.ArrayList;
  * 默认不开启保存图片功能，但是会有默认的保存图片地址,默认展示第一张图片<br>
  * 注意查看大图传本地图片路径的时候要加上scheme，既是加上这个："file://"，这样显示的效果更佳<br>
  * 可以这样使用,how to use：<br>
- * new PhotoPagerConfig<br>
+ * <code>new PhotoPagerConfig<br>
  * .Builder(this)<br>
  * .setBigImageUrls(list)<br>
  * .setLowImageUrls(list)<br>
  * .setPosition(4)<br>
  * .setSavaImage(true)<br>
  * .setSaveImageLocalPath("/storage/xxxx/xxx")<br>
- * .build();<br>
+ * .build();<br></code>
  * Created by Awen <Awentljs@gmail.com>
  */
 public class PhotoPagerConfig {

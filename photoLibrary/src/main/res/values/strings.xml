@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">PhotoPick-Master</string>
     <string name="app_root_name">PhotoPickLibrary</string>
 
     <string name="gallery_num">%sphoto</string>
@@ -7,14 +6,14 @@
     <string name="all_photo">All pictures</string>
     <string name="select_photo">Select Image</string>
     <string name="clip">cut</string>
-    <string name="ok">ok</string>
+    <string name="ok">OK</string>
     <string name="save_big_image">save picture</string>
     <string name="saved_faild">save failed</string>
     <string name="save_image_aready">Saved -> gallery view, picture address: \n %s</string>
     <string name="gallery">gallery</string>
     <string name="loading">loading&#8230;</string>
     <string name="unable_find_pic">Can not find picture</string>
-    <string name="cancel">cancel</string>
+    <string name="cancel">Cancel</string>
     <string name="selected">selected</string>
     <string name="send">send</string>
     <string name="sends" formatted="false">send(%s/%s)</string>

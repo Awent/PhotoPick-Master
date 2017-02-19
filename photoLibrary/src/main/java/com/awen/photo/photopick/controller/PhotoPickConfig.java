@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.awen.photo.Awen;
+import com.awen.photo.R;
 import com.awen.photo.photopick.bean.PhotoPickBean;
 import com.awen.photo.photopick.ui.PhotoPickActivity;
 
@@ -53,6 +54,7 @@ public class PhotoPickConfig {
         intent.putExtra(EXTRA_PICK_BUNDLE, bundle);
         intent.setClass(context, PhotoPickActivity.class);
         context.startActivityForResult(intent, PICK_REQUEST_CODE);
+        context.overridePendingTransition(R.anim.image_pager_enter_animation, 0);
     }
 
     public static class Builder {

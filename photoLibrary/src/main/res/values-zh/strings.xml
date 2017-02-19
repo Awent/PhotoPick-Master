@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">PhotoPick-Master</string>
     <string name="app_root_name">PhotoPickLibrary</string>
 
     <string name="gallery_num">%s张</string>
