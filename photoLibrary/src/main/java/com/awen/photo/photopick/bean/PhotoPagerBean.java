@@ -32,8 +32,6 @@ public class PhotoPagerBean implements Parcelable {
     private ArrayList<String> lowImgUrls;
 
     public PhotoPagerBean(){
-        bigImgUrls = new ArrayList<>();
-        lowImgUrls = new ArrayList<>();
     }
 
     private PhotoPagerBean(Parcel in) {
