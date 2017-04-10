@@ -39,7 +39,7 @@ public class MediaStoreHelper {
                 if (cursor == null) return;
 
                 List<PhotoDirectory> directories = Data.getDataFromCursor(context, cursor, checkImageStatus);
-
+                cursor.close();
                 if (resultCallback != null) {
                     resultCallback.onResultCallback(directories);
                 }

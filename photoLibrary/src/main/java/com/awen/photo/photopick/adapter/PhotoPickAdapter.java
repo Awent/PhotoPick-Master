@@ -19,10 +19,10 @@ import android.widget.Toast;
 import com.awen.photo.R;
 import com.awen.photo.photopick.bean.Photo;
 import com.awen.photo.photopick.bean.PhotoPickBean;
-import com.awen.photo.photopick.ui.ClipPictureActivity;
-import com.awen.photo.photopick.ui.PhotoPickActivity;
 import com.awen.photo.photopick.controller.PhotoPickConfig;
 import com.awen.photo.photopick.controller.PhotoPreviewConfig;
+import com.awen.photo.photopick.ui.ClipPictureActivity;
+import com.awen.photo.photopick.ui.PhotoPickActivity;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -160,8 +160,8 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
                 }
             }else if(v.getId() == R.id.photo_pick_rl){
                 if (showCamera && position == 0) {
-                    //以下操作会回调Activity中的#selectPicFromCameraSuccess()或selectPicFromCameraFaild()
-                    PermissionGen.needPermission((Activity) context, 100, Manifest.permission.CAMERA);
+                    //以下操作会回调Activity中的#selectPicFromCameraSuccess()或selectPicFromCameraFailed()
+                    PermissionGen.needPermission((Activity) context, PhotoPickActivity.REQUEST_CODE_PERMISSION_CAMERA, Manifest.permission.CAMERA);
                 } else if (isClipPhoto) {//头像裁剪
                     startClipPic(getItem(position).getPath());
                 } else {//查看大图

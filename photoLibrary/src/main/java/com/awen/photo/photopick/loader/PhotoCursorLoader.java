@@ -25,18 +25,13 @@ public class PhotoCursorLoader {
 
     private boolean showGif;
 
-    public PhotoCursorLoader(){
+    public PhotoCursorLoader() {
         //default ，默认配置
         setShowGif(true);//展示gif
         setUri(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         setProjection(IMAGE_PROJECTION);
         setSelection(MIME_TYPE + "=? or " + MIME_TYPE + "=? " + (showGif ? ("or " + MIME_TYPE + "=?") : ""));
-        String[] selectionArgs;
-        if (showGif) {
-            selectionArgs = new String[]{IMAGE_JPEG, IMAGE_PNG, IMAGE_GIF};
-        } else {
-            selectionArgs = new String[]{IMAGE_JPEG, IMAGE_PNG};
-        }
+        setShowGif(isShowGif());
         setSelectionArgs(selectionArgs);
         setSortOrder(MediaStore.Images.Media.DATE_ADDED + " DESC");
 //        setSortOrder(MediaStore.Images.Media.DATE_MODIFIED);

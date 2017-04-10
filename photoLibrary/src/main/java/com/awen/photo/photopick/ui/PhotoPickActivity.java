@@ -4,11 +4,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,10 +28,10 @@ import com.awen.photo.photopick.adapter.PhotoPickAdapter;
 import com.awen.photo.photopick.bean.Photo;
 import com.awen.photo.photopick.bean.PhotoDirectory;
 import com.awen.photo.photopick.bean.PhotoPickBean;
-import com.awen.photo.photopick.loader.MediaStoreHelper;
-import com.awen.photo.photopick.util.PermissionUtil;
 import com.awen.photo.photopick.controller.PhotoPickConfig;
 import com.awen.photo.photopick.controller.PhotoPreviewConfig;
+import com.awen.photo.photopick.loader.MediaStoreHelper;
+import com.awen.photo.photopick.util.PermissionUtil;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.File;
@@ -59,11 +61,14 @@ public class PhotoPickActivity extends BaseActivity {
     private final String TAG = getClass().getSimpleName();
     public static final int REQUEST_CODE_CAMERA = 0;// 拍照
     public static final int REQUEST_CODE_CLIPIC = 1;//裁剪头像
+    public static final int REQUEST_CODE_PERMISSION_SD = 200;//获取sd卡读写权限
+    public static final int REQUEST_CODE_PERMISSION_CAMERA = 100;//获取拍照权限
 
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private PhotoGalleryAdapter galleryAdapter;
     private PhotoPickAdapter adapter;
     private PhotoPickBean pickBean;
+    private Uri cameraUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +84,8 @@ public class PhotoPickActivity extends BaseActivity {
             finish();
             return;
         }
-        //以下操作会回调这两个方法:#selectPicFromCameraSuccess(), #selectPicFromCameraFaild()
-        PermissionGen.needPermission(this, 200, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        //以下操作会回调这两个方法:#startPermissionSDSuccess(), #startPermissionSDFaild()
+        PermissionGen.needPermission(this, REQUEST_CODE_PERMISSION_SD, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     private void startInit() {
@@ -169,26 +174,26 @@ public class PhotoPickActivity extends BaseActivity {
         PermissionGen.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
-    @PermissionSuccess(requestCode = 100)
+    @PermissionSuccess(requestCode = REQUEST_CODE_PERMISSION_CAMERA)
     private void selectPicFromCameraSuccess() {
         Log.e(TAG, "selectPicFromCameraSuccess");
-        adapter.selectPicFromCamera();
+        selectPicFromCamera();
     }
 
-    @PermissionFail(requestCode = 100)
-    private void selectPicFromCameraFaild() {
-        Log.e(TAG, "selectPicFromCameraFaild");
+    @PermissionFail(requestCode = REQUEST_CODE_PERMISSION_CAMERA)
+    private void selectPicFromCameraFailed() {
+        Log.e(TAG, "selectPicFromCameraFailed");
         PermissionUtil.showSystemSettingDialog(this, getString(R.string.permission_tip_camera));
     }
 
-    @PermissionSuccess(requestCode = 200)
+    @PermissionSuccess(requestCode = REQUEST_CODE_PERMISSION_SD)
     private void startPermissionSDSuccess() {
         startInit();
         Log.e(TAG, "startPermissionSuccess");
     }
 
-    @PermissionFail(requestCode = 200)
-    private void startPermissionSDFaild() {
+    @PermissionFail(requestCode = REQUEST_CODE_PERMISSION_SD)
+    private void startPermissionSDFailed() {
         new AlertDialog.Builder(this)
                 .setMessage(getString(R.string.permission_tip_SD))
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -203,7 +208,23 @@ public class PhotoPickActivity extends BaseActivity {
                 finish();
             }
         }).setCancelable(false).show();
-        Log.e(TAG, "startPermissionFaild");
+        Log.e(TAG, "startPermissionFailed");
+    }
+
+    /**
+     * 启动Camera拍照
+     */
+    public void selectPicFromCamera() {
+        if (!android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+            Toast.makeText(this, R.string.cannot_take_pic, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // 直接将拍到的照片存到手机默认的文件夹
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        ContentValues values = new ContentValues();
+        cameraUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri);
+        startActivityForResult(intent, REQUEST_CODE_CAMERA);
     }
 
     @Override
@@ -308,7 +329,7 @@ public class PhotoPickActivity extends BaseActivity {
 
     private void findPhoto() {
         String picturePath = null;
-        Uri uri = adapter.getCameraUri();
+        Uri uri = cameraUri;
         Cursor cursor = null;
         try {
             cursor = getContentResolver().query(uri, null, null, null, null);

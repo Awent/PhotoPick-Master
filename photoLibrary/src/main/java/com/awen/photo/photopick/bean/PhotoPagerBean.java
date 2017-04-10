@@ -3,15 +3,12 @@ package com.awen.photo.photopick.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Awen <Awentljs@gmail.com>.
  */
 public class PhotoPagerBean implements Parcelable {
-
-    public PhotoPagerBean(){}
 
     /**
      * 是否开启图片保存到本地功能
@@ -33,6 +30,11 @@ public class PhotoPagerBean implements Parcelable {
      * 小图,可用于在展示大图前进行小图的展示
      */
     private ArrayList<String> lowImgUrls;
+
+    public PhotoPagerBean(){
+        bigImgUrls = new ArrayList<>();
+        lowImgUrls = new ArrayList<>();
+    }
 
     private PhotoPagerBean(Parcel in) {
         saveImage = in.readByte() != 0;
@@ -117,6 +119,9 @@ public class PhotoPagerBean implements Parcelable {
         if (bigImageUrl == null) {
             throw new NullPointerException("bigImageUrl is null");
         }
+        if(bigImgUrls == null){
+            bigImgUrls = new ArrayList<>();
+        }
         bigImgUrls.add(bigImageUrl);
     }
 
@@ -128,6 +133,9 @@ public class PhotoPagerBean implements Parcelable {
     public void addSingleLowImageUrl(String lowImageUrl) {
         if (lowImageUrl == null) {
             throw new NullPointerException("lowImageUrl is null");
+        }
+        if(lowImgUrls == null){
+            lowImgUrls = new ArrayList<>();
         }
         lowImgUrls.add(lowImageUrl);
     }
