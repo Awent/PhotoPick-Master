@@ -2,6 +2,8 @@ package com.awen.photo.photopick.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v7.widget.GridLayoutManager;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -31,6 +33,19 @@ public class PhotoPagerBean implements Parcelable {
      */
     private ArrayList<String> lowImgUrls;
 
+    /**
+     * 是否开启activity过度的动画效果，
+     */
+    private boolean isAnimation;
+    /**
+     * 如果是想要动画，并且是RecycleView的，此参数必须要传
+     */
+    private GridLayoutManager layoutManager;
+    /**
+     * 如果是想要动画，并且是单张图片的，此参数必须要传
+     */
+    private View beginView;
+
     public PhotoPagerBean(){
     }
 
@@ -40,6 +55,7 @@ public class PhotoPagerBean implements Parcelable {
         pagePosition = in.readInt();
         bigImgUrls = in.createStringArrayList();
         lowImgUrls = in.createStringArrayList();
+        isAnimation = in.readByte() != 0;
     }
 
     @Override
@@ -49,11 +65,7 @@ public class PhotoPagerBean implements Parcelable {
         dest.writeInt(pagePosition);
         dest.writeStringList(bigImgUrls);
         dest.writeStringList(lowImgUrls);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        dest.writeByte((byte) (isAnimation ? 1 : 0));
     }
 
     public static final Creator<PhotoPagerBean> CREATOR = new Creator<PhotoPagerBean>() {
@@ -67,6 +79,11 @@ public class PhotoPagerBean implements Parcelable {
             return new PhotoPagerBean[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     public boolean isSaveImage() {
         return saveImage;
@@ -138,5 +155,27 @@ public class PhotoPagerBean implements Parcelable {
         lowImgUrls.add(lowImageUrl);
     }
 
+    public boolean isAnimation() {
+        return isAnimation;
+    }
 
+    public void setAnimation(boolean animation) {
+        isAnimation = animation;
+    }
+
+    public GridLayoutManager getLayoutManager() {
+        return layoutManager;
+    }
+
+    public void setLayoutManager(GridLayoutManager layoutManager) {
+        this.layoutManager = layoutManager;
+    }
+
+    public View getBeginView() {
+        return beginView;
+    }
+
+    public void setBeginView(View beginView) {
+        this.beginView = beginView;
+    }
 }

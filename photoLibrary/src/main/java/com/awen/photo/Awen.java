@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 
+import com.awen.photo.photopick.util.FileSizeUtil;
 import com.awen.photo.photopick.util.ImagePipelineConfigFactory;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
@@ -11,9 +12,9 @@ import com.facebook.drawee.backends.pipeline.Fresco;
  * Created by Awen <Awentljs@gmail.com>
  */
 
-public final class Awen {
+public class Awen {
 
-    private Awen() {
+    protected Awen() {
     }
 
     @ColorRes
@@ -52,6 +53,17 @@ public final class Awen {
         path = saveImageLocalPath;
     }
 
+    public static void checkInit() {
+        if (mContext == null) {
+            throw new NullPointerException("photoLibrary was not initialized,please init in your Application");
+        }
+    }
+
+    public static void destroy(){
+        mContext = null;
+        path = null;
+    }
+
     @ColorInt
     public static int getToolbarBackGround() {
         return mContext.getResources().getColor(toolbarBackGround);
@@ -65,23 +77,20 @@ public final class Awen {
         return path;
     }
 
+    /**
+     * 设置toolbar颜色
+     * @param toolbarBackGroundId resId
+     */
     public static void setToolbarBackGround(@ColorRes int toolbarBackGroundId) {
         toolbarBackGround = toolbarBackGroundId;
     }
 
+    /**
+     * 查看网络大图时，你想把图片保存的地址,保存的图片是可以在手机图库可以看到的
+     * @param saveImageLocalPath 大图存储的地址
+     */
     public static void setSaveImageLocalPath(String saveImageLocalPath){
         path = saveImageLocalPath;
-    }
-
-    public static void checkInit() {
-        if (mContext == null) {
-            throw new NullPointerException("photoLibrary was not initialized,please init in your Application");
-        }
-    }
-
-    public static void destroy(){
-        mContext = null;
-        path = null;
     }
 
 }

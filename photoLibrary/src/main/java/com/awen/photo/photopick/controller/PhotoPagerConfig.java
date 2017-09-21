@@ -3,9 +3,12 @@ package com.awen.photo.photopick.controller;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.view.View;
 
 import com.awen.photo.Awen;
 import com.awen.photo.R;
+import com.awen.photo.photopick.anim.ViewOptionsCompat;
 import com.awen.photo.photopick.bean.PhotoPagerBean;
 import com.awen.photo.photopick.ui.PhotoPagerActivity;
 import com.awen.photo.photopick.util.AppPathUtil;
@@ -30,7 +33,7 @@ public class PhotoPagerConfig {
     public static final String EXTRA_PAGER_BUNDLE = "extra_pager_bundle";
     public static final String EXTRA_PAGER_BEAN = "extra_pager_bean";
 
-    public PhotoPagerConfig(Activity activity, Builder builder) {
+    private PhotoPagerConfig(Activity activity, Builder builder) {
         PhotoPagerBean photoPagerBean = builder.photoPagerBean;
         if (photoPagerBean == null) {
             throw new NullPointerException("Builder#photoPagerBean is null");
@@ -41,27 +44,40 @@ public class PhotoPagerConfig {
         if (photoPagerBean.getPagePosition() > photoPagerBean.getBigImgUrls().size()) {
             throw new IndexOutOfBoundsException("show position out bigImageUrls size,position = " + photoPagerBean.getPagePosition() + ",bigImageUrls size = " + photoPagerBean.getBigImgUrls().size());
         }
-        Bundle bundle = new Bundle();
+        boolean isAnimation = false;
+        Bundle bundle = null;
+        if (photoPagerBean.isAnimation() && photoPagerBean.getLayoutManager() != null) {
+            bundle = ViewOptionsCompat.makeScaleUpAnimation(photoPagerBean.getLayoutManager(), photoPagerBean.getBigImgUrls());
+            isAnimation = true;
+        } else if (photoPagerBean.isAnimation() && photoPagerBean.getBeginView() != null) {
+            bundle = ViewOptionsCompat.makeScaleUpAnimation(photoPagerBean.getBeginView(), photoPagerBean.getBigImgUrls().get(0));
+            isAnimation = true;
+        }
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
         bundle.putParcelable(EXTRA_PAGER_BEAN, photoPagerBean);
-        openImageBrower(activity, bundle);
-    }
-
-    private void openImageBrower(Activity activity, Bundle bundle) {
-        Intent intent = new Intent(activity, PhotoPagerActivity.class);
+        Intent intent = new Intent(activity, builder.clazz);
         intent.putExtra(EXTRA_PAGER_BUNDLE, bundle);
         activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.image_pager_enter_animation, 0);
+        activity.overridePendingTransition(isAnimation ? 0 : R.anim.image_pager_enter_animation, 0);
     }
 
     public static class Builder {
         private Activity context;
         private PhotoPagerBean photoPagerBean;
+        private Class<?> clazz;
 
         public Builder(Activity context) {
+            this(context, PhotoPagerActivity.class);
+        }
+
+        public Builder(Activity context, Class<?> clazz) {
             Awen.checkInit();
             if (context == null) {
                 throw new NullPointerException("activity is null");
             }
+            this.clazz = clazz;
             this.context = context;
             photoPagerBean = new PhotoPagerBean();
             photoPagerBean.setPagePosition(0);//默认展示第1张图片
@@ -152,6 +168,24 @@ public class PhotoPagerConfig {
          */
         public Builder addSingleLowImageUrl(String lowImageUrl) {
             photoPagerBean.addSingleLowImageUrl(lowImageUrl);
+            return this;
+        }
+
+        /**
+         * 在打开/关闭大图浏览界面时，是否启用动画效果
+         */
+        public Builder setAnimation(boolean isAnimation) {
+            photoPagerBean.setAnimation(isAnimation);
+            return this;
+        }
+
+        public Builder setLayoutManager(GridLayoutManager layoutManager) {
+            photoPagerBean.setLayoutManager(layoutManager);
+            return this;
+        }
+
+        public Builder setBeginView(View beginView) {
+            photoPagerBean.setBeginView(beginView);
             return this;
         }
 

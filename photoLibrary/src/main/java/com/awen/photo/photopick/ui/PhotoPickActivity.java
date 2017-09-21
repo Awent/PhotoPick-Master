@@ -28,15 +28,14 @@ import com.awen.photo.photopick.adapter.PhotoPickAdapter;
 import com.awen.photo.photopick.bean.Photo;
 import com.awen.photo.photopick.bean.PhotoDirectory;
 import com.awen.photo.photopick.bean.PhotoPickBean;
+import com.awen.photo.photopick.bean.PhotoResultBean;
 import com.awen.photo.photopick.controller.PhotoPickConfig;
 import com.awen.photo.photopick.controller.PhotoPreviewConfig;
 import com.awen.photo.photopick.loader.MediaStoreHelper;
 import com.awen.photo.photopick.util.PermissionUtil;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import kr.co.namee.permissiongen.PermissionFail;
@@ -69,6 +68,7 @@ public class PhotoPickActivity extends BaseActivity {
     private PhotoPickAdapter adapter;
     private PhotoPickBean pickBean;
     private Uri cameraUri;
+    private static PhotoPickConfig.Builder.OnPhotoResultCallback onPhotoResultCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +84,7 @@ public class PhotoPickActivity extends BaseActivity {
             finish();
             return;
         }
+//        onPhotoResultCallback = pickBean.getOnPhotoResultCallback();
         //以下操作会回调这两个方法:#startPermissionSDSuccess(), #startPermissionSDFaild()
         PermissionGen.needPermission(this, REQUEST_CODE_PERMISSION_SD, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
@@ -130,7 +131,7 @@ public class PhotoPickActivity extends BaseActivity {
 //                galleryAdapter.refresh(directories);
 //            }
 //        });
-        MediaStoreHelper.getPhotoDirs(this, new MediaStoreHelper.PhotosResultCallback() {
+        MediaStoreHelper.getPhotoDirs(this, pickBean.isShowGif(), new MediaStoreHelper.PhotosResultCallback() {
             @Override
             public void onResultCallback(final List<PhotoDirectory> directories) {
                 runOnUiThread(new Runnable() {
@@ -230,7 +231,7 @@ public class PhotoPickActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!pickBean.isClipPhoto()) {
-            getMenuInflater().inflate(R.menu.menu_ok, menu);
+            getMenuInflater().inflate(R.menu.menu_pick, menu);
         }
         return true;
     }
@@ -244,7 +245,16 @@ public class PhotoPickActivity extends BaseActivity {
                 setResult(Activity.RESULT_OK, intent);
 //                String s = "已选择的图片大小 = " + adapter.getSelectPhotos().size() + "\n" + adapter.getSelectPhotos().toString();
 //                Toast.makeText(this, s, Toast.LENGTH_LONG).show();
-                finish();
+                onPhotoResultBack(adapter.getSelectPhotos(),false);
+            }
+            return true;
+        }else if(item.getItemId() == R.id.preview){//图片预览
+            if (adapter != null && !adapter.getSelectPhotos().isEmpty()) {
+                new PhotoPreviewConfig.Builder(this)
+                        .setMaxPickSize(pickBean.getMaxPickSize())
+                        .setOriginalPicture(pickBean.isOriginalPicture())
+                        .setPreview(true)
+                        .build();
             }
             return true;
         }
@@ -282,7 +292,7 @@ public class PhotoPickActivity extends BaseActivity {
                         intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, pic);
                         setResult(Activity.RESULT_OK, intent);
 //                        Toast.makeText(this, "已裁剪的图片地址 = \n" + photPath, Toast.LENGTH_LONG).show();
-                        finish();
+                        onPhotoResultBack(pic,false);
                     } else {
                         Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
                     }
@@ -294,34 +304,12 @@ public class PhotoPickActivity extends BaseActivity {
                 boolean isBackPressed = data.getBooleanExtra("isBackPressed", false);
                 if (!isBackPressed) {//如果上个activity不是按了返回键的，就是按了"发送"按钮
                     setResult(Activity.RESULT_OK, data);
-                    finish();
-                } else {//用户按了返回键，合并用户选择的图片集合
                     ArrayList<String> photoLists = data.getStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST);
-                    if (photoLists == null) {
-                        return;
-                    }
-                    ArrayList<String> selectedList = adapter.getSelectPhotos();//之前已经选了的图片
-                    List<String> deleteList = new ArrayList<>();//这是去图片预览界面需要删除的图片
-                    for (String s : selectedList) {
-                        if (!photoLists.contains(s)) {
-                            deleteList.add(s);
-                        }
-                    }
-                    selectedList.removeAll(deleteList);//删除预览界面取消选择的图片
-                    deleteList.clear();
-                    //合并相同的数据
-                    HashSet<String> set = new HashSet<>(photoLists);
-                    for (String s : selectedList) {
-                        set.add(s);
-                    }
-                    selectedList.clear();
-                    selectedList.addAll(set);
-                    toolbar.setTitle(adapter.getTitle());
+                    boolean isOriginalPicture = data.getBooleanExtra(PhotoPreviewConfig.EXTRA_ORIGINAL_PIC,false);
+                    onPhotoResultBack(photoLists,isOriginalPicture);
+                } else {//用户按了返回键，合并用户选择的图片集合
                     adapter.notifyDataSetChanged();
-
-//                    for(String s: set){
-//                        Log.e(TAG,s);
-//                    }
+                    toolbar.setTitle(adapter.getTitle());
                 }
                 break;
         }
@@ -364,9 +352,28 @@ public class PhotoPickActivity extends BaseActivity {
                 intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, pic);
                 setResult(Activity.RESULT_OK, intent);
 //                Toast.makeText(this, "已返回的拍照图片地址 = \n" + picturePath, Toast.LENGTH_LONG).show();
-                finish();
+                onPhotoResultBack(pic,false);
             }
         }
+    }
+
+    /**
+     * 通过eventBus作为数据的回传
+     * @param photos
+     * @param originalPicture
+     */
+    private void onPhotoResultBack(ArrayList<String> photos,boolean originalPicture){
+        PhotoResultBean bean = new PhotoResultBean();
+        bean.setOriginalPicture(originalPicture);
+        bean.setPhotoLists(photos);
+        if(onPhotoResultCallback != null){
+            onPhotoResultCallback.onResult(bean);
+        }
+        finish();
+    }
+
+    public static void setOnPhotoResultCallback(PhotoPickConfig.Builder.OnPhotoResultCallback onPhotoResultCallback) {
+        PhotoPickActivity.onPhotoResultCallback = onPhotoResultCallback;
     }
 
     @Override
@@ -375,4 +382,13 @@ public class PhotoPickActivity extends BaseActivity {
         overridePendingTransition(0, R.anim.image_pager_exit_animation);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(adapter != null){
+            adapter.destroy();
+            adapter = null;
+        }
+        onPhotoResultCallback = null;
+    }
 }

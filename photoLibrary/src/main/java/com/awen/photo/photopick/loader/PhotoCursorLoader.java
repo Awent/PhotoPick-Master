@@ -12,6 +12,23 @@ import static android.provider.MediaStore.MediaColumns.MIME_TYPE;
  */
 public class PhotoCursorLoader {
 
+    private final static String IMAGE_JPEG = "image/jpeg";
+    private final static String IMAGE_PNG = "image/png";
+    private final static String IMAGE_GIF = "image/gif";
+    private final static String IMAGE_WEBP = "image/webp";
+
+    private final String[] IMAGE_PROJECTION = {
+            MediaStore.Images.Media._ID,
+            MediaStore.Images.Media.DATA,
+            MediaStore.Images.Media.BUCKET_ID,
+            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+            MediaStore.Images.Media.DATE_ADDED,
+            MediaStore.Images.Media.SIZE,
+            MediaStore.Images.Media.MIME_TYPE
+//            MediaStore.Images.Media.WIDTH,
+//            MediaStore.Images.Media.HEIGHT
+    };
+
     @NonNull
     private Uri uri;
     @Nullable
@@ -30,11 +47,10 @@ public class PhotoCursorLoader {
         setShowGif(true);//展示gif
         setUri(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         setProjection(IMAGE_PROJECTION);
-        setSelection(MIME_TYPE + "=? or " + MIME_TYPE + "=? " + (showGif ? ("or " + MIME_TYPE + "=?") : ""));
+        setSelection(MIME_TYPE + "=? or " + MIME_TYPE + "=? or " + MIME_TYPE + "=? " + (showGif ? ("or " + MIME_TYPE + "=?") : ""));
         setShowGif(isShowGif());
         setSelectionArgs(selectionArgs);
         setSortOrder(MediaStore.Images.Media.DATE_ADDED + " DESC");
-//        setSortOrder(MediaStore.Images.Media.DATE_MODIFIED);
     }
 
     public PhotoCursorLoader(@NonNull Uri uri, @Nullable String[] projection,
@@ -46,19 +62,6 @@ public class PhotoCursorLoader {
         this.selectionArgs = selectionArgs;
         this.sortOrder = sortOrder;
     }
-
-    private final static String IMAGE_JPEG = "image/jpeg";
-    private final static String IMAGE_PNG = "image/png";
-    private final static String IMAGE_GIF = "image/gif";
-
-    private final String[] IMAGE_PROJECTION = {
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.DATA,
-            MediaStore.Images.Media.BUCKET_ID,
-            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-            MediaStore.Images.Media.DATE_ADDED,
-            MediaStore.Images.Media.SIZE
-    };
 
     @NonNull
     public Uri getUri() {
@@ -112,9 +115,10 @@ public class PhotoCursorLoader {
     public void setShowGif(boolean showGif) {
         this.showGif = showGif;
         if (showGif) {
-            selectionArgs = new String[]{IMAGE_JPEG, IMAGE_PNG, IMAGE_GIF};
+            selectionArgs = new String[]{IMAGE_JPEG, IMAGE_PNG, IMAGE_WEBP, IMAGE_GIF};
         } else {
-            selectionArgs = new String[]{IMAGE_JPEG, IMAGE_PNG};
+            selectionArgs = new String[]{IMAGE_JPEG, IMAGE_PNG, IMAGE_WEBP};
         }
+        setSelection(MIME_TYPE + "=? or " + MIME_TYPE + "=? or " + MIME_TYPE + "=? " + (showGif ? ("or " + MIME_TYPE + "=?") : ""));
     }
 }

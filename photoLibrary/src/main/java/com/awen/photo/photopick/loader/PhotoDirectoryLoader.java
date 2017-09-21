@@ -15,6 +15,7 @@ public class PhotoDirectoryLoader extends CursorLoader {
     private final static String IMAGE_JPEG = "image/jpeg";
     private final static String IMAGE_PNG = "image/png";
     private final static String IMAGE_GIF = "image/gif";
+    private final static String IMAGE_WEBP = "image/webP";
 
     final String[] IMAGE_PROJECTION = {
             Media._ID,
@@ -40,9 +41,9 @@ public class PhotoDirectoryLoader extends CursorLoader {
                 MIME_TYPE + "=? or " + MIME_TYPE + "=? " + (showGif ? ("or " + MIME_TYPE + "=?") : ""));
         String[] selectionArgs;
         if (showGif) {
-            selectionArgs = new String[]{IMAGE_JPEG, IMAGE_PNG, IMAGE_GIF};
+            selectionArgs = new String[]{IMAGE_JPEG, IMAGE_PNG, IMAGE_WEBP,IMAGE_GIF};
         } else {
-            selectionArgs = new String[]{IMAGE_JPEG, IMAGE_PNG};
+            selectionArgs = new String[]{IMAGE_JPEG, IMAGE_PNG,IMAGE_WEBP};
         }
         setSelectionArgs(selectionArgs);
     }

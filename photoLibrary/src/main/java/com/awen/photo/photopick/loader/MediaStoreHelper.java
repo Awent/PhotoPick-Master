@@ -25,20 +25,17 @@ public class MediaStoreHelper {
      * @param context Activity
      * @param resultCallback PhotosResultCallback
      */
-    public static void getPhotoDirs(final Activity context, final PhotosResultCallback resultCallback) {
-        getPhotoDirs(context, resultCallback, true);
-    }
-
-    public static void getPhotoDirs(final Activity context, final PhotosResultCallback resultCallback, final boolean checkImageStatus) {
+    public static void getPhotoDirs(final Activity context, final boolean showGif, final PhotosResultCallback resultCallback) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 PhotoCursorLoader loader = new PhotoCursorLoader();
+                loader.setShowGif(showGif);
                 ContentResolver contentResolver = context.getContentResolver();
                 Cursor cursor = contentResolver.query(loader.getUri(), loader.getProjection(), loader.getSelection(), loader.getSelectionArgs(), loader.getSortOrder());
                 if (cursor == null) return;
 
-                List<PhotoDirectory> directories = Data.getDataFromCursor(context, cursor, checkImageStatus);
+                List<PhotoDirectory> directories = Data.getDataFromCursor(context, cursor);
                 cursor.close();
                 if (resultCallback != null) {
                     resultCallback.onResultCallback(directories);
@@ -55,7 +52,7 @@ public class MediaStoreHelper {
      */
     public static void getPhotoDirs(final AppCompatActivity activity, final Bundle args, final PhotosResultCallback resultCallback) {
         activity.getSupportLoaderManager()
-                .initLoader(0, args, new PhotoDirLoaderCallbacks(activity, true, resultCallback));
+                .initLoader(0, args, new PhotoDirLoaderCallbacks(activity, resultCallback));
 
     }
 
@@ -63,12 +60,10 @@ public class MediaStoreHelper {
 
         private Context context;
         private PhotosResultCallback resultCallback;
-        private boolean checkImageStatus;//是否检查图片已经损坏
 
-        public PhotoDirLoaderCallbacks(Context context, boolean checkImageStatus, PhotosResultCallback resultCallback) {
+        public PhotoDirLoaderCallbacks(Context context, PhotosResultCallback resultCallback) {
             this.context = context;
             this.resultCallback = resultCallback;
-            this.checkImageStatus = checkImageStatus;
         }
 
         @Override
@@ -81,7 +76,7 @@ public class MediaStoreHelper {
 
             if (data == null) return;
 
-            List<PhotoDirectory> directories = Data.getDataFromCursor(context, data, checkImageStatus);
+            List<PhotoDirectory> directories = Data.getDataFromCursor(context, data);
             data.close();
 
             if (resultCallback != null) {

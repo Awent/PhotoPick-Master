@@ -10,7 +10,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +25,7 @@ import android.widget.RadioButton;
 import com.awen.photo.Awen;
 import com.awen.photo.BaseActivity;
 import com.awen.photo.R;
+import com.awen.photo.photopick.adapter.PhotoPickAdapter;
 import com.awen.photo.photopick.bean.Photo;
 import com.awen.photo.photopick.bean.PhotoPreviewBean;
 import com.awen.photo.photopick.controller.PhotoPickConfig;
@@ -32,6 +34,9 @@ import com.awen.photo.photopick.util.FileSizeUtil;
 import com.awen.photo.photopick.widget.HackyViewPager;
 import com.awen.photo.photopick.widget.photodraweeview.OnViewTapListener;
 import com.awen.photo.photopick.widget.photodraweeview.PhotoDraweeView;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.ImageViewState;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
@@ -45,21 +50,25 @@ import java.io.File;
 import java.util.ArrayList;
 
 /**
- * 图片预览,后期会继续添加视频预览
+ * 图片预览,包括长图(跟微信微博一样),后期会继续添加视频预览
  * Created by Awen <Awentljs@gmail.com>
  */
 
 public class PhotoPreviewActivity extends BaseActivity {
 
+    private final String TAG = getClass().getSimpleName();
     private ArrayList<Photo> photos;
     private ArrayList<String> selectPhotos;
-    private OnViewTapListener onViewTapListener;
+    private ArrayList<Photo> previewPhotos;
+    private OnViewTapListener onViewTapListener;//图片单击
+    private View.OnClickListener onClickListener;//长图单击
     private CheckBox checkbox;
     private RadioButton radioButton;
     private int pos;
     private int maxPickSize;
     private boolean isChecked = false;
     private boolean originalPicture;
+    private int screenWith, screenHeight;
 
     @Override
     protected void onCreate(@Nullable Bundle arg0) {
@@ -73,14 +82,15 @@ public class PhotoPreviewActivity extends BaseActivity {
             finish();
             return;
         }
-        photos = bean.getPhotos();
+        photos = bean.isPreview() ? PhotoPickAdapter.getPreviewPhotos() : PhotoPickAdapter.photos;
         if (photos == null || photos.isEmpty()) {
             finish();
             return;
         }
         originalPicture = bean.isOriginalPicture();
         maxPickSize = bean.getMaxPickSize();
-        selectPhotos = bean.getSelectPhotos();
+        selectPhotos = PhotoPickAdapter.selectPhotos;
+        previewPhotos = PhotoPickAdapter.previewPhotos;
         final int beginPosition = bean.getPosition();
         setOpenToolBar(false);
         setContentView(R.layout.activity_photo_select);
@@ -93,6 +103,11 @@ public class PhotoPreviewActivity extends BaseActivity {
         toolbar.setTitle((beginPosition + 1) + "/" + photos.size());
         setSupportActionBar(toolbar);
 
+        if (selectPhotos != null && selectPhotos.contains(photos.get(0).getPath())) {//pos=0的时候
+            checkbox.setChecked(true);
+        } else {
+            checkbox.setChecked(false);
+        }
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -106,13 +121,13 @@ public class PhotoPreviewActivity extends BaseActivity {
                 toolbar.setTitle(position + "/" + photos.size());
                 if (selectPhotos != null && selectPhotos.contains(photos.get(pos).getPath())) {
                     checkbox.setChecked(true);
-                    if(pos == 1 && selectPhotos.contains(photos.get(pos - 1).getPath())){
+                    if (pos == 1 && selectPhotos.contains(photos.get(pos - 1).getPath())) {
                         checkbox.setChecked(true);
                     }
                 } else {
                     checkbox.setChecked(false);
                 }
-                if(originalPicture){
+                if (originalPicture) {
                     radioButton.setText(getString(R.string.image_size, FileSizeUtil.formatFileSize(photos.get(pos).getSize())));
                 }
             }
@@ -127,11 +142,15 @@ public class PhotoPreviewActivity extends BaseActivity {
         onViewTapListener = new OnViewTapListener() {
             @Override
             public void onViewTap(View view, float x, float y) {
-                if (toolBarStatus) {
-                    hideViews();
-                } else {
-                    showViews();
-                }
+                onSingleClick();
+            }
+        };
+
+        //长图单击回调
+        onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSingleClick();
             }
         };
 
@@ -141,9 +160,13 @@ public class PhotoPreviewActivity extends BaseActivity {
                 if (selectPhotos == null) {
                     selectPhotos = new ArrayList<>();
                 }
+                if(previewPhotos == null){
+                    previewPhotos = new ArrayList<>();
+                }
                 String path = photos.get(pos).getPath();
                 if (selectPhotos.contains(path)) {
                     selectPhotos.remove(path);
+                    previewPhotos.remove(photos.get(pos));
                     checkbox.setChecked(false);
                 } else {
                     if (maxPickSize == selectPhotos.size()) {
@@ -151,13 +174,14 @@ public class PhotoPreviewActivity extends BaseActivity {
                         return;
                     }
                     selectPhotos.add(path);
+                    previewPhotos.add(photos.get(pos));
                     checkbox.setChecked(true);
                 }
                 updateMenuItemTitle();
             }
         });
 
-        if(originalPicture){
+        if (originalPicture) {
             radioButton.setText(getString(R.string.image_size, FileSizeUtil.formatFileSize(photos.get(beginPosition).getSize())));
             radioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -171,16 +195,30 @@ public class PhotoPreviewActivity extends BaseActivity {
                     }
                 }
             });
-        }else {
+        } else {
             radioButton.setVisibility(View.GONE);
         }
 
         viewPager.setAdapter(new SamplePagerAdapter());
         viewPager.setCurrentItem(beginPosition);
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        Display display = getWindowManager().getDefaultDisplay();
+        display.getMetrics(metrics);
+        screenWith = metrics.widthPixels;
+        screenHeight = metrics.heightPixels;
+    }
+
+    private void onSingleClick() {
+        if (toolBarStatus) {
+            hideViews();
+        } else {
+            showViews();
+        }
     }
 
     private void updateMenuItemTitle() {
-        if (selectPhotos.isEmpty()) {
+        if (selectPhotos == null || selectPhotos.isEmpty()) {
             menuItem.setTitle(R.string.send);
         } else {
             menuItem.setTitle(getString(R.string.sends, String.valueOf(selectPhotos.size()), String.valueOf(maxPickSize)));
@@ -216,7 +254,7 @@ public class PhotoPreviewActivity extends BaseActivity {
         Intent intent = new Intent();
         intent.putExtra("isBackPressed", true);
         intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, selectPhotos);
-        intent.putExtra(PhotoPreviewConfig.EXTRA_ORIGINAL_PIC,originalPicture);
+        intent.putExtra(PhotoPreviewConfig.EXTRA_ORIGINAL_PIC, radioButton.isChecked());
         setResult(Activity.RESULT_OK, intent);
         finish();
     }
@@ -247,40 +285,57 @@ public class PhotoPreviewActivity extends BaseActivity {
         }
 
         @Override
-        public View instantiateItem(ViewGroup container, int position) {
-            final PhotoDraweeView mPhotoDraweeView = new PhotoDraweeView(container.getContext());
-            mPhotoDraweeView.setBackgroundColor(getResources().getColor(android.R.color.black));
-            mPhotoDraweeView.setOnViewTapListener(onViewTapListener);
+        public View instantiateItem(ViewGroup container, final int position) {
+            Photo photo = photos.get(position);
+            final String bigImgUrl = photo.getPath();
+            float offsetW = (photo.getWidth() / photo.getHeight()) - (screenWith / screenHeight);
+            float offsetH = (photo.getHeight() / photo.getWidth()) - (screenHeight / screenWith);
+//            Log.e(TAG,"offsetW = " + offsetW + ",offsetH = " + offsetH);
+            if (offsetW > 1.0f && !photo.isGif() && !photo.isWebp()) {//横向长图
+                photos.get(position).setLongPhoto(true);
+                SubsamplingScaleImageView subsamplingScaleImageView = loadLongPhoto(new File(bigImgUrl), 0, screenHeight / photo.getHeight());
+                container.addView(subsamplingScaleImageView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                return subsamplingScaleImageView;
+            } else if (offsetH > 0.8f && !photo.isGif() && !photo.isWebp()) {//纵向长图
+                photos.get(position).setLongPhoto(true);
+                SubsamplingScaleImageView subsamplingScaleImageView = loadLongPhoto(new File(bigImgUrl), 1);
+                container.addView(subsamplingScaleImageView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                return subsamplingScaleImageView;
+            } else {
+                //不是长图，gif等
+                final PhotoDraweeView mPhotoDraweeView = new PhotoDraweeView(container.getContext());
+                mPhotoDraweeView.setBackgroundColor(getResources().getColor(android.R.color.black));
+                mPhotoDraweeView.setOnViewTapListener(onViewTapListener);
 
-            GenericDraweeHierarchy hierarchy = mPhotoDraweeView.getHierarchy();
-            hierarchy.setActualImageFocusPoint(new PointF(0.5f, 0.5f)); // 居中显示
-//            hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.CENTER_INSIDE); // 修改缩放类型
-
-            String bigImgUrl = photos.get(position).getPath();
-            Uri uri = Uri.fromFile(new File(bigImgUrl));
-            ImageRequest request = ImageRequestBuilder
-                    .newBuilderWithSource(uri)
-                    .setProgressiveRenderingEnabled(true)
-                    .build();
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setAutoPlayAnimations(true)
-                    .setImageRequest(request)//原图，大图
-                    .setControllerListener(new BaseControllerListener<ImageInfo>() {
-                        @Override
-                        public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
-                            super.onFinalImageSet(id, imageInfo, animatable);
-                            if (imageInfo == null) {
-                                return;
+                GenericDraweeHierarchy hierarchy = mPhotoDraweeView.getHierarchy();
+                hierarchy.setFailureImage(getResources().getDrawable(R.mipmap.failure_image), ScalingUtils.ScaleType.CENTER);
+//            hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER); // 修改缩放类型
+//            hierarchy.setActualImageFocusPoint(new PointF(0.5f, 0.5f)); // 居中显示
+                File file = new File(bigImgUrl);
+                Uri uri = Uri.fromFile(file);
+                ImageRequest request = ImageRequestBuilder
+                        .newBuilderWithSource(uri)
+                        .setProgressiveRenderingEnabled(true)
+                        .build();
+                DraweeController controller = Fresco.newDraweeControllerBuilder()
+                        .setAutoPlayAnimations(true)
+                        .setImageRequest(request)//原图，大图
+                        .setControllerListener(new BaseControllerListener<ImageInfo>() {
+                            @Override
+                            public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
+                                super.onFinalImageSet(id, imageInfo, animatable);
+                                if (imageInfo == null) {
+                                    return;
+                                }
+                                mPhotoDraweeView.update(imageInfo.getWidth(), imageInfo.getHeight());
                             }
-                            Log.e("PhotoSelectActivity", "imageWidth = " + imageInfo.getWidth() + ", imageHeight = " + imageInfo.getHeight());
-                            mPhotoDraweeView.update(imageInfo.getWidth(), imageInfo.getHeight());
-                        }
-                    })
-                    .setOldController(mPhotoDraweeView.getController())
-                    .build();
-            mPhotoDraweeView.setController(controller);
-            container.addView(mPhotoDraweeView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            return mPhotoDraweeView;
+                        })
+                        .setOldController(mPhotoDraweeView.getController())
+                        .build();
+                mPhotoDraweeView.setController(controller);
+                container.addView(mPhotoDraweeView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                return mPhotoDraweeView;
+            }
         }
 
         @Override
@@ -295,10 +350,63 @@ public class PhotoPreviewActivity extends BaseActivity {
 
     }
 
+    /**
+     * gif播放与暂停
+     */
+    private void gifPlayController(DraweeController draweeController) {
+        if (draweeController == null) {
+            return;
+        }
+        Animatable animatable = draweeController.getAnimatable();
+        if (animatable == null) {
+            return;
+        }
+        //判断是否正在运行
+        if (animatable.isRunning()) {
+            //运行中，停止
+            animatable.stop();
+        } else {
+            //停止了，运行
+            animatable.start();
+        }
+    }
+
+    /**
+     * 加载超长图
+     */
+    private SubsamplingScaleImageView loadLongPhoto(File file, int orientation) {
+        return loadLongPhoto(file, orientation, 0);
+    }
+
+    /**
+     * 加载超长图
+     */
+    private SubsamplingScaleImageView loadLongPhoto(File file, int orientation, int hScale) {
+        SubsamplingScaleImageView imageView = new SubsamplingScaleImageView(this);
+        imageView.setOnClickListener(onClickListener);
+        imageView.setBackgroundColor(getResources().getColor(android.R.color.black));
+        if (file != null && file.exists()) {
+            if (orientation == 1) {//纵向图
+                imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP);
+                imageView.setImage(ImageSource.uri(file.getAbsolutePath()), new ImageViewState(0, new PointF(0, 0), SubsamplingScaleImageView.ORIENTATION_0));
+            } else {
+                imageView.setMaxScale(hScale);
+                imageView.setImage(ImageSource.uri(file.getAbsolutePath()));
+            }
+        } else {
+            imageView.setImage(ImageSource.resource(R.mipmap.failure_image));
+        }
+        return imageView;
+    }
+
     @Override
     public void finish() {
         super.finish();
         overridePendingTransition(0, R.anim.image_pager_exit_animation);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

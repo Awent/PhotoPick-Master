@@ -18,6 +18,12 @@
         </activity>
         <activity
             android:theme="@style/PhoAppTheme.AppTheme"
+            android:name=".MyPhotoPagerActivity"/>
+        <activity
+            android:theme="@style/PhoAppTheme.AppTheme"
+            android:name=".PhotoPagerAnimaActivity"/>
+        <activity
+            android:theme="@style/PhoAppTheme.AppTheme"
             android:name="com.awen.photo.photopick.ui.ClipPictureActivity" />
         <activity
             android:theme="@style/PhoAppTheme.AppTheme"

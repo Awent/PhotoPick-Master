@@ -10,17 +10,28 @@
 
     <com.facebook.drawee.view.SimpleDraweeView xmlns:fresco="http://schemas.android.com/apk/res-auto"
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         fresco:actualImageScaleType="focusCrop"
+        fresco:failureImage="@mipmap/failure_image"
+        fresco:failureImageScaleType="centerInside"
         fresco:pressedStateOverlayImage="@color/fresco_image_press" />
 
-    <CheckBox
+    <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_margin="@dimen/layout_margin_4dp" />
+        android:layout_margin="@dimen/layout_margin_4dp"
+        android:theme="@style/PhoCheckBox" />
+
+    <ImageView
+        android:id="@+id/gifIcon"
+        android:layout_width="36dp"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/layout_margin_4dp"
+        android:src="@mipmap/gif_icon" />
 </RelativeLayout>

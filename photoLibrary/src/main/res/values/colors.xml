@@ -6,4 +6,5 @@
 
     <color name="fresco_wait_color">#D9D9D9</color>
     <color name="fresco_image_press">#80ffffff</color>
+    <drawable name="transparent">#00000000</drawable>
 </resources>

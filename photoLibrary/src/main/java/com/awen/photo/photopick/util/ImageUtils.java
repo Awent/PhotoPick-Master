@@ -32,7 +32,7 @@ public class ImageUtils {
         // ,设置该属性为true，不会真的返回一个Bitmap给你，它仅仅会把它的宽，高取回来给你，
         // 这样就不会占用太多的内存，也就不会那么频繁的发生OOM了
         opts.inJustDecodeBounds = true;
-        bit = BitmapFactory.decodeFile(path, opts);
+        BitmapFactory.decodeFile(path, opts);
         int test = 1;
         if (opts.outWidth > opts.outHeight) {
             if (opts.outWidth >= w)

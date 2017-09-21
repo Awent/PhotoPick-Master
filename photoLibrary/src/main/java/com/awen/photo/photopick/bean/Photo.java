@@ -3,8 +3,6 @@ package com.awen.photo.photopick.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
-
 /**
  * Created by Awen <Awentljs@gmail.com>
  */
@@ -13,25 +11,41 @@ public class Photo implements Parcelable {
     private int id;
     private String path;
     private long size;//byte 字节
+    private boolean isLongPhoto;//是否是超长图
+    private int width; //图片真实宽度
+    private int height;//图片真实高度
+    private String mimeType;//图片类型：image/webp、image/jpeg、image/png、image/gif
 
-    public Photo(int id, String path) {
-        this.id = id;
-        this.path = path;
-    }
+    public Photo(){}
 
-    public Photo(int id, String path, long size) {
+    public Photo(int id, String path, long size,int width,int height,String mimeType) {
         this.id = id;
         this.path = path;
         this.size = size;
+        this.width = width;
+        this.height = height;
+        this.mimeType = mimeType;
     }
 
-    public Photo() {
-    }
-
-    private Photo(Parcel in) {
+    protected Photo(Parcel in) {
         id = in.readInt();
         path = in.readString();
         size = in.readLong();
+        isLongPhoto = in.readByte() != 0;
+        width = in.readInt();
+        height = in.readInt();
+        mimeType = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(path);
+        dest.writeLong(size);
+        dest.writeByte((byte) (isLongPhoto ? 1 : 0));
+        dest.writeInt(width);
+        dest.writeInt(height);
+        dest.writeString(mimeType);
     }
 
     public static final Creator<Photo> CREATOR = new Creator<Photo>() {
@@ -45,6 +59,11 @@ public class Photo implements Parcelable {
             return new Photo[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -85,15 +104,51 @@ public class Photo implements Parcelable {
         this.size = size;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public boolean isLongPhoto() {
+        return isLongPhoto;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(path);
-        dest.writeLong(size);
+    public void setLongPhoto(boolean longPhoto) {
+        isLongPhoto = longPhoto;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    /**
+     * 是否是gif图片
+     * @return true代表是gif
+     */
+    public boolean isGif(){
+        return mimeType != null && mimeType.equals("image/gif");
+    }
+
+    /**
+     * 是否是webp图片
+     * @return true代表是webp
+     */
+    public boolean isWebp(){
+        return mimeType != null && mimeType.equals("image/webp");
     }
 }

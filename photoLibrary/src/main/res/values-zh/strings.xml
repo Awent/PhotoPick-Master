@@ -7,6 +7,7 @@
     <string name="select_photo">选择图片</string>
     <string name="clip">裁剪</string>
     <string name="ok">确定</string>
+    <string name="preview">预览</string>
     <string name="save_big_image">保存图片</string>
     <string name="saved_faild">保存失败</string>
     <string name="save_image_aready">已保存->图库查看,图片地址: \n %s</string>

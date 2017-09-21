@@ -1,5 +1,7 @@
 package com.simaple;
 
+import com.awen.photo.FrescoImageLoader;
+
 import java.util.ArrayList;
 
 /**
@@ -12,6 +14,16 @@ public class ImageProvider {
         //也可以传本地图片，格式如下：
 //                list.add("file:///storage/emulated/0/xxxx.jpg");
 //                list.add("file:///storage/emulated/0/zzzzz.jpg");
+        list.add(FrescoImageLoader.getResUrl(R.mipmap.larger_long_photo));//长图
+        list.add(FrescoImageLoader.getAssetUrl("test.jpeg"));
+//        //如果加载本地图片，可按照下面的来
+//        list.add(FrescoImageLoader.getFileUrl("/storage/emulated/0/Pictures/Screenshots/Screenshot_20170919-203120.png"));
+//        list.add(FrescoImageLoader.getFileUrl("/storage/emulated/0/tencent/MicroMsg/WeiXin/mmexport1505817817979.jpg"));
+        //网络长图
+        list.add("http://img.zcool.cn/community/01e92257c93edb0000018c1b8776b8.jpg");
+        list.add("http://pic90.nipic.com/file/20160302/4627410_000612662875_2.jpg");
+        list.add("http://pic1.16xx8.com/allimg/170813/16xx8_ps20.jpg");
+        //网络图片
         list.add("http://p1.wmpic.me/article/2015/06/29/1435559754_fnZtksvI.jpg");
         list.add("http://p2.wmpic.me/article/2015/06/29/1435559758_rMcNLvQq.jpg");
         list.add("http://res.mamiw.com/uploads/allimg/170215/19-1F215094J3952.gif");

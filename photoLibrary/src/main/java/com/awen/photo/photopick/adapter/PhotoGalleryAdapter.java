@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.awen.photo.R;
 import com.awen.photo.photopick.bean.Photo;
 import com.awen.photo.photopick.bean.PhotoDirectory;
+import com.facebook.common.util.UriUtil;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -101,12 +102,12 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
             name.setText(directory.getName());
             num.setText(context.getString(R.string.gallery_num, String.valueOf(directory.getPhotoPaths().size())));
             //不设置.setResizeOptions(new ResizeOptions(imageSize, imageSize))会显示有问题
-            ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.fromFile(new File(directory.getCoverPath())))
+            ImageRequest imageRequest = ImageRequestBuilder
+                    .newBuilderWithSource(new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(directory.getCoverPath()).build())
                     .setLocalThumbnailPreviewsEnabled(true)
                     .setResizeOptions(new ResizeOptions(imageSize, imageSize)).build();
             DraweeController draweeController = Fresco.newDraweeControllerBuilder()
                     .setImageRequest(imageRequest)
-                    .setAutoPlayAnimations(true)
                     .setOldController(imageView.getController())
                     .build();
             imageView.setController(draweeController);

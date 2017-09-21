@@ -80,12 +80,8 @@ public class PhotoDirectory {
         return paths;
     }
 
-    public void addPhoto(int id, String path) {
-        photos.add(new Photo(id, path));
-    }
-
-    public void addPhoto(int id, String path, long size) {
-        photos.add(new Photo(id, path, size));
+    public void addPhoto(Photo photo) {
+        photos.add(photo);
     }
 
 }

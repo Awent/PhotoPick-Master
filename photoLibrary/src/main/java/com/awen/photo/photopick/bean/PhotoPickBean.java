@@ -2,6 +2,9 @@ package com.awen.photo.photopick.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import com.awen.photo.photopick.controller.PhotoPickConfig;
 
 import java.io.Serializable;
 
@@ -16,6 +19,8 @@ public class PhotoPickBean implements Parcelable {
     private boolean showCamera;//是否展示拍照icon
     private boolean clipPhoto; //是否启动裁剪图片
     private boolean originalPicture;//是否选择的是原图
+    private boolean showGif;//是否展示gif图片
+    private PhotoPickConfig.Builder.OnPhotoResultCallback onPhotoResultCallback;
 
     public PhotoPickBean(){}
 
@@ -26,6 +31,7 @@ public class PhotoPickBean implements Parcelable {
         showCamera = in.readByte() != 0;
         clipPhoto = in.readByte() != 0;
         originalPicture = in.readByte() != 0;
+        showGif = in.readByte() != 0;
     }
 
     @Override
@@ -36,11 +42,7 @@ public class PhotoPickBean implements Parcelable {
         dest.writeByte((byte) (showCamera ? 1 : 0));
         dest.writeByte((byte) (clipPhoto ? 1 : 0));
         dest.writeByte((byte) (originalPicture ? 1 : 0));
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        dest.writeByte((byte) (showGif ? 1 : 0));
     }
 
     public static final Creator<PhotoPickBean> CREATOR = new Creator<PhotoPickBean>() {
@@ -54,6 +56,12 @@ public class PhotoPickBean implements Parcelable {
             return new PhotoPickBean[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
 
     public int getMaxPickSize() {
         return maxPickSize;
@@ -101,5 +109,21 @@ public class PhotoPickBean implements Parcelable {
 
     public void setOriginalPicture(boolean originalPicture) {
         this.originalPicture = originalPicture;
+    }
+
+    public boolean isShowGif() {
+        return showGif;
+    }
+
+    public void setShowGif(boolean showGif) {
+        this.showGif = showGif;
+    }
+
+    public PhotoPickConfig.Builder.OnPhotoResultCallback getOnPhotoResultCallback() {
+        return onPhotoResultCallback;
+    }
+
+    public void setOnPhotoResultCallback(PhotoPickConfig.Builder.OnPhotoResultCallback onPhotoResultCallback) {
+        this.onPhotoResultCallback = onPhotoResultCallback;
     }
 }

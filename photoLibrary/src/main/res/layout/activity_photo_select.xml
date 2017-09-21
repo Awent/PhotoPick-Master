@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <com.awen.photo.photopick.widget.HackyViewPager
         android:id="@+id/pager"
@@ -20,23 +19,24 @@
         android:paddingLeft="@dimen/layout_padding_16dp"
         android:paddingRight="@dimen/layout_padding_16dp">
 
-        <RadioButton
+        <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/radioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:checked="false"
             android:text="@string/image_size"
+            android:theme="@style/PhoCheckBox"
             android:textColor="@android:color/white" />
 
-        <CheckBox
+        <android.support.v7.widget.AppCompatCheckBox
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:text="@string/selected"
+            android:theme="@style/PhoCheckBox"
             android:textColor="@android:color/white" />
     </RelativeLayout>
-
 </FrameLayout>

@@ -8,15 +8,15 @@ import java.text.DecimalFormat;
 
 public class FileSizeUtil {
 
+    private static DecimalFormat df = new DecimalFormat("#.00");
     /**
      * 转换文件大小
      */
     public static String formatFileSize(long fileS) {
-        DecimalFormat df = new DecimalFormat("#.00");
-        String fileSizeString;
         if (fileS == 0) {
             return "0B";
         }
+        String fileSizeString;
         if (fileS < 1024) {
             fileSizeString = df.format((double) fileS) + "B";
         } else if (fileS < 1048576) {

@@ -3,14 +3,14 @@ apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.Awent'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 25
-        versionCode 6
-        versionName "1.14"
+        targetSdkVersion 26
+        versionCode 7
+        versionName "1.16"
     }
     buildTypes {
         release {
@@ -22,13 +22,20 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.1.1'
-    compile 'com.facebook.fresco:fresco:0.9.0'
-    compile 'com.android.support:recyclerview-v7:25.1.1'
-    compile 'me.relex:circleindicator:1.1.8@aar'
+    compile 'com.android.support:appcompat-v7:26.0.1'
+    compile 'com.facebook.fresco:fresco:0.14.1'
+    // 支持 GIF 动图，需要添加
+    compile 'com.facebook.fresco:animated-gif:0.14.1'
+    // 支持 WebP （静态图+动图），需要添加
+    compile 'com.facebook.fresco:animated-webp:0.14.1'
+    compile 'com.facebook.fresco:webpsupport:0.14.1'
+    compile 'com.android.support:recyclerview-v7:26.0.1'
     //跟随viewpager的点
-    compile 'com.sothree.slidinguppanel:library:3.3.0'
+    compile 'me.relex:circleindicator:1.1.8@aar'
     //上滑控制面板,项目中的potopick中有使用案例
-    compile 'com.lovedise:permissiongen:0.0.6'
+    compile 'com.sothree.slidinguppanel:library:3.3.0'
     //android6.0权限工具类
+    compile 'com.lovedise:permissiongen:0.0.6'
+    //加载超长图必备库
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
 }
