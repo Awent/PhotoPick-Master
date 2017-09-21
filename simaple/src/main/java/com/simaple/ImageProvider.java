@@ -19,10 +19,12 @@ public class ImageProvider {
 //        //如果加载本地图片，可按照下面的来
 //        list.add(FrescoImageLoader.getFileUrl("/storage/emulated/0/Pictures/Screenshots/Screenshot_20170919-203120.png"));
 //        list.add(FrescoImageLoader.getFileUrl("/storage/emulated/0/tencent/MicroMsg/WeiXin/mmexport1505817817979.jpg"));
-        //网络长图
+        //网络长图,包括横向和纵向的长图
         list.add("http://img.zcool.cn/community/01e92257c93edb0000018c1b8776b8.jpg");
         list.add("http://pic90.nipic.com/file/20160302/4627410_000612662875_2.jpg");
         list.add("http://pic1.16xx8.com/allimg/170813/16xx8_ps20.jpg");
+        list.add("https://raw.githubusercontent.com/Awent/PhotoPick-Master/master/pictrue/WechatIMG20.jpeg");
+        list.add("https://raw.githubusercontent.com/Awent/PhotoPick-Master/master/pictrue/WechatIMG21.jpeg");
         //网络图片
         list.add("http://p1.wmpic.me/article/2015/06/29/1435559754_fnZtksvI.jpg");
         list.add("http://p2.wmpic.me/article/2015/06/29/1435559758_rMcNLvQq.jpg");

@@ -23,6 +23,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:26.0.1'
     compile 'com.android.support:recyclerview-v7:26.0.1'
-//    compile 'com.github.Awent:PhotoPick-Master:v1.05'
+//    compile 'com.github.Awent:PhotoPick-Master:v1.06'
     compile project(':photoLibrary')
 }

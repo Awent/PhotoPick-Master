@@ -6,17 +6,5 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <activity
-        android:theme="@style/PhoAppTheme.AppTheme"
-        android:name="com.awen.photo.photopick.ui.ClipPictureActivity" />
-    <activity
-        android:theme="@style/PhoAppTheme.AppTheme"
-        android:name="com.awen.photo.photopick.ui.PhotoPagerActivity" />
-    <activity
-        android:theme="@style/PhoAppTheme.AppTheme"
-        android:name="com.awen.photo.photopick.ui.PhotoPickActivity" />
-    <activity
-        android:theme="@style/PhoAppTheme.AppTheme"
-        android:name="com.awen.photo.photopick.ui.PhotoPreviewActivity" />
 
 </manifest>

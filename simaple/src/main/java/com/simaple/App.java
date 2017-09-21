@@ -15,7 +15,7 @@ public class App extends Application {
         super.onCreate();
         FrescoImageLoader.init(this);
         //下面是配置toolbar颜色和存储图片地址的
-//        Awen.init(this,android.R.color.holo_blue_light);
-//        Awen.init(this,android.R.color.holo_blue_light,"/storage/xxxx/xxx");
+//        FrescoImageLoader.init(this,android.R.color.holo_blue_light);
+//        FrescoImageLoader.init(this,android.R.color.holo_blue_light,"/storage/xxxx/xxx");
     }
 }
