@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.widget.ScrollerCompat;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -277,7 +278,10 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         } else {
             mScrollEdge = EDGE_NONE;
         }
-
+        Log.e(getClass().getSimpleName(),"viewWidth = " + viewWidth + ",viewHeight = " + viewHeight);
+        Log.e(getClass().getSimpleName(),"width = " + width + ",height = " + height);
+        Log.e(getClass().getSimpleName(),"deltaX = " + deltaX + ",deltaY = " + deltaY);
+        Log.e(getClass().getSimpleName(),"rect.left = " + rect.left + ",rect.right = " + rect.right);
         mMatrix.postTranslate(deltaX, deltaY);
         return true;
     }

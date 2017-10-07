@@ -358,7 +358,7 @@ public class PhotoPickActivity extends BaseActivity {
     }
 
     /**
-     * 通过eventBus作为数据的回传
+     * 数据的回传
      * @param photos
      * @param originalPicture
      */
@@ -389,6 +389,12 @@ public class PhotoPickActivity extends BaseActivity {
             adapter.destroy();
             adapter = null;
         }
+
+        if(galleryAdapter != null){
+            galleryAdapter.destroy();
+            galleryAdapter = null;
+        }
         onPhotoResultCallback = null;
+        slidingUpPanelLayout = null;
     }
 }

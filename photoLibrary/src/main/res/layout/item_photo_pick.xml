@@ -2,20 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/photo_pick_rl"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:clickable="true"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <com.facebook.drawee.view.SimpleDraweeView xmlns:fresco="http://schemas.android.com/apk/res-auto"
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_centerVertical="true"
-        fresco:actualImageScaleType="focusCrop"
+        fresco:actualImageScaleType="centerCrop"
         fresco:failureImage="@mipmap/failure_image"
         fresco:failureImageScaleType="centerInside"
+        fresco:placeholderImageScaleType="centerCrop"
         fresco:pressedStateOverlayImage="@color/fresco_image_press" />
 
     <android.support.v7.widget.AppCompatCheckBox

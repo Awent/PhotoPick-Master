@@ -10,8 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +22,7 @@ import android.widget.RadioButton;
 
 import com.awen.photo.Awen;
 import com.awen.photo.BaseActivity;
+import com.awen.photo.FrescoImageLoader;
 import com.awen.photo.R;
 import com.awen.photo.photopick.adapter.PhotoPickAdapter;
 import com.awen.photo.photopick.bean.Photo;
@@ -54,7 +53,7 @@ import java.util.ArrayList;
  * Created by Awen <Awentljs@gmail.com>
  */
 
-public class PhotoPreviewActivity extends BaseActivity {
+public class PhotoPreviewActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
 
     private final String TAG = getClass().getSimpleName();
     private ArrayList<Photo> photos;
@@ -69,6 +68,7 @@ public class PhotoPreviewActivity extends BaseActivity {
     private boolean isChecked = false;
     private boolean originalPicture;
     private int screenWith, screenHeight;
+    private HackyViewPager viewPager;
 
     @Override
     protected void onCreate(@Nullable Bundle arg0) {
@@ -97,7 +97,7 @@ public class PhotoPreviewActivity extends BaseActivity {
 
         radioButton = (RadioButton) findViewById(R.id.radioButton);
         checkbox = (CheckBox) findViewById(R.id.checkbox);
-        HackyViewPager viewPager = (HackyViewPager) findViewById(R.id.pager);
+        viewPager = (HackyViewPager) findViewById(R.id.pager);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Awen.getToolbarBackGround());
         toolbar.setTitle((beginPosition + 1) + "/" + photos.size());
@@ -108,35 +108,7 @@ public class PhotoPreviewActivity extends BaseActivity {
         } else {
             checkbox.setChecked(false);
         }
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                pos = position;
-                position++;
-                toolbar.setTitle(position + "/" + photos.size());
-                if (selectPhotos != null && selectPhotos.contains(photos.get(pos).getPath())) {
-                    checkbox.setChecked(true);
-                    if (pos == 1 && selectPhotos.contains(photos.get(pos - 1).getPath())) {
-                        checkbox.setChecked(true);
-                    }
-                } else {
-                    checkbox.setChecked(false);
-                }
-                if (originalPicture) {
-                    radioButton.setText(getString(R.string.image_size, FileSizeUtil.formatFileSize(photos.get(pos).getSize())));
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        viewPager.addOnPageChangeListener(this);
 
         //图片单击的回调
         onViewTapListener = new OnViewTapListener() {
@@ -160,7 +132,7 @@ public class PhotoPreviewActivity extends BaseActivity {
                 if (selectPhotos == null) {
                     selectPhotos = new ArrayList<>();
                 }
-                if(previewPhotos == null){
+                if (previewPhotos == null) {
                     previewPhotos = new ArrayList<>();
                 }
                 String path = photos.get(pos).getPath();
@@ -202,11 +174,8 @@ public class PhotoPreviewActivity extends BaseActivity {
         viewPager.setAdapter(new SamplePagerAdapter());
         viewPager.setCurrentItem(beginPosition);
 
-        DisplayMetrics metrics = new DisplayMetrics();
-        Display display = getWindowManager().getDefaultDisplay();
-        display.getMetrics(metrics);
-        screenWith = metrics.widthPixels;
-        screenHeight = metrics.heightPixels;
+        screenWith = getResources().getDisplayMetrics().widthPixels;
+        screenHeight = getResources().getDisplayMetrics().heightPixels;
     }
 
     private void onSingleClick() {
@@ -277,6 +246,34 @@ public class PhotoPreviewActivity extends BaseActivity {
         toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
 
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        pos = position;
+        position++;
+        toolbar.setTitle(position + "/" + photos.size());
+        if (selectPhotos != null && selectPhotos.contains(photos.get(pos).getPath())) {
+            checkbox.setChecked(true);
+            if (pos == 1 && selectPhotos.contains(photos.get(pos - 1).getPath())) {
+                checkbox.setChecked(true);
+            }
+        } else {
+            checkbox.setChecked(false);
+        }
+        if (originalPicture) {
+            radioButton.setText(getString(R.string.image_size, FileSizeUtil.formatFileSize(photos.get(pos).getSize())));
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
     private class SamplePagerAdapter extends PagerAdapter {
 
         @Override
@@ -288,8 +285,11 @@ public class PhotoPreviewActivity extends BaseActivity {
         public View instantiateItem(ViewGroup container, final int position) {
             Photo photo = photos.get(position);
             final String bigImgUrl = photo.getPath();
-            float offsetW = (photo.getWidth() / photo.getHeight()) - (screenWith / screenHeight);
-            float offsetH = (photo.getHeight() / photo.getWidth()) - (screenHeight / screenWith);
+            float offsetW = 0.0f, offsetH = 0.0f;
+            if (photo.getWidth() > 0 && photo.getHeight() > 0) {
+                offsetW = (photo.getWidth() / photo.getHeight()) - (screenWith / screenHeight);
+                offsetH = (photo.getHeight() / photo.getWidth()) - (screenHeight / screenWith);
+            }
 //            Log.e(TAG,"offsetW = " + offsetW + ",offsetH = " + offsetH);
             if (offsetW > 1.0f && !photo.isGif() && !photo.isWebp()) {//横向长图
                 photos.get(position).setLongPhoto(true);
@@ -340,6 +340,16 @@ public class PhotoPreviewActivity extends BaseActivity {
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
+            if (photos != null && photos.size() > 0 && position < photos.size()) {
+                Photo photo = photos.get(position);
+                if (photo.isLongPhoto()) {
+                    SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) object;
+                    if (imageView != null) {
+                        imageView.recycle();
+                    }
+                }
+                FrescoImageLoader.evictFromMemoryCache(photo.getPath());
+            }
             container.removeView((View) object);
         }
 
@@ -407,6 +417,16 @@ public class PhotoPreviewActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        photos = null;
+        selectPhotos = null;
+        previewPhotos = null;
+        onViewTapListener = null;
+        onClickListener = null;
+        if (viewPager != null) {
+            viewPager.removeOnPageChangeListener(this);
+            viewPager.setAdapter(null);
+            viewPager = null;
+        }
         super.onDestroy();
     }
 }

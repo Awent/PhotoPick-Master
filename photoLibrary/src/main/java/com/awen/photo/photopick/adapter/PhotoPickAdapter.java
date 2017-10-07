@@ -2,24 +2,15 @@ package com.awen.photo.photopick.adapter;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import com.awen.photo.FrescoImageLoader;
 import com.awen.photo.R;
 import com.awen.photo.photopick.bean.Photo;
 import com.awen.photo.photopick.bean.PhotoPickBean;
@@ -34,11 +25,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import kr.co.namee.permissiongen.PermissionGen;
 
 /**
@@ -55,10 +43,7 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
 
     public PhotoPickAdapter(Context context, PhotoPickBean pickBean) {
         this.context = context;
-        DisplayMetrics metrics = new DisplayMetrics();
-        Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
-        display.getMetrics(metrics);
-        this.imageSize = metrics.widthPixels / pickBean.getSpanCount();
+        this.imageSize = context.getResources().getDisplayMetrics().widthPixels / pickBean.getSpanCount();
         this.pickBean = pickBean;
         if (photos == null) {
             photos = new ArrayList<>();
@@ -79,7 +64,7 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo_pick, null);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo_pick, parent,false);
         return new ViewHolder(view);
     }
 
@@ -104,11 +89,11 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
 
         ViewHolder(View itemView) {
             super(itemView);
-            gifIcon = itemView.findViewById(R.id.gifIcon);
+            gifIcon = (ImageView) itemView.findViewById(R.id.gifIcon);
             imageView = (SimpleDraweeView) itemView.findViewById(R.id.imageView);
             checkbox = (CheckBox) itemView.findViewById(R.id.checkbox);
-            imageView.getLayoutParams().height = imageSize;
-            imageView.getLayoutParams().width = imageSize;
+            itemView.getLayoutParams().height = imageSize;
+            itemView.getLayoutParams().width = imageSize;
             checkbox.setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
@@ -239,5 +224,7 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
         photos = null;
         selectPhotos = null;
         previewPhotos = null;
+        onUpdateListener = null;
+        pickBean = null;
     }
 }

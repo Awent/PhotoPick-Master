@@ -3,14 +3,14 @@ apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.Awent'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.1'
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 26
-        versionCode 7
-        versionName "1.16"
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode 8
+        versionName "1.4"
     }
     buildTypes {
         release {
@@ -22,14 +22,14 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:26.0.1'
-    compile 'com.facebook.fresco:fresco:0.14.1'
+    compile "com.android.support:appcompat-v7:${rootProject.ext.android.supportVersion}"
+    compile "com.android.support:recyclerview-v7:${rootProject.ext.android.supportVersion}"
+    compile "com.facebook.fresco:fresco:${rootProject.ext.android.frescoVersion}"
     // 支持 GIF 动图，需要添加
-    compile 'com.facebook.fresco:animated-gif:0.14.1'
+    compile "com.facebook.fresco:animated-gif:${rootProject.ext.android.frescoVersion}"
     // 支持 WebP （静态图+动图），需要添加
-    compile 'com.facebook.fresco:animated-webp:0.14.1'
-    compile 'com.facebook.fresco:webpsupport:0.14.1'
-    compile 'com.android.support:recyclerview-v7:26.0.1'
+    compile "com.facebook.fresco:animated-webp:${rootProject.ext.android.frescoVersion}"
+    compile "com.facebook.fresco:webpsupport:${rootProject.ext.android.frescoVersion}"
     //跟随viewpager的点
     compile 'me.relex:circleindicator:1.1.8@aar'
     //上滑控制面板,项目中的potopick中有使用案例

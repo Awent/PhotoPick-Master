@@ -1,11 +1,8 @@
 package com.awen.photo.photopick.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +18,6 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,10 +33,7 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
 
     public PhotoGalleryAdapter(Context context) {
         this.context = context;
-        DisplayMetrics metrics = new DisplayMetrics();
-        Display display = ((Activity) context).getWindowManager().getDefaultDisplay();
-        display.getMetrics(metrics);
-        this.imageSize = metrics.widthPixels / 6;
+        this.imageSize = context.getResources().getDisplayMetrics().widthPixels / 6;
     }
 
     public void refresh(List<PhotoDirectory> directories) {
@@ -133,5 +126,12 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
 
     public interface OnItemClickListener {
         void onClick(List<Photo> photos);
+    }
+
+    public void destroy(){
+        directories.clear();
+        directories = null;
+        onItemClickListener = null;
+        context = null;
     }
 }

@@ -31,6 +31,7 @@ import java.util.ArrayList;
  */
 public class PhotoPagerConfig {
     public static final String EXTRA_PAGER_BUNDLE = "extra_pager_bundle";
+    public static final String EXTRA_USER_BUNDLE = "extra_user_bundle";
     public static final String EXTRA_PAGER_BEAN = "extra_pager_bean";
 
     private PhotoPagerConfig(Activity activity, Builder builder) {
@@ -59,6 +60,9 @@ public class PhotoPagerConfig {
         bundle.putParcelable(EXTRA_PAGER_BEAN, photoPagerBean);
         Intent intent = new Intent(activity, builder.clazz);
         intent.putExtra(EXTRA_PAGER_BUNDLE, bundle);
+        if (builder.bundle != null) {
+            intent.putExtra(EXTRA_USER_BUNDLE, builder.bundle);
+        }
         activity.startActivity(intent);
         activity.overridePendingTransition(isAnimation ? 0 : R.anim.image_pager_enter_animation, 0);
     }
@@ -67,6 +71,7 @@ public class PhotoPagerConfig {
         private Activity context;
         private PhotoPagerBean photoPagerBean;
         private Class<?> clazz;
+        private Bundle bundle;
 
         public Builder(Activity context) {
             this(context, PhotoPagerActivity.class);
@@ -180,12 +185,28 @@ public class PhotoPagerConfig {
         }
 
         public Builder setLayoutManager(GridLayoutManager layoutManager) {
+            if(layoutManager != null){
+                setAnimation(true);
+            }
             photoPagerBean.setLayoutManager(layoutManager);
             return this;
         }
 
         public Builder setBeginView(View beginView) {
+            if(beginView != null){
+                setAnimation(true);
+            }
             photoPagerBean.setBeginView(beginView);
+            return this;
+        }
+
+        /**
+         * 设置用户想传递的bundle
+         * @param bundle
+         * @return
+         */
+        public Builder setBundle(Bundle bundle) {
+            this.bundle = bundle;
             return this;
         }
 

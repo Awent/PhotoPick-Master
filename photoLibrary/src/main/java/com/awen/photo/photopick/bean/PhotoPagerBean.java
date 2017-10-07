@@ -49,6 +49,7 @@ public class PhotoPagerBean implements Parcelable {
     public PhotoPagerBean(){
     }
 
+
     private PhotoPagerBean(Parcel in) {
         saveImage = in.readByte() != 0;
         saveImageLocalPath = in.readString();
@@ -178,4 +179,5 @@ public class PhotoPagerBean implements Parcelable {
     public void setBeginView(View beginView) {
         this.beginView = beginView;
     }
+
 }

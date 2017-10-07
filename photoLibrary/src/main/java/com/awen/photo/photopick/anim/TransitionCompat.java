@@ -74,7 +74,6 @@ public class TransitionCompat {
 
         // 执行屏幕的动画
         scaleUpAnimation(viewOptions, isEnter);
-
     }
 
     private ImageView getThumbnailOriginalImageView(ViewOptions viewOptions) {

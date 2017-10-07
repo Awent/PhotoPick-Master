@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,10 +18,11 @@
         </activity>
         <activity
             android:theme="@style/PhoAppTheme.AppTheme"
-            android:name=".MyPhotoPagerActivity"/>
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:name=".activity.MyPhotoPagerActivity"/>
         <activity
             android:theme="@style/PhoAppTheme.AppTheme"
-            android:name=".PhotoPagerAnimaActivity"/>
+            android:name=".activity.PhotoPagerAnimaActivity"/>
         <activity
             android:theme="@style/PhoAppTheme.AppTheme"
             android:name="com.awen.photo.photopick.ui.ClipPictureActivity" />

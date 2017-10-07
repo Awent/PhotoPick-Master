@@ -1,10 +1,13 @@
 package com.awen.photo;
 
 import android.net.Uri;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.awen.photo.photopick.util.FileSizeUtil;
 import com.facebook.common.util.UriUtil;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipeline;
 
 import java.util.List;
 
@@ -21,6 +24,16 @@ import java.util.List;
 public final class FrescoImageLoader extends Awen {
 
     private FrescoImageLoader() {
+    }
+
+    public static void evictFromMemoryCache(String url){
+        if (url != null && !TextUtils.isEmpty(url)) {
+            ImagePipeline imagePipeline = Fresco.getImagePipeline();
+            Uri uri = Uri.parse(url);
+            if (imagePipeline.isInBitmapMemoryCache(uri)) {
+                imagePipeline.evictFromMemoryCache(uri);
+            }
+        }
     }
 
     /**
