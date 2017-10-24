@@ -10,33 +10,43 @@
 
     <include layout="@layout/toolbar_layout" />
 
-    <RelativeLayout
+    <!-- 这里多一层是为了适配有些手机的导航栏-->
+    <LinearLayout
+        android:id="@+id/bottom_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#80000000"
-        android:minHeight="48dp"
-        android:paddingLeft="@dimen/layout_padding_16dp"
-        android:paddingRight="@dimen/layout_padding_16dp">
+        android:background="@color/navigationBarColor"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatRadioButton
-            android:id="@+id/radioButton"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:checked="false"
-            android:text="@string/image_size"
-            android:theme="@style/PhoCheckBox"
-            android:textColor="@android:color/white" />
+            android:minHeight="48dp"
+            android:paddingLeft="@dimen/layout_padding_16dp"
+            android:paddingRight="@dimen/layout_padding_16dp">
 
-        <android.support.v7.widget.AppCompatCheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="@string/selected"
-            android:theme="@style/PhoCheckBox"
-            android:textColor="@android:color/white" />
-    </RelativeLayout>
+            <android.support.v7.widget.AppCompatRadioButton
+                android:id="@+id/radioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:checked="false"
+                android:text="@string/image_size"
+                android:textColor="@android:color/white"
+                android:theme="@style/PhoCheckBox" />
+
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="@string/selected"
+                android:textColor="@android:color/white"
+                android:theme="@style/PhoCheckBox" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
 </FrameLayout>

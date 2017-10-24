@@ -40,7 +40,7 @@ public class Data {
             long size = data.getLong(data.getColumnIndexOrThrow(SIZE));
             String mimeType = data.getString(data.getColumnIndexOrThrow(MIME_TYPE));
             Photo photo = new Photo();
-            if(BitmapUtil.checkImgCorrupted(photo,path)){
+            if(size <= 0 || BitmapUtil.checkImgCorrupted(photo,path)){
                 continue;
             }
             photo.setId(imageId);

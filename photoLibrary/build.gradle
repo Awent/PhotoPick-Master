@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion rootProject.ext.android.targetSdkVersion
-        versionCode 8
-        versionName "1.4"
+        versionCode 9
+        versionName "1.5"
     }
     buildTypes {
         release {

@@ -26,7 +26,6 @@ import com.awen.photo.Awen;
 import com.awen.photo.BaseActivity;
 import com.awen.photo.FrescoImageLoader;
 import com.awen.photo.R;
-import com.awen.photo.photopick.anim.TransitionCompat;
 import com.awen.photo.photopick.bean.PhotoPagerBean;
 import com.awen.photo.photopick.util.AppPathUtil;
 import com.awen.photo.photopick.util.ImageUtils;
@@ -34,6 +33,7 @@ import com.awen.photo.photopick.util.PermissionUtil;
 import com.awen.photo.photopick.controller.PhotoPagerConfig;
 import com.awen.photo.photopick.widget.RoundProgressBarDrawable;
 import com.awen.photo.photopick.widget.HackyViewPager;
+import com.awen.photo.photopick.widget.ScalePhotoView;
 import com.awen.photo.photopick.widget.photodraweeview.OnViewTapListener;
 import com.awen.photo.photopick.widget.photodraweeview.PhotoDraweeView;
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -89,7 +89,7 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
     private static final String TAG = PhotoPagerActivity.class.getSimpleName();
     private static final int REQUEST_CODE = 100;
     private static final String STATE_POSITION = "STATE_POSITION";
-    private HackyViewPager viewPager;
+    private ViewPager viewPager;
     private CircleIndicator indicator;
     protected PhotoPagerBean photoPagerBean;
     private OnViewTapListener onViewTapListener;
@@ -103,13 +103,9 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
     //-end
 
     private int screenWith, screenHeight;
-    //动画
-    private TransitionCompat transitionCompat;
-    private boolean isAnimation;
 
     private FrameLayout rootLayout;
     private View customView;
-
     /**
      * 设置自定义view layout
      *
@@ -171,12 +167,12 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
 
         rootLayout = new FrameLayout(this);
         rootLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        rootLayout.setBackgroundColor(getResources().getColor(android.R.color.black));
-        View content = LayoutInflater.from(this).inflate(R.layout.activity_photo_detail_pager, rootLayout);
+        rootLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        final View content = LayoutInflater.from(this).inflate(R.layout.activity_photo_detail_pager, rootLayout);
         setContentView(rootLayout);
 
         indicator = (CircleIndicator) content.findViewById(R.id.indicator);
-        viewPager = (HackyViewPager) content.findViewById(R.id.pager);
+        viewPager = (ViewPager) content.findViewById(R.id.pager);
         viewPager.setAdapter(new SamplePagerAdapter());
         setIndicatorVisibility(true);
         if (savedInstanceState != null) {
@@ -199,17 +195,25 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
             }
         };
 
-        isAnimation = photoPagerBean.isAnimation();
-        if (isAnimation) {
-            transitionCompat = new TransitionCompat(this, bundle);
-            transitionCompat.setCurrentPosition(photoPagerBean.getPagePosition());
-            transitionCompat.startTransition();
-        }
-
         screenWith = getResources().getDisplayMetrics().widthPixels;
         screenHeight = getResources().getDisplayMetrics().heightPixels;
 
         setCustomView(-1);//设置用户自定义的view
+
+        ScalePhotoView scalePhotoView = (ScalePhotoView) content.findViewById(R.id.scalePhotoView);
+        scalePhotoView.setOpenDownAnimate(photoPagerBean.isOpenDownAnimate());
+        if(photoPagerBean.isOpenDownAnimate()){
+            scalePhotoView.setOnViewTouchListener(new ScalePhotoView.onViewTouchListener() {
+                @Override
+                public void onFinish() {
+                    onBackPressed();
+                }
+
+                @Override
+                public void onMoving(float deltaX, float deltaY) {
+                }
+            });
+        }
     }
 
     @Override
@@ -225,9 +229,6 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
     @Override
     public void onPageSelected(int position) {
         currentPosition = position;
-        if (transitionCompat != null && isAnimation) {
-            transitionCompat.setCurrentPosition(position);
-        }
     }
 
     @Override
@@ -286,7 +287,6 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
             parent.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
             final PhotoDraweeView mPhotoDraweeView = new PhotoDraweeView(container.getContext());
-//            mPhotoDraweeView.setBackgroundColor(getResources().getColor(android.R.color.black));
             mPhotoDraweeView.setOnViewTapListener(onViewTapListener);
 
             GenericDraweeHierarchy hierarchy = mPhotoDraweeView.getHierarchy();
@@ -435,8 +435,8 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
 //        matrixLongPhoto(imageInfo,position);
         float offsetW = (imageInfo.getWidth() / imageInfo.getHeight()) - (screenWith / screenHeight);
         float offsetH = (imageInfo.getHeight() / imageInfo.getWidth()) - (screenHeight / screenWith);
-            Log.e(TAG,"position = " + position + ",offsetW = " + offsetW + ",offsetH = " + offsetH);
-            Log.e(TAG,"position = " + position + ",imageInfo.getWidth() = " + imageInfo.getWidth() + ",imageInfo.getHeight() = " + imageInfo.getHeight());
+//            Log.e(TAG,"position = " + position + ",offsetW = " + offsetW + ",offsetH = " + offsetH);
+//            Log.e(TAG,"position = " + position + ",imageInfo.getWidth() = " + imageInfo.getWidth() + ",imageInfo.getHeight() = " + imageInfo.getHeight());
         if (offsetW > 1.0f) {//横向长图
             return loadLongPhoto(position, 0, screenHeight / imageInfo.getHeight());
         } else if (offsetH > 0.8f) {//纵向长图
@@ -461,7 +461,6 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
             return null;
         }
         SubsamplingScaleImageView imageView = new SubsamplingScaleImageView(this);
-//        imageView.setBackgroundColor(getResources().getColor(android.R.color.black));
         Bitmap bitmap = wkBitmap.get(position);
         if (bitmap != null) {
             if (orientation == 1) {//纵向图
@@ -627,13 +626,10 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
 
     @Override
     public void onBackPressed() {
-        if (transitionCompat != null && isAnimation) {
-            transitionCompat.finishAfterTransition();
-        } else {
-            finish();
-            overridePendingTransition(0, R.anim.image_pager_exit_animation);
-        }
-//        super.onBackPressed();
+        indicator.setVisibility(View.GONE);
+        finish();
+        overridePendingTransition(0, R.anim.image_pager_exit_animation);
+        super.onBackPressed();
     }
 
 }

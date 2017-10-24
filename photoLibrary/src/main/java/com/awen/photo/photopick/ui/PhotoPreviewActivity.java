@@ -10,10 +10,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.CheckBox;
@@ -30,6 +32,7 @@ import com.awen.photo.photopick.bean.PhotoPreviewBean;
 import com.awen.photo.photopick.controller.PhotoPickConfig;
 import com.awen.photo.photopick.controller.PhotoPreviewConfig;
 import com.awen.photo.photopick.util.FileSizeUtil;
+import com.awen.photo.photopick.util.ViewUtil;
 import com.awen.photo.photopick.widget.HackyViewPager;
 import com.awen.photo.photopick.widget.photodraweeview.OnViewTapListener;
 import com.awen.photo.photopick.widget.photodraweeview.PhotoDraweeView;
@@ -69,9 +72,11 @@ public class PhotoPreviewActivity extends BaseActivity implements ViewPager.OnPa
     private boolean originalPicture;
     private int screenWith, screenHeight;
     private HackyViewPager viewPager;
+    private LinearLayout bottom_ll;
 
     @Override
     protected void onCreate(@Nullable Bundle arg0) {
+        setOpenNavigationBar(true);
         super.onCreate(arg0);
         Bundle bundle = getIntent().getBundleExtra(PhotoPreviewConfig.EXTRA_BUNDLE);
         if (bundle == null) {
@@ -176,6 +181,15 @@ public class PhotoPreviewActivity extends BaseActivity implements ViewPager.OnPa
 
         screenWith = getResources().getDisplayMetrics().widthPixels;
         screenHeight = getResources().getDisplayMetrics().heightPixels;
+
+        //适配导航栏
+        bottom_ll = (LinearLayout) findViewById(R.id.bottom_ll);
+        int navigationBarHeight = ViewUtil.getNavigationBarHeight(this);
+        if (navigationBarHeight > 0) {
+            View navigation_bar_view = new View(this);
+            navigation_bar_view.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, navigationBarHeight));
+            bottom_ll.addView(navigation_bar_view);
+        }
     }
 
     private void onSingleClick() {
@@ -239,11 +253,13 @@ public class PhotoPreviewActivity extends BaseActivity implements ViewPager.OnPa
     private void hideViews() {//隐藏toolbar
         toolBarStatus = false;
         toolbar.animate().translationY(-toolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+        bottom_ll.animate().alpha(0.0f).setInterpolator(new AccelerateInterpolator(2));
     }
 
     private void showViews() {
         toolBarStatus = true;
         toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        bottom_ll.animate().alpha(1.0f).setInterpolator(new DecelerateInterpolator(2));
     }
 
     @Override
@@ -278,7 +294,7 @@ public class PhotoPreviewActivity extends BaseActivity implements ViewPager.OnPa
 
         @Override
         public int getCount() {
-            return photos.size();
+            return photos == null ? 0 : photos.size();
         }
 
         @Override

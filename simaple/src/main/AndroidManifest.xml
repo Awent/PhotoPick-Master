@@ -20,14 +20,12 @@
             android:theme="@style/PhoAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:name=".activity.MyPhotoPagerActivity"/>
-        <activity
-            android:theme="@style/PhoAppTheme.AppTheme"
-            android:name=".activity.PhotoPagerAnimaActivity"/>
+
         <activity
             android:theme="@style/PhoAppTheme.AppTheme"
             android:name="com.awen.photo.photopick.ui.ClipPictureActivity" />
         <activity
-            android:theme="@style/PhoAppTheme.AppTheme"
+            android:theme="@style/PhoAppTheme.Transparent"
             android:name="com.awen.photo.photopick.ui.PhotoPagerActivity" />
         <activity
             android:theme="@style/PhoAppTheme.AppTheme"

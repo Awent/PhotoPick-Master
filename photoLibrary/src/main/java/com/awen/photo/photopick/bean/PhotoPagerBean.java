@@ -32,19 +32,10 @@ public class PhotoPagerBean implements Parcelable {
      * 小图,可用于在展示大图前进行小图的展示
      */
     private ArrayList<String> lowImgUrls;
-
     /**
-     * 是否开启activity过度的动画效果，
+     * 是否开启下滑关闭activity，默认开启。类似微信的图片浏览，可下滑关闭一样，但是没有图片归位效果
      */
-    private boolean isAnimation;
-    /**
-     * 如果是想要动画，并且是RecycleView的，此参数必须要传
-     */
-    private GridLayoutManager layoutManager;
-    /**
-     * 如果是想要动画，并且是单张图片的，此参数必须要传
-     */
-    private View beginView;
+    private boolean isOpenDownAnimate;
 
     public PhotoPagerBean(){
     }
@@ -56,7 +47,7 @@ public class PhotoPagerBean implements Parcelable {
         pagePosition = in.readInt();
         bigImgUrls = in.createStringArrayList();
         lowImgUrls = in.createStringArrayList();
-        isAnimation = in.readByte() != 0;
+        isOpenDownAnimate = in.readByte() != 0;
     }
 
     @Override
@@ -66,7 +57,7 @@ public class PhotoPagerBean implements Parcelable {
         dest.writeInt(pagePosition);
         dest.writeStringList(bigImgUrls);
         dest.writeStringList(lowImgUrls);
-        dest.writeByte((byte) (isAnimation ? 1 : 0));
+        dest.writeByte((byte) (isOpenDownAnimate ? 1 : 0));
     }
 
     public static final Creator<PhotoPagerBean> CREATOR = new Creator<PhotoPagerBean>() {
@@ -156,28 +147,11 @@ public class PhotoPagerBean implements Parcelable {
         lowImgUrls.add(lowImageUrl);
     }
 
-    public boolean isAnimation() {
-        return isAnimation;
+    public boolean isOpenDownAnimate() {
+        return isOpenDownAnimate;
     }
 
-    public void setAnimation(boolean animation) {
-        isAnimation = animation;
+    public void setOpenDownAnimate(boolean openDownAnimate) {
+        isOpenDownAnimate = openDownAnimate;
     }
-
-    public GridLayoutManager getLayoutManager() {
-        return layoutManager;
-    }
-
-    public void setLayoutManager(GridLayoutManager layoutManager) {
-        this.layoutManager = layoutManager;
-    }
-
-    public View getBeginView() {
-        return beginView;
-    }
-
-    public void setBeginView(View beginView) {
-        this.beginView = beginView;
-    }
-
 }

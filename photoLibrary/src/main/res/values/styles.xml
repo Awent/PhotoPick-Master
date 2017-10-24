@@ -12,6 +12,10 @@
         <item name="android:textAllCaps">false</item><!-- 把英文大写改成小写 -->
     </style>
 
+    <style name="PhoAppTheme.Transparent" parent="PhoAppTheme.AppTheme">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
     <style name="PhoCheckBox" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">#ffffff</item>
         <item name="colorControlActivated">#00b820</item>

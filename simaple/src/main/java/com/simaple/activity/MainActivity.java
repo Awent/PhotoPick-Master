@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button6).setOnClickListener(this);
         findViewById(R.id.button7).setOnClickListener(this);
         findViewById(R.id.button8).setOnClickListener(this);
-        findViewById(R.id.button9).setOnClickListener(this);
     }
 
     @Override
@@ -79,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button2://裁剪头像
                 new PhotoPickConfig.Builder(this)
-                        .pickMode(PhotoPickConfig.MODE_SINGLE_PICK)
                         .clipPhoto(true)
                         .build();
                 break;
@@ -142,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 for (int i = 0; i < ImageProvider.getImageUrls().size(); i++) {
                     MyPhotoBean bean = new MyPhotoBean();
                     bean.setId(i);
-                    bean.setContent("content = " + ImageProvider.getImageUrls().get(i));
+                    bean.setContent("content = 你是否还记得？那年我们在春暖花开里相遇，我们都用真情，守护着相遇后的每一秒光阴。每一次与你目光碰触，你的眼睛清澈如水，深邃如诗，绽不尽的芳华，浪漫依依。" + "---" + i);
                     list.add(bean);
                 }
                 Bundle bundle = new Bundle();
@@ -152,10 +150,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .setBigImageUrls(ImageProvider.getImageUrls())
                         .setSavaImage(true)
                         .setBundle(bundle) //传递自己的数据，如果数据中包含java bean，必须实现Parcelable接口
+                        .setOpenDownAnimate(false)
                         .build();
-                break;
-            case R.id.button9:
-                startActivity(new Intent(this, PhotoPagerAnimaActivity.class));
                 break;
         }
     }

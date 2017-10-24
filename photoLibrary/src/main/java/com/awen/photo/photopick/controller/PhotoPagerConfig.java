@@ -8,7 +8,6 @@ import android.view.View;
 
 import com.awen.photo.Awen;
 import com.awen.photo.R;
-import com.awen.photo.photopick.anim.ViewOptionsCompat;
 import com.awen.photo.photopick.bean.PhotoPagerBean;
 import com.awen.photo.photopick.ui.PhotoPagerActivity;
 import com.awen.photo.photopick.util.AppPathUtil;
@@ -45,18 +44,7 @@ public class PhotoPagerConfig {
         if (photoPagerBean.getPagePosition() > photoPagerBean.getBigImgUrls().size()) {
             throw new IndexOutOfBoundsException("show position out bigImageUrls size,position = " + photoPagerBean.getPagePosition() + ",bigImageUrls size = " + photoPagerBean.getBigImgUrls().size());
         }
-        boolean isAnimation = false;
-        Bundle bundle = null;
-        if (photoPagerBean.isAnimation() && photoPagerBean.getLayoutManager() != null) {
-            bundle = ViewOptionsCompat.makeScaleUpAnimation(photoPagerBean.getLayoutManager(), photoPagerBean.getBigImgUrls());
-            isAnimation = true;
-        } else if (photoPagerBean.isAnimation() && photoPagerBean.getBeginView() != null) {
-            bundle = ViewOptionsCompat.makeScaleUpAnimation(photoPagerBean.getBeginView(), photoPagerBean.getBigImgUrls().get(0));
-            isAnimation = true;
-        }
-        if (bundle == null) {
-            bundle = new Bundle();
-        }
+        Bundle bundle = new Bundle();
         bundle.putParcelable(EXTRA_PAGER_BEAN, photoPagerBean);
         Intent intent = new Intent(activity, builder.clazz);
         intent.putExtra(EXTRA_PAGER_BUNDLE, bundle);
@@ -64,7 +52,7 @@ public class PhotoPagerConfig {
             intent.putExtra(EXTRA_USER_BUNDLE, builder.bundle);
         }
         activity.startActivity(intent);
-        activity.overridePendingTransition(isAnimation ? 0 : R.anim.image_pager_enter_animation, 0);
+        activity.overridePendingTransition(R.anim.image_pager_enter_animation, 0);
     }
 
     public static class Builder {
@@ -88,6 +76,7 @@ public class PhotoPagerConfig {
             photoPagerBean.setPagePosition(0);//默认展示第1张图片
             photoPagerBean.setSaveImage(false);//默认不开启保存图片到本地
             photoPagerBean.setSaveImageLocalPath(AppPathUtil.getBigBitmapCachePath());//默认保存到本地的图片地址
+            photoPagerBean.setOpenDownAnimate(true);
         }
 
         /**
@@ -176,29 +165,6 @@ public class PhotoPagerConfig {
             return this;
         }
 
-        /**
-         * 在打开/关闭大图浏览界面时，是否启用动画效果
-         */
-        public Builder setAnimation(boolean isAnimation) {
-            photoPagerBean.setAnimation(isAnimation);
-            return this;
-        }
-
-        public Builder setLayoutManager(GridLayoutManager layoutManager) {
-            if(layoutManager != null){
-                setAnimation(true);
-            }
-            photoPagerBean.setLayoutManager(layoutManager);
-            return this;
-        }
-
-        public Builder setBeginView(View beginView) {
-            if(beginView != null){
-                setAnimation(true);
-            }
-            photoPagerBean.setBeginView(beginView);
-            return this;
-        }
 
         /**
          * 设置用户想传递的bundle
@@ -207,6 +173,16 @@ public class PhotoPagerConfig {
          */
         public Builder setBundle(Bundle bundle) {
             this.bundle = bundle;
+            return this;
+        }
+
+        /**
+         * 是否开启下滑关闭activity，默认开启。类似微信的图片浏览，可下滑关闭一样，但是没有图片归位效果
+         * @param isOpenDownAnimate default true
+         * @return
+         */
+        public Builder setOpenDownAnimate(boolean isOpenDownAnimate) {
+            photoPagerBean.setOpenDownAnimate(isOpenDownAnimate);
             return this;
         }
 

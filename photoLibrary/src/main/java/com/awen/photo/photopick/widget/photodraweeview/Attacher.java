@@ -278,10 +278,10 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         } else {
             mScrollEdge = EDGE_NONE;
         }
-        Log.e(getClass().getSimpleName(),"viewWidth = " + viewWidth + ",viewHeight = " + viewHeight);
-        Log.e(getClass().getSimpleName(),"width = " + width + ",height = " + height);
-        Log.e(getClass().getSimpleName(),"deltaX = " + deltaX + ",deltaY = " + deltaY);
-        Log.e(getClass().getSimpleName(),"rect.left = " + rect.left + ",rect.right = " + rect.right);
+//        Log.e(getClass().getSimpleName(),"viewWidth = " + viewWidth + ",viewHeight = " + viewHeight);
+//        Log.e(getClass().getSimpleName(),"width = " + width + ",height = " + height);
+//        Log.e(getClass().getSimpleName(),"deltaX = " + deltaX + ",deltaY = " + deltaY);
+//        Log.e(getClass().getSimpleName(),"rect.left = " + rect.left + ",rect.right = " + rect.right);
         mMatrix.postTranslate(deltaX, deltaY);
         return true;
     }
