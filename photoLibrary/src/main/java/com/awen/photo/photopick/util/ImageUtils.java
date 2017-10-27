@@ -8,9 +8,15 @@ import android.util.Log;
 
 import com.awen.photo.Awen;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Created by Awen <Awentljs@gmail.com>
@@ -196,6 +202,67 @@ public class ImageUtils {
             return isSuccesse;
         }
         return false;
+    }
+
+    /**
+     * 保存图片，并且可以再手机的图库中看到
+     *
+     * @return true:保存成功，false:保存失败
+     */
+    public static boolean saveImageToGallery(String newPath, String oldPath) {
+        boolean isSuccesse = false;
+        File file = new File(newPath);
+        if (file.exists()) {
+            file.delete(); // 删除原图片
+        }
+        String dir;
+        if (!file.isFile()) {
+            dir = newPath.substring(0, newPath.lastIndexOf("/"));
+            File dirFile = new File(dir);
+            if (!dirFile.exists()) {
+                if (!dirFile.mkdirs()) {
+                    return false;
+                }
+            }
+            FileOutputStream fOut = null;
+            InputStream is = null;
+            try {
+                file.createNewFile();
+                int bytesum = 0;
+                int byteread = 0;
+                File oldfile = new File(oldPath);
+                if (oldfile.exists()) { //文件存在时
+                    is = new FileInputStream(oldPath); //读入原文件
+                    fOut = new FileOutputStream(newPath);
+                    byte[] buffer = new byte[1444];
+                    while ((byteread = is.read(buffer)) != -1) {
+                        bytesum += byteread; //字节数 文件大小
+                        fOut.write(buffer, 0, byteread);
+                    }
+                }
+                // 最后通知图库更新
+                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri uri = Uri.fromFile(file);
+                intent.setData(uri);
+                Awen.getContext().sendBroadcast(intent);
+                isSuccesse = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (fOut != null) {
+                        fOut.flush();
+                        fOut.close();
+                    }
+                    if (is != null) {
+                        is.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return isSuccesse;
     }
 
 }

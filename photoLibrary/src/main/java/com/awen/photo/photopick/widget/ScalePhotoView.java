@@ -15,7 +15,9 @@ import android.widget.FrameLayout;
 import com.awen.photo.photopick.util.ViewUtil;
 
 /**
- * 仿微信图片下拉关闭效果，为了达到背景渐变效果，下拉移动的是viewpager，viewpager的父容器作为背景渐变的作用
+ * 仿微信图片下拉关闭效果，为了达到背景渐变效果，下拉移动的是viewpager，viewpager的父容器作为背景渐变的作用<br>
+ *     目前存在的问题：如果快速地两次按下滑动，可能会出现视图错位
+ *
  * Created by Awen <Awentljs@gmail.com>
  */
 
@@ -23,9 +25,9 @@ public class ScalePhotoView extends FrameLayout {
 
     public final String TAG = getClass().getSimpleName();
 
-    public static final float MIN_SCALE_WEIGHT = 0.25f;
-    public static final int DURATION = 300;
-    public static final float DRAG_GAP_PX = 50.0f;
+    private static final float MIN_SCALE_WEIGHT = 0.25f;
+    private static final int DURATION = 300;
+    private static final float DRAG_GAP_PX = 50.0f;
 
     private float downX;
     private float downY;
@@ -82,6 +84,7 @@ public class ScalePhotoView extends FrameLayout {
                     if (onViewTouchListener != null) {
                         onViewTouchListener.onMoving(deltaX, deltaY);
                     }
+                    isMoving = true;
                     toMoving(ev.getRawX(), ev.getRawY());
                     return true;
                 }
@@ -92,7 +95,7 @@ public class ScalePhotoView extends FrameLayout {
                 final float upY = ev.getRawY();
 //                Log.e(TAG, "downY = " + downY);
 //                Log.e(TAG, "upY = " + upY);
-                if (upY > downY &&  Math.abs(upY - downY) > screenHeight >> 3) {
+                if (upY > downY && Math.abs(upY - downY) > screenHeight >> 3) {
                     if (onViewTouchListener != null) {
                         onViewTouchListener.onFinish();
                     } else {
@@ -119,7 +122,7 @@ public class ScalePhotoView extends FrameLayout {
                 break;
             case MotionEvent.ACTION_MOVE:
                 float deltaY = ev.getRawY() - downY;
-                if(deltaY > DRAG_GAP_PX){//是下拉，进行拦截
+                if (deltaY > DRAG_GAP_PX) {//是下拉，进行拦截
                     return true;
                 }
                 break;
@@ -172,7 +175,6 @@ public class ScalePhotoView extends FrameLayout {
     }
 
     private void toMoving(float movingX, float movingY) {
-        isMoving = true;
         float deltaX = movingX - downX;
         float deltaY = movingY - downY;
         float scale = 1f;

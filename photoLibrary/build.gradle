@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion rootProject.ext.android.targetSdkVersion
-        versionCode 9
-        versionName "1.5"
+        versionCode 10
+        versionName "1.5.1"
     }
     buildTypes {
         release {
@@ -37,5 +37,5 @@ dependencies {
     //android6.0权限工具类
     compile 'com.lovedise:permissiongen:0.0.6'
     //加载超长图必备库
-    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.7.2'
 }

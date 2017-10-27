@@ -17,6 +17,9 @@ public class ImageProvider {
 //        list.add(FrescoImageLoader.getFileUrl("/storage/emulated/0/Pictures/Screenshots/Screenshot_20170919-203120.png"));
 //        list.add(FrescoImageLoader.getFileUrl("/storage/emulated/0/tencent/MicroMsg/WeiXin/mmexport1505817817979.jpg"));
         //网络长图,包括横向和纵向的长图
+        list.add("http://www.qqleju.com/uploads/allimg/130724/24-035110_951.jpg");
+        list.add("https://ww4.sinaimg.cn/bmiddle/73851b25jw1du81xj0psuj.jpg");
+        list.add("https://mat1.gtimg.com/ent/0000/xmsct.jpg");
         list.add("http://img.zcool.cn/community/01e92257c93edb0000018c1b8776b8.jpg");
         list.add("http://pic90.nipic.com/file/20160302/4627410_000612662875_2.jpg");
         list.add("http://pic1.16xx8.com/allimg/170813/16xx8_ps20.jpg");

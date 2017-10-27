@@ -3,7 +3,6 @@ package com.awen.photo.photopick.ui;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
@@ -32,7 +31,6 @@ import com.awen.photo.photopick.util.ImageUtils;
 import com.awen.photo.photopick.util.PermissionUtil;
 import com.awen.photo.photopick.controller.PhotoPagerConfig;
 import com.awen.photo.photopick.widget.RoundProgressBarDrawable;
-import com.awen.photo.photopick.widget.HackyViewPager;
 import com.awen.photo.photopick.widget.ScalePhotoView;
 import com.awen.photo.photopick.widget.photodraweeview.OnViewTapListener;
 import com.awen.photo.photopick.widget.photodraweeview.PhotoDraweeView;
@@ -59,6 +57,7 @@ import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.WeakHashMap;
 
@@ -99,6 +98,7 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
     //-start 防止viewpager的预加载，使得到的图片跟要保存的图片保持一致
     private WeakHashMap<Integer, ImageRequest> wkRequest;
     private WeakHashMap<Integer, Bitmap> wkBitmap;
+    private WeakHashMap<Integer, Uri> wkLongBitmapUri;//主要是为了保存长图的时候用到
     protected int currentPosition;
     //-end
 
@@ -106,6 +106,7 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
 
     private FrameLayout rootLayout;
     private View customView;
+
     /**
      * 设置自定义view layout
      *
@@ -136,7 +137,7 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
     protected void init() {
     }
 
-    protected Bundle getBundle(){
+    protected Bundle getBundle() {
         return getIntent().getBundleExtra(PhotoPagerConfig.EXTRA_USER_BUNDLE);
     }
 
@@ -202,7 +203,7 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
 
         ScalePhotoView scalePhotoView = (ScalePhotoView) content.findViewById(R.id.scalePhotoView);
         scalePhotoView.setOpenDownAnimate(photoPagerBean.isOpenDownAnimate());
-        if(photoPagerBean.isOpenDownAnimate()){
+        if (photoPagerBean.isOpenDownAnimate()) {
             scalePhotoView.setOnViewTouchListener(new ScalePhotoView.onViewTouchListener() {
                 @Override
                 public void onFinish() {
@@ -267,9 +268,9 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
      * @param visibility
      */
     protected void setIndicatorVisibility(boolean visibility) {
-        if(photoPagerBean.getBigImgUrls().size() == 1 || !visibility){
+        if (photoPagerBean.getBigImgUrls().size() == 1 || !visibility) {
             indicator.setVisibility(View.GONE);
-        }else {
+        } else {
             indicator.setViewPager(viewPager);
         }
     }
@@ -298,7 +299,7 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
             final String bigImgUrl = photoPagerBean.getBigImgUrls().get(position);
             //小图，可在大图前进行展示
             String lowImgUrl = (photoPagerBean.getLowImgUrls() == null || photoPagerBean.getLowImgUrls().isEmpty()) ? "" : photoPagerBean.getLowImgUrls().get(position);
-            Uri uri = Uri.parse(bigImgUrl);
+            final Uri uri = Uri.parse(bigImgUrl);
             final ImageRequest request = ImageRequestBuilder
                     .newBuilderWithSource(uri)
                     .setProgressiveRenderingEnabled(false)
@@ -313,12 +314,10 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
                         public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
                             super.onFinalImageSet(id, imageInfo, animatable);
                             if (imageInfo == null) {
-//                                Log.e(TAG, "imageInfo = null");
                                 return;
                             }
-                            View view = loadLargerLongPhoto(position, imageInfo, bigImgUrl);
-                            if (view != null) {
-//                                Log.e(TAG,"长图 - " + position + ",url = " + bigImgUrl);
+                            View view = loadLargerLongPhoto(position, imageInfo, bigImgUrl, uri);
+                            if (view != null) {//长图
                                 view.setTag(position);
                                 parent.addView(view, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                                 mPhotoDraweeView.setVisibility(View.GONE);
@@ -410,38 +409,17 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
         }
     }
 
-    private void matrixLongPhoto(ImageInfo imageInfo,int position){
-        // 获得图片的宽高
-        int width = imageInfo.getWidth();
-        int height = imageInfo.getHeight();
-        if (width > 200 || wkBitmap == null || !wkBitmap.containsKey(position)) {
-            return ;
-        }
-        // 计算缩放比例
-        float scaleWidth = ((float) screenWith) / width;
-        // 取得想要缩放的matrix参数
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleWidth);
-        // 得到新的图片
-        Bitmap newBitmap = Bitmap.createBitmap(wkBitmap.get(position), 0, 0, width, height, matrix, true);
-        wkBitmap.put(position,newBitmap);
-    }
-
-    private SubsamplingScaleImageView loadLargerLongPhoto(int position, ImageInfo imageInfo, String url) {
+    private SubsamplingScaleImageView loadLargerLongPhoto(int position, ImageInfo imageInfo, String url, Uri uri) {
         String fileName = url.substring(url.lastIndexOf("/") + 1, url.length());
         if (fileName.contains(".webp") || fileName.contains(".gif")) {
             return null;
         }
-//        matrixLongPhoto(imageInfo,position);
         float offsetW = (imageInfo.getWidth() / imageInfo.getHeight()) - (screenWith / screenHeight);
         float offsetH = (imageInfo.getHeight() / imageInfo.getWidth()) - (screenHeight / screenWith);
-//            Log.e(TAG,"position = " + position + ",offsetW = " + offsetW + ",offsetH = " + offsetH);
-//            Log.e(TAG,"position = " + position + ",imageInfo.getWidth() = " + imageInfo.getWidth() + ",imageInfo.getHeight() = " + imageInfo.getHeight());
         if (offsetW > 1.0f) {//横向长图
-            return loadLongPhoto(position, 0, screenHeight / imageInfo.getHeight());
+            return loadLongPhoto(position, 0, screenHeight / imageInfo.getHeight(), imageInfo, uri);
         } else if (offsetH > 0.8f) {//纵向长图
-            /**,Math.max(screenWith / (float) imageInfo.getWidth(), screenHeight / (float) imageInfo.getHeight())*/
-            return loadLongPhoto(position, 1);
+            return loadLongPhoto(position, 1, imageInfo, uri);
         }
         return null;
     }
@@ -449,14 +427,14 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
     /**
      * 加载超长图
      */
-    private SubsamplingScaleImageView loadLongPhoto(int position, int orientation) {
-        return loadLongPhoto(position, orientation, 0);
+    private SubsamplingScaleImageView loadLongPhoto(int position, int orientation, ImageInfo imageInfo, Uri uri) {
+        return loadLongPhoto(position, orientation, 0, imageInfo, uri);
     }
 
     /**
      * 加载超长图
      */
-    private SubsamplingScaleImageView loadLongPhoto(int position, int orientation, float hScale) {
+    private SubsamplingScaleImageView loadLongPhoto(int position, int orientation, float hScale, ImageInfo imageInfo, Uri uri) {
         if (wkBitmap == null || !wkBitmap.containsKey(position)) {
             return null;
         }
@@ -464,10 +442,16 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
         Bitmap bitmap = wkBitmap.get(position);
         if (bitmap != null) {
             if (orientation == 1) {//纵向图
+                //这里直接获取File，因为fresco得到的长图bitmap是经过牙刷处理的，质量太低
+                File file = FrescoImageLoader.getCache(this, uri);
+                ImageSource imageSource;
+                if (file != null) {
+                    imageSource = ImageSource.uri(file.getAbsolutePath());
+                } else {
+                    imageSource = ImageSource.bitmap(wkBitmap.get(position));
+                }
                 imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP);
-//                imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
-//                imageView.setMinScale(hScale);
-                imageView.setImage(ImageSource.bitmap(bitmap), new ImageViewState(hScale, new PointF(0, 0), SubsamplingScaleImageView.ORIENTATION_0));
+                imageView.setImage(imageSource, new ImageViewState(hScale, new PointF(0, 0), SubsamplingScaleImageView.ORIENTATION_0));
             } else {
                 imageView.setMaxScale(hScale);
                 imageView.setImage(ImageSource.bitmap(bitmap));
@@ -475,6 +459,10 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
             imageView.setOnClickListener(onClickListener);
             //图片下载完成并且开启图片保存才给长按保存
             imageView.setOnLongClickListener(this);
+            if (wkLongBitmapUri == null) {
+                wkLongBitmapUri = new WeakHashMap<>();
+            }
+            wkLongBitmapUri.put(position, uri);
         } else {
             imageView.setImage(ImageSource.resource(R.mipmap.failure_image));
         }
@@ -574,6 +562,12 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
      * 保存图片到本地sd卡
      */
     private boolean saveImage(String filePath, Bitmap bitmap) {
+        if (wkLongBitmapUri.containsKey(currentPosition)) {//如果保存的是长图
+            File file = FrescoImageLoader.getCache(this, wkLongBitmapUri.get(currentPosition));
+            if (file != null) {
+                return ImageUtils.saveImageToGallery(filePath, file.getAbsolutePath());
+            }
+        }
         if (bitmap == null) {
             Toast.makeText(PhotoPagerActivity.this, R.string.saved_faild, Toast.LENGTH_SHORT).show();
             return false;
@@ -613,6 +607,10 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
         if (wkRequest != null) {
             wkRequest.clear();
             wkRequest = null;
+        }
+        if (wkLongBitmapUri != null) {
+            wkLongBitmapUri.clear();
+            wkLongBitmapUri = null;
         }
         onViewTapListener = null;
         onClickListener = null;

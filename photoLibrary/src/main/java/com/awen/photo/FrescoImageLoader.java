@@ -1,14 +1,23 @@
 package com.awen.photo;
 
+import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.awen.photo.photopick.util.FileSizeUtil;
+import com.facebook.binaryresource.BinaryResource;
+import com.facebook.binaryresource.FileBinaryResource;
+import com.facebook.cache.common.CacheKey;
 import com.facebook.common.util.UriUtil;
+import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory;
 import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.core.ImagePipelineFactory;
+import com.facebook.imagepipeline.request.ImageRequest;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -34,6 +43,37 @@ public final class FrescoImageLoader extends Awen {
                 imagePipeline.evictFromMemoryCache(uri);
             }
         }
+    }
+
+    /**
+     * 图片是否已经存在了
+     */
+    public static boolean isCached(Context context, Uri uri) {
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        DataSource<Boolean> dataSource = imagePipeline.isInDiskCache(uri);
+        if (dataSource == null) {
+            return false;
+        }
+        ImageRequest imageRequest = ImageRequest.fromUri(uri);
+        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance()
+                .getEncodedCacheKey(imageRequest, context);
+        BinaryResource resource = ImagePipelineFactory.getInstance()
+                .getMainFileCache().getResource(cacheKey);
+        return resource != null && dataSource.getResult() != null && dataSource.getResult();
+    }
+
+    /**
+     * 本地缓存文件
+     */
+    public static File getCache(Context context, Uri uri) {
+        if (!isCached(context, uri))
+            return null;
+        ImageRequest imageRequest = ImageRequest.fromUri(uri);
+        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance()
+                .getEncodedCacheKey(imageRequest, context);
+        BinaryResource resource = ImagePipelineFactory.getInstance()
+                .getMainFileCache().getResource(cacheKey);
+        return ((FileBinaryResource) resource).getFile();
     }
 
     /**
