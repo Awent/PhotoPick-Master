@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //方法1
                 new PhotoPagerConfig.Builder(this)
                         .setBigImageUrls(ImageProvider.getBigImgUrls())
-                        .setLowImageUrls(ImageProvider.getLowImgUrls())
+                        .setSmallImageUrls(ImageProvider.getSmallImgUrls())
                         .setSavaImage(true)
                         .build();
 
@@ -102,8 +102,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                        //添加大图
 //                        .addSingleBigImageUrl("http://120.27.113.153/frogdrfs/2016/08/22/0ac279d511de46a0858a1812efe9a1ce.jpg")
 //                        .addSingleBigImageUrl("http://120.27.113.153/frogdrfs/2016/08/29/62e2cd190a174e6c83ea3e948ecba66a.jpg")
-//                        .addSingleLowImageUrl("http://120.27.113.153/frogdrfs/2016/08/22/0ac279d511de46a0858a1812efe9a1ce.jpg&64X64.jpg")
-//                        .addSingleLowImageUrl("http://120.27.113.153/frogdrfs/2016/08/29/62e2cd190a174e6c83ea3e948ecba66a.jpg&64X64.jpg")
+//                        .addSingleSmallImageUrl("http://120.27.113.153/frogdrfs/2016/08/22/0ac279d511de46a0858a1812efe9a1ce.jpg&64X64.jpg")
+//                        .addSingleSmallImageUrl("http://120.27.113.153/frogdrfs/2016/08/29/62e2cd190a174e6c83ea3e948ecba66a.jpg&64X64.jpg")
 //                        .setSavaImage(true)
 //                        .build();
 
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //先构建实体类,在实体类里设置好参数
 //                PhotoPagerBean bean = new PhotoPagerBean();
 //                bean.setBigImgUrls(ImageProvider.getBigImgUrls());
-//                bean.setLowImgUrls(ImageProvider.getLowImgUrls());
+//                bean.setSmallImgUrls(ImageProvider.getSmallImgUrls());
 //                bean.setSaveImage(true);
 //                //再设置实体类
 //                new PhotoPagerConfig.Builder(this)

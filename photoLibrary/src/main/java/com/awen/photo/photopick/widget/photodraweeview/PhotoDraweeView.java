@@ -149,4 +149,8 @@ public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
     public Attacher getmAttacher() {
         return mAttacher;
     }
+
+    public void setOnTouchEventAndScaleChangeListener(OnTouchEventAndScaleChangeListener onTouchEventAndScaleChangeListener) {
+        mAttacher.setOnTouchEventAndScaleChangeListener(onTouchEventAndScaleChangeListener);
+    }
 }

@@ -130,16 +130,27 @@ public class PhotoPagerConfig {
         }
 
         /**
-         * 小图图片的url,后续可扩展更多
-         *
+         *  p:更名为small,不使用low了，感觉很不好
+         * @deprecated use {@link #setSmallImageUrls(ArrayList)}
          * @param lowImgUrls 小图图片的url
          * @return Builder
          */
         public Builder setLowImageUrls(ArrayList<String> lowImgUrls) {
-            if (lowImgUrls == null || lowImgUrls.isEmpty()) {
-                throw new NullPointerException("lowImgUrls is null or size is 0");
+            setSmallImageUrls(lowImgUrls);
+            return this;
+        }
+
+        /**
+         * 小图图片的url,后续可扩展更多
+         *
+         * @param smallImgUrls 小图图片的url
+         * @return Builder
+         */
+        public Builder setSmallImageUrls(ArrayList<String> smallImgUrls) {
+            if (smallImgUrls == null || smallImgUrls.isEmpty()) {
+                throw new NullPointerException("smallImgUrls is null or size is 0");
             }
-            photoPagerBean.setLowImgUrls(lowImgUrls);
+            photoPagerBean.setSmallImgUrls(smallImgUrls);
             return this;
         }
 
@@ -157,8 +168,16 @@ public class PhotoPagerConfig {
         /**
          * 一张一张小图add进ArrayList
          *
-         * @param lowImageUrl 小图url
+         * @param smallImageUrl 小图url
          * @return Builder
+         */
+        public Builder addSingleSmallImageUrl(String smallImageUrl) {
+            photoPagerBean.addSingleSmallImageUrl(smallImageUrl);
+            return this;
+        }
+
+        /**
+         * @deprecated use {@link #addSingleSmallImageUrl(String)}
          */
         public Builder addSingleLowImageUrl(String lowImageUrl) {
             photoPagerBean.addSingleLowImageUrl(lowImageUrl);

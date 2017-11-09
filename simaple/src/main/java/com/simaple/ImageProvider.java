@@ -11,7 +11,7 @@ public class ImageProvider {
 
     public static ArrayList<String> getImageUrls(){
         ArrayList<String> list = new ArrayList<>();
-        list.add(FrescoImageLoader.getResUrl(R.mipmap.larger_long_photo));//长图
+        list.add(FrescoImageLoader.getResUrl(R.mipmap.resx));//长图
         list.add(FrescoImageLoader.getAssetUrl("test.jpeg"));
 //        //如果加载本地图片，可按照下面的来
 //        list.add(FrescoImageLoader.getFileUrl("/storage/emulated/0/Pictures/Screenshots/Screenshot_20170919-203120.png"));
@@ -57,7 +57,7 @@ public class ImageProvider {
      * 小图，这里随便找两张小图的
      * @return
      */
-    public static ArrayList<String> getLowImgUrls(){
+    public static ArrayList<String> getSmallImgUrls(){
         ArrayList<String> list = new ArrayList<>();
         list.add("http://img.qq745.com/uploads/hzbimg/0907/hzb33617.png");
         list.add("http://img.qq745.com/uploads/hzbimg/0907/hzb33616.png");

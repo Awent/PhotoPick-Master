@@ -1,15 +1,12 @@
 package com.awen.photo.photopick.widget;
 
-import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorRes;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,106 +16,66 @@ import android.support.annotation.Nullable;
  */
 
 public class RoundProgressBarDrawable extends Drawable {
-    // init Max value is 10000
-    protected long mMaxValue = 10000;
-    // The size of text
-    private int mTextSize;
-    // The color of text
-    private int mTextColor;
-    // the X offset of text
-    private int mTextXOffset;
-    private int mTextYOffset;
-    //The text typeface
-    private Typeface mTypeface;
-    // THe visiable of text
-    private boolean mTextShow;
-    // The paint of text
-    private Paint mTextPaint;
-    // The Progress Value
-    protected long mProgress;
-
-    // The Paint of the Ring
-    private Paint mCirclePaint;
-    // The Size of the Ring
-    private float mCircleWidth;
-    // The progress Color for the Ring
-    private int mCircleProgressColor;
-    // The bottom color for the Ring
-    private int mCircleBottomColor;
-    //THe bottom circle width
-    private int mCircleBottomWidth;
-    // the radius of the Ring
-    private int mCircleRadius;
-    // Padding of line padding int the fan style
-    private int mFanPadding;
-    //Custom String
-    private String mCustomStr;
+    private long maxValue = 10000;
+    private long progress;
+    private Paint circlePaint;
+    private float circleWidth;
+    private int circleProgressColor;
+    private int circleBottomColor;
+    private int circleBottomWidth;
+    private int circleRadius;
+    private int interval;//两个圆之间的间隔
 
     public RoundProgressBarDrawable() {
-        this(false, 70);
+        this(70);
     }
 
-    public RoundProgressBarDrawable(boolean mTextShow, int mCircleRadius) {
-        mTextPaint = new Paint();
-        mTextSize = 20;
-        mTextColor = Color.WHITE;
-        this.mTextShow = mTextShow;
-        mTextPaint = new Paint();
-        mTextPaint.setAntiAlias(true);
-        mTextPaint.setColor(mTextColor);
-        mTextPaint.setTextSize(mTextSize);
-        mTextPaint.setTextAlign(Paint.Align.CENTER);
-
-        mCirclePaint = new Paint();
-
-        mCirclePaint.setAntiAlias(true);
-        mCirclePaint.setStrokeWidth(10);
-        mCirclePaint.setStrokeCap(Paint.Cap.ROUND);
-
-        mCircleProgressColor = 0xdddddddd;
-        mCircleBottomColor = 0xdddddddd;
-        mCircleWidth = 8;
-        this.mCircleRadius = mCircleRadius;
-        mFanPadding = 5;
-        mCircleBottomWidth = 2;
-        mProgress = 1;
+    public RoundProgressBarDrawable(int circleRadius) {
+        circlePaint = new Paint();
+        circlePaint.setAntiAlias(true);
+        circlePaint.setStrokeWidth(10);
+        circlePaint.setStrokeCap(Paint.Cap.ROUND);
+        circleProgressColor = 0xdddddddd;
+        circleBottomColor = 0xdddddddd;
+        circleWidth = 8;
+        this.circleRadius = circleRadius;
+        interval = 5;
+        circleBottomWidth = 2;
+        progress = 1;
     }
 
     /*
-     * draw the circle background
+     * 话空心圆
      */
     private void drawCircle(Canvas canvas) {
         Rect bounds = getBounds();
-        int xPos = bounds.left + bounds.width() / 2;
-        int yPos = bounds.bottom - bounds.height() / 2;
-
-        mCirclePaint.setColor(mCircleBottomColor);
-        mCirclePaint.setStrokeWidth(mCircleBottomWidth);
-        mCirclePaint.setStyle(Paint.Style.STROKE);
-        mCirclePaint.setShader(null);
-
-        canvas.drawCircle(xPos, yPos, mCircleRadius + mFanPadding, mCirclePaint);
+        int xPos = bounds.left + (bounds.width() >> 1);
+        int yPos = bounds.bottom - (bounds.height() >> 1);
+        circlePaint.setColor(circleBottomColor);
+        circlePaint.setStrokeWidth(circleBottomWidth);
+        circlePaint.setStyle(Paint.Style.STROKE);
+        circlePaint.setShader(null);
+        canvas.drawCircle(xPos, yPos, circleRadius + interval, circlePaint);
     }
 
     /*
-     * draw the arc for the progress
+     * 根据进度条画实心圆
      */
     private void drawArc(Canvas canvas) {
-        mCirclePaint.setStyle(Paint.Style.FILL);
+        circlePaint.setStyle(Paint.Style.FILL);
         Rect bounds = getBounds();
-        int xpos = bounds.left + bounds.width() / 2;
-        int ypos = bounds.bottom - bounds.height() / 2;
-        RectF rectF = new RectF(xpos - mCircleRadius, ypos - mCircleRadius, xpos + mCircleRadius, ypos + mCircleRadius);
-        float degree = (float) mProgress / (float) mMaxValue * 360;
-
-        mCirclePaint.setStrokeWidth(mCircleWidth);
-        mCirclePaint.setColor(mCircleProgressColor);
-        canvas.drawArc(rectF, 270, degree, true, mCirclePaint);
+        int xPos = bounds.left + (bounds.width() >> 1);
+        int yPos = bounds.bottom - (bounds.height() >> 1);
+        RectF rectF = new RectF(xPos - circleRadius, yPos - circleRadius, xPos + circleRadius, yPos + circleRadius);
+        float degree = (float) progress / (float) maxValue * 360;
+        circlePaint.setStrokeWidth(circleWidth);
+        circlePaint.setColor(circleProgressColor);
+        canvas.drawArc(rectF, 270, degree, true, circlePaint);
     }
 
     @Override
     public void draw(@NonNull Canvas canvas) {
-        if ((int) (((float) mProgress / (float) mMaxValue) * 100) == 100) {
+        if ((int) (((float) progress / (float) maxValue) * 100) == 100) {
             return;
         }
         drawCircle(canvas);
@@ -137,14 +94,14 @@ public class RoundProgressBarDrawable extends Drawable {
 
     @Override
     public int getOpacity() {
-        return 0;
+        return PixelFormat.UNKNOWN;
     }
 
     @Override
     protected boolean onLevelChange(int level) {
-        long origin = mProgress;
-        mProgress = level;
-        if (mProgress != 0 && origin != mProgress) {
+        long origin = progress;
+        progress = level;
+        if (progress != 0 && origin != progress) {
             invalidateSelf();
             return true;
         } else {
@@ -152,49 +109,28 @@ public class RoundProgressBarDrawable extends Drawable {
         }
     }
 
-    public void setTextColor(int mTextColor) {
-        mTextPaint.setColor(mTextColor);
-        this.mTextColor = mTextColor;
+    public RoundProgressBarDrawable setMaxValue(long value) {
+        this.maxValue = value;
+        return this;
     }
 
-    public void setTextColorRes(@ColorRes int ColorRes, Context context) {
-        mTextPaint.setColor(context.getResources().getColor(ColorRes));
+    public RoundProgressBarDrawable setCircleWidth(float circleWidth) {
+        this.circleWidth = circleWidth;
+        return this;
     }
 
-    public void setTextShow(boolean mTextShow) {
-        this.mTextShow = mTextShow;
+    public RoundProgressBarDrawable setCircleBottomWidth(int circleBottomWidth) {
+        this.circleBottomWidth = circleBottomWidth;
+        return this;
     }
 
-    public void setTypeface(Typeface mTypeface) {
-        this.mTypeface = mTypeface;
-        mTextPaint.setTypeface(mTypeface);
+    public RoundProgressBarDrawable setCircleRadius(int circleRadius) {
+        this.circleRadius = circleRadius;
+        return this;
     }
 
-    public void setCustomText(String text) {
-        mCustomStr = text;
-    }
-
-    public void setTextXOffset(int offset) {
-        mTextXOffset = offset;
-    }
-
-    public void setTextYOffset(int offset) {
-        mTextYOffset = offset;
-    }
-
-    public void setMaxValue(long value) {
-        this.mMaxValue = value;
-    }
-
-    public void setmCircleWidth(float mCircleWidth) {
-        this.mCircleWidth = mCircleWidth;
-    }
-
-    public void setmCircleBottomWidth(int mCircleBottomWidth) {
-        this.mCircleBottomWidth = mCircleBottomWidth;
-    }
-
-    public void setmCircleRadius(int mCircleRadius) {
-        this.mCircleRadius = mCircleRadius;
+    public RoundProgressBarDrawable setInterval(int interval) {
+        this.interval = interval;
+        return this;
     }
 }

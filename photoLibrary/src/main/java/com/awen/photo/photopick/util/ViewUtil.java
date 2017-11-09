@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Build;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -44,6 +45,11 @@ public class ViewUtil {
 
     public static int getDisplayHeight(Context context){
         return context.getResources().getDisplayMetrics().heightPixels;
+    }
+
+    public static int[] getDisplayWidthAndHeight(Context context){
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return new int[]{displayMetrics.widthPixels,displayMetrics.heightPixels};
     }
 
 }

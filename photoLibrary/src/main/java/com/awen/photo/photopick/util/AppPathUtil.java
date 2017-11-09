@@ -41,7 +41,7 @@ public class AppPathUtil {
         }
         //地址如下:path/appname/appname_photo/
         String app_root_name = Awen.getContext().getString(R.string.app_root_name);
-        path = path + "/" + app_root_name + "/" + app_root_name + "_" + str + "/";
+        path = path + File.separator + app_root_name + File.separator + app_root_name + "_" + str + File.separator;
         exitesFolder(path);
         return path;
     }

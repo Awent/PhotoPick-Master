@@ -18,7 +18,7 @@ import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.request.ImageRequest;
 
 import java.io.File;
-import java.util.List;
+import java.io.IOException;
 
 /**
  * 以下四个方法可能是你想用的
@@ -55,10 +55,8 @@ public final class FrescoImageLoader extends Awen {
             return false;
         }
         ImageRequest imageRequest = ImageRequest.fromUri(uri);
-        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance()
-                .getEncodedCacheKey(imageRequest, context);
-        BinaryResource resource = ImagePipelineFactory.getInstance()
-                .getMainFileCache().getResource(cacheKey);
+        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(imageRequest, context);
+        BinaryResource resource = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
         return resource != null && dataSource.getResult() != null && dataSource.getResult();
     }
 
@@ -69,11 +67,30 @@ public final class FrescoImageLoader extends Awen {
         if (!isCached(context, uri))
             return null;
         ImageRequest imageRequest = ImageRequest.fromUri(uri);
-        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance()
-                .getEncodedCacheKey(imageRequest, context);
-        BinaryResource resource = ImagePipelineFactory.getInstance()
-                .getMainFileCache().getResource(cacheKey);
+        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(imageRequest, context);
+        BinaryResource resource = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
         return ((FileBinaryResource) resource).getFile();
+    }
+
+    public static File getCache(ImageRequest request) {
+        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(request, null);
+        BinaryResource bRes = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
+        return ((FileBinaryResource) bRes).getFile();
+    }
+
+    public static byte[] getByte(Context context, Uri uri) throws IOException {
+        if (!isCached(context, uri))
+            return null;
+        ImageRequest imageRequest = ImageRequest.fromUri(uri);
+        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(imageRequest, null);
+        BinaryResource bRes = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
+        return bRes.read();
+    }
+
+    public static byte[] getByte(ImageRequest request) throws IOException {
+        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(request, null);
+        BinaryResource bRes = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
+        return bRes.read();
     }
 
     /**

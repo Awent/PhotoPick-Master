@@ -2,6 +2,7 @@ package com.awen.photo.photopick.widget.photodraweeview;
 
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.VelocityTracker;
@@ -118,10 +119,8 @@ public class ScaleDragDetector implements ScaleGestureDetector.OnScaleGestureLis
                     mLastTouchX = MotionEventCompat.getX(ev, newPointerIndex);
                     mLastTouchY = MotionEventCompat.getY(ev, newPointerIndex);
                 }
-
                 break;
         }
-
         mActivePointerIndex = MotionEventCompat.findPointerIndex(ev,
                 mActivePointerId != INVALID_POINTER_ID ? mActivePointerId : 0);
     }

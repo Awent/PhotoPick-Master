@@ -31,13 +31,13 @@ public class PhotoPagerBean implements Parcelable {
     /**
      * 小图,可用于在展示大图前进行小图的展示
      */
-    private ArrayList<String> lowImgUrls;
+    private ArrayList<String> smallImgUrls;
     /**
      * 是否开启下滑关闭activity，默认开启。类似微信的图片浏览，可下滑关闭一样，但是没有图片归位效果
      */
     private boolean isOpenDownAnimate;
 
-    public PhotoPagerBean(){
+    public PhotoPagerBean() {
     }
 
 
@@ -46,7 +46,7 @@ public class PhotoPagerBean implements Parcelable {
         saveImageLocalPath = in.readString();
         pagePosition = in.readInt();
         bigImgUrls = in.createStringArrayList();
-        lowImgUrls = in.createStringArrayList();
+        smallImgUrls = in.createStringArrayList();
         isOpenDownAnimate = in.readByte() != 0;
     }
 
@@ -56,7 +56,7 @@ public class PhotoPagerBean implements Parcelable {
         dest.writeString(saveImageLocalPath);
         dest.writeInt(pagePosition);
         dest.writeStringList(bigImgUrls);
-        dest.writeStringList(lowImgUrls);
+        dest.writeStringList(smallImgUrls);
         dest.writeByte((byte) (isOpenDownAnimate ? 1 : 0));
     }
 
@@ -109,12 +109,26 @@ public class PhotoPagerBean implements Parcelable {
         this.bigImgUrls = bigImgUrls;
     }
 
+    /**
+     * @deprecated use {@link #getSmallImgUrls()}
+     */
     public ArrayList<String> getLowImgUrls() {
-        return lowImgUrls;
+        return smallImgUrls;
     }
 
+    /**
+     * @deprecated use {@link #setSmallImgUrls(ArrayList)}
+     */
     public void setLowImgUrls(ArrayList<String> lowImgUrls) {
-        this.lowImgUrls = lowImgUrls;
+        setSmallImgUrls(lowImgUrls);
+    }
+
+    public void setSmallImgUrls(ArrayList<String> smallImgUrls) {
+        this.smallImgUrls = smallImgUrls;
+    }
+
+    public ArrayList<String> getSmallImgUrls() {
+        return smallImgUrls;
     }
 
     /**
@@ -126,7 +140,7 @@ public class PhotoPagerBean implements Parcelable {
         if (bigImageUrl == null) {
             throw new NullPointerException("bigImageUrl is null");
         }
-        if(bigImgUrls == null){
+        if (bigImgUrls == null) {
             bigImgUrls = new ArrayList<>();
         }
         bigImgUrls.add(bigImageUrl);
@@ -135,16 +149,26 @@ public class PhotoPagerBean implements Parcelable {
     /**
      * 一张一张小图add进ArrayList
      *
+     * @param smallImageUrl 小图url
+     */
+    public void addSingleSmallImageUrl(String smallImageUrl) {
+        if (smallImageUrl == null) {
+            throw new NullPointerException("smallImageUrl is null");
+        }
+        if (smallImgUrls == null) {
+            smallImgUrls = new ArrayList<>();
+        }
+        smallImgUrls.add(smallImageUrl);
+    }
+
+    /**
+     * 一张一张小图add进ArrayList
+     *
      * @param lowImageUrl 小图url
+     * @deprecated use {@link #addSingleSmallImageUrl(String)}
      */
     public void addSingleLowImageUrl(String lowImageUrl) {
-        if (lowImageUrl == null) {
-            throw new NullPointerException("lowImageUrl is null");
-        }
-        if(lowImgUrls == null){
-            lowImgUrls = new ArrayList<>();
-        }
-        lowImgUrls.add(lowImageUrl);
+        addSingleSmallImageUrl(lowImageUrl);
     }
 
     public boolean isOpenDownAnimate() {
