@@ -19,9 +19,4 @@
 
 # Explicitly preserve all serialization members. The Serializable interface
 # is only a marker interface, so it wouldn't save them.
-#保持 Parcelable 不被混淆
--keep class * implements android.os.Parcelable {
-  public static final android.os.Parcelable$Creator *;
-}
-# app javabean classes
--keep class com.awen.photo.photopick.bean.** { *; }
+

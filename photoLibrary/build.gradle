@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion rootProject.ext.android.targetSdkVersion
-        versionCode 11
-        versionName "1.6"
+        versionCode 12
+        versionName "1.7"
     }
     buildTypes {
         release {
@@ -35,7 +35,7 @@ dependencies {
     //上滑控制面板,项目中的potopick中有使用案例
     compile 'com.sothree.slidinguppanel:library:3.3.0'
     //android6.0权限工具类
-    compile 'com.lovedise:permissiongen:0.0.6'
+    compile 'com.lovedise:permissiongen:0.1.1'
     //加载超长图必备库
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.7.2'
 }
