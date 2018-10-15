@@ -174,7 +174,8 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
         if (savedInstanceState != null) {
             photoPagerBean.setPagePosition(savedInstanceState.getInt(STATE_POSITION));
         }
-        viewPager.setCurrentItem(photoPagerBean.getPagePosition());
+        currentPosition = photoPagerBean.getPagePosition();
+        viewPager.setCurrentItem(currentPosition);
         viewPager.addOnPageChangeListener(this);
         //图片单击的回调
         onViewTapListener = new OnViewTapListener() {
