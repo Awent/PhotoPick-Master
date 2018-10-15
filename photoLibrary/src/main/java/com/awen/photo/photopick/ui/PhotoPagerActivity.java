@@ -296,7 +296,7 @@ public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPage
             mPhotoDraweeView.setOnTouchEventAndScaleChangeListener(scalePhotoView.getOnTouchEventAndScaleChangeListener());
 
             GenericDraweeHierarchy hierarchy = mPhotoDraweeView.getHierarchy();
-            hierarchy.setProgressBarImage(new RoundProgressBarDrawable());//设置进度条
+            hierarchy.setProgressBarImage(new RoundProgressBarDrawable(screenWith >> 4));//设置进度条
             hierarchy.setActualImageFocusPoint(new PointF(0.5f, 0.5f)); // 居中显示
 //            hierarchy.setFailureImage(getResources().getDrawable(R.mipmap.failure_image));
             hierarchy.setRetryImage(getResources().getDrawable(R.mipmap.failure_image), ScalingUtils.ScaleType.FIT_CENTER);
