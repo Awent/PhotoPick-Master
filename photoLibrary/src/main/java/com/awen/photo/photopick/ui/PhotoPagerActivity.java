@@ -22,7 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.awen.photo.Awen;
-import com.awen.photo.BaseActivity;
+import com.awen.photo.FrescoBaseActivity;
 import com.awen.photo.FrescoImageLoader;
 import com.awen.photo.R;
 import com.awen.photo.photopick.bean.PhotoPagerBean;
@@ -33,7 +33,6 @@ import com.awen.photo.photopick.util.PermissionUtil;
 import com.awen.photo.photopick.controller.PhotoPagerConfig;
 import com.awen.photo.photopick.widget.RoundProgressBarDrawable;
 import com.awen.photo.photopick.widget.ScalePhotoView;
-import com.awen.photo.photopick.widget.photodraweeview.OnScaleChangeListener;
 import com.awen.photo.photopick.widget.photodraweeview.OnViewTapListener;
 import com.awen.photo.photopick.widget.photodraweeview.PhotoDraweeView;
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -56,7 +55,6 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.WeakHashMap;
 
 import kr.co.namee.permissiongen.PermissionFail;
@@ -81,7 +79,7 @@ import me.relex.circleindicator.CircleIndicator;
  *
  * @author Homk-M <Awentljs@gmail.com>
  */
-public class PhotoPagerActivity extends BaseActivity implements ViewPager.OnPageChangeListener, View.OnLongClickListener {
+public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.OnPageChangeListener, View.OnLongClickListener {
     private static final String TAG = PhotoPagerActivity.class.getSimpleName();
     private static final int REQUEST_CODE = 100;
     private static final String STATE_POSITION = "STATE_POSITION";

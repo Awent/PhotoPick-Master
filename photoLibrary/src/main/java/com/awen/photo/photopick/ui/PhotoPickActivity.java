@@ -21,7 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.awen.photo.BaseActivity;
+import com.awen.photo.FrescoBaseActivity;
 import com.awen.photo.R;
 import com.awen.photo.photopick.adapter.PhotoGalleryAdapter;
 import com.awen.photo.photopick.adapter.PhotoPickAdapter;
@@ -56,7 +56,7 @@ import kr.co.namee.permissiongen.PermissionSuccess;
  * </code>
  * Created by Awen <Awentljs@gmail.com>
  */
-public class PhotoPickActivity extends BaseActivity {
+public class PhotoPickActivity extends FrescoBaseActivity {
     private final String TAG = getClass().getSimpleName();
     public static final int REQUEST_CODE_CAMERA = 0;// 拍照
     public static final int REQUEST_CODE_CLIPIC = 1;//裁剪头像

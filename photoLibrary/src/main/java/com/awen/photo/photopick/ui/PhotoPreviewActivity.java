@@ -10,12 +10,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.CheckBox;
@@ -23,7 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 
 import com.awen.photo.Awen;
-import com.awen.photo.BaseActivity;
+import com.awen.photo.FrescoBaseActivity;
 import com.awen.photo.FrescoImageLoader;
 import com.awen.photo.R;
 import com.awen.photo.photopick.adapter.PhotoPickAdapter;
@@ -56,7 +54,7 @@ import java.util.ArrayList;
  * Created by Awen <Awentljs@gmail.com>
  */
 
-public class PhotoPreviewActivity extends BaseActivity implements ViewPager.OnPageChangeListener {
+public class PhotoPreviewActivity extends FrescoBaseActivity implements ViewPager.OnPageChangeListener {
 
     private final String TAG = getClass().getSimpleName();
     private ArrayList<Photo> photos;

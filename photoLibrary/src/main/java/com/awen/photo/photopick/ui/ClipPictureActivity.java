@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.awen.photo.BaseActivity;
+import com.awen.photo.FrescoBaseActivity;
 import com.awen.photo.R;
 import com.awen.photo.photopick.util.AppPathUtil;
 import com.awen.photo.photopick.util.ImageUtils;
@@ -17,7 +17,7 @@ import com.awen.photo.photopick.widget.clipimage.ClipImageLayout;
  *
  * @author Homk-M <Awentljs@gmail.com>
  */
-public class ClipPictureActivity extends BaseActivity {
+public class ClipPictureActivity extends FrescoBaseActivity {
 
     public static final String CLIPED_PHOTO_PATH = "cliped_photo_path"; // 已经裁剪的图片地址
     public static final String USER_PHOTO_PATH = "user_photo_path"; // 选择头像的本地地址

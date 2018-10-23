@@ -1,6 +1,7 @@
 package com.awen.photo.photopick.util;
 
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import com.awen.photo.photopick.bean.Photo;
 
@@ -31,6 +32,7 @@ public class BitmapUtil {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, options);
+
         if(options.mCancel || options.outWidth == -1 || options.outHeight == -1){
             return true;
         }else {
