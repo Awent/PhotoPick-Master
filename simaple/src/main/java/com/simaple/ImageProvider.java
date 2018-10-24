@@ -26,12 +26,12 @@ public class ImageProvider {
         list.add("https://raw.githubusercontent.com/Awent/PhotoPick-Master/master/pictrue/WechatIMG20.jpeg");
         list.add("https://raw.githubusercontent.com/Awent/PhotoPick-Master/master/pictrue/WechatIMG21.jpeg");
         //网络图片
-        list.add("http://p1.wmpic.me/article/2015/06/29/1435559754_fnZtksvI.jpg");
-        list.add("http://p2.wmpic.me/article/2015/06/29/1435559758_rMcNLvQq.jpg");
-        list.add("http://res.mamiw.com/uploads/allimg/151223/2241033125-6.gif");
-        list.add("http://i-3.yxdown.com/2016/5/15/0b7ab36c-26d4-469e-806c-ca396d9e1da6.gif");
-        list.add("http://i-3.yxdown.com/2016/5/15/196566b6-f4cd-4067-9fb9-0b7c46468c73.gif");
-        list.add("http://i-3.yxdown.com/2016/5/15/e94ac816-f2e9-4456-9697-589fb29e4dda.gif");
+        list.add("http://d.5857.com/xgmn_161229/013.jpg");
+        list.add("http://t1.mmonly.cc/uploads/allimg/20150522/5ic0qfprp3s.jpg");
+        list.add("https://newimg.uumnt.cc:8092/Pics/2017/0822/05/04.jpg");
+        list.add("http://t1.mmonly.cc/uploads/tu/201706/9999/7a4088b7b6.jpg");
+        list.add("https://www.swbox.cn/wp-content/uploads/2018/04/21304Mc8-1.jpg");
+        list.add("http://t1.mmonly.cc/uploads/tu/201602/145/0jhmx2jcfzw.gif");
         list.add("http://i-3.yxdown.com/2016/5/15/82001295-c8f4-4b79-bc19-b029d868c00d.gif");
         list.add("http://i-3.yxdown.com/2016/5/15/c037f911-105f-41ba-a5ad-6b6ca6b70efc.gif");
         list.add("http://www.wmpic.me/wp-content/uploads/2014/02/20140218150739227.jpg");

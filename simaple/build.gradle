@@ -20,6 +20,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':photoLibrary')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':photoLibrary')
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.android.supportVersion}"
 }

@@ -2,10 +2,11 @@
 
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -14,19 +15,19 @@ buildscript {
 
 allprojects {
     repositories {
+        google()
         mavenCentral()
         jcenter()
         maven { url 'https://jitpack.io' }
-        maven { url "https://maven.google.com" }
     }
 }
 
 ext {
     android = [
             compileSdkVersion : 28,        //根据自己项目的来配置
-            buildToolsVersion : '27.0.2',  //根据自己项目的来配置
+            buildToolsVersion : '28.0.3',  //根据自己项目的来配置
             targetSdkVersion  : 28,        //根据自己项目的来配置
-            supportVersion    : '27.0.2',  //android support version
+            supportVersion    : '28.0.0',  //android support version
             frescoVersion     : '1.11.0'   //fresco的版本，可自行修改
     ]
 }
