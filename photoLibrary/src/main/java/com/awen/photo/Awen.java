@@ -7,6 +7,7 @@ import android.support.annotation.ColorRes;
 import com.awen.photo.photopick.util.FileSizeUtil;
 import com.awen.photo.photopick.util.ImagePipelineConfigFactory;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 
 /**
  * Created by Awen <Awentljs@gmail.com>
@@ -34,20 +35,31 @@ public class Awen {
     }
 
     /**
-     *
      * @param context
      * @param toolbarBackGroundId
-     * @param saveImageLocalPath 保存图片的路径地址，可以不设置
+     * @param saveImageLocalPath  保存图片的路径地址，可以不设置
      */
     public static void init(Context context, @ColorRes int toolbarBackGroundId, String saveImageLocalPath) {
-        if(mContext != null){//说明已经初始化过了,不用重复初始化
+        init(context, toolbarBackGroundId, saveImageLocalPath, ImagePipelineConfigFactory.getImagePipelineConfig(context));
+    }
+
+    /**
+     * @param context
+     * @param toolbarBackGroundId
+     * @param saveImageLocalPath  保存图片的路径地址，可以不设置
+     * @param imagePipelineConfig Fresco初始化配置
+     */
+    public static void init(Context context, @ColorRes int toolbarBackGroundId, String saveImageLocalPath, ImagePipelineConfig imagePipelineConfig) {
+        if (mContext != null) {//说明已经初始化过了,不用重复初始化
             return;
         }
         //这里用facebook提供的开源图片处理框架,详细用法可参考文档:http://www.fresco-cn.org/
         //或者:http://blog.csdn.net/android_ls/article/details/53137867
         //或者:http://blog.csdn.net/wa991830558/article/details/46005063
         //或者:http://www.lxway.com/4406818246.htm
-        Fresco.initialize(context, ImagePipelineConfigFactory.getImagePipelineConfig(context));
+        if (!Fresco.hasBeenInitialized()) {
+            Fresco.initialize(context, imagePipelineConfig);
+        }
         toolbarBackGround = toolbarBackGroundId;
         mContext = context.getApplicationContext();
         path = saveImageLocalPath;
@@ -59,7 +71,7 @@ public class Awen {
         }
     }
 
-    public static void destroy(){
+    public static void destroy() {
         mContext = null;
         path = null;
     }
@@ -79,6 +91,7 @@ public class Awen {
 
     /**
      * 设置toolbar颜色
+     *
      * @param toolbarBackGroundId resId
      */
     public static void setToolbarBackGround(@ColorRes int toolbarBackGroundId) {
@@ -87,9 +100,10 @@ public class Awen {
 
     /**
      * 查看网络大图时，你想把图片保存的地址,保存的图片是可以在手机图库可以看到的
+     *
      * @param saveImageLocalPath 大图存储的地址
      */
-    public static void setSaveImageLocalPath(String saveImageLocalPath){
+    public static void setSaveImageLocalPath(String saveImageLocalPath) {
         path = saveImageLocalPath;
     }
 

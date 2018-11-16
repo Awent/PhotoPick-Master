@@ -245,7 +245,9 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
      * 图片单击回调
      */
     protected boolean onSingleClick() {
-        onBackPressed();
+        if(!hasStop) {
+            onBackPressed();
+        }
         return false;
     }
 
@@ -546,6 +548,13 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
         return state;
     }
 
+    private boolean hasStop;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hasStop = false;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -561,6 +570,7 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
             viewPager = null;
         }
         photoPagerBean = null;
+        hasStop=true;
     }
 
     @Override
