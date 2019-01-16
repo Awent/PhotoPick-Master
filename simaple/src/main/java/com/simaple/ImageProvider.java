@@ -3,14 +3,15 @@ package com.simaple;
 import com.awen.photo.FrescoImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Awen <Awentljs@gmail.com>
  */
 public class ImageProvider {
 
-    public static ArrayList<String> getImageUrls(){
-        ArrayList<String> list = new ArrayList<>();
+    public static List<String> getImageUrls(){
+        List<String> list = new ArrayList<>();
         list.add(FrescoImageLoader.getResUrl(R.mipmap.resx));//长图
         list.add(FrescoImageLoader.getAssetUrl("test.jpeg"));
 //        //如果加载本地图片，可按照下面的来
@@ -44,8 +45,8 @@ public class ImageProvider {
      * 大图
      * @return
      */
-    public static ArrayList<String> getBigImgUrls(){
-        ArrayList<String> list = new ArrayList<>();
+    public static List<String> getBigImgUrls(){
+        List<String> list = new ArrayList<>();
         list.add("https://wx3.sinaimg.cn/mw690/0061VhPpgy1fx8w3jn6o8j30u00qd774.jpg");
         list.add("https://wx4.sinaimg.cn/mw690/006mQAf4ly1fx8yoea4zuj30vy1bzk0x.jpg");
         list.add("https://wx1.sinaimg.cn/mw690/006mQAf4ly1fx8yoipc10j30vy1bzwnt.jpg");
@@ -56,8 +57,8 @@ public class ImageProvider {
      * 小图，这里随便找两张小图的
      * @return
      */
-    public static ArrayList<String> getSmallImgUrls(){
-        ArrayList<String> list = new ArrayList<>();
+    public static List<String> getSmallImgUrls(){
+        List<String> list = new ArrayList<>();
         list.add("https://wx3.sinaimg.cn/mw690/006qDXTKgy1fx8q6x78hkj30c80953yt.jpg");
         list.add("https://wx3.sinaimg.cn/mw690/006qDXTKgy1fx8q6x78hkj30c80953yt.jpg");
         list.add("https://wx3.sinaimg.cn/mw690/006qDXTKgy1fx8q6x78hkj30c80953yt.jpg");

@@ -13,6 +13,7 @@ import com.awen.photo.photopick.ui.PhotoPagerActivity;
 import com.awen.photo.photopick.util.AppPathUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 默认不开启保存图片功能，但是会有默认的保存图片地址,默认展示第一张图片<br>
@@ -99,11 +100,11 @@ public class PhotoPagerConfig {
          * @param bigImgUrls 图片的url
          * @return Builder
          */
-        public Builder setBigImageUrls(ArrayList<String> bigImgUrls) {
+        public Builder setBigImageUrls(List<String> bigImgUrls) {
             if (bigImgUrls == null || bigImgUrls.isEmpty()) {
                 throw new NullPointerException("imageUrls is null or size is 0");
             }
-            photoPagerBean.setBigImgUrls(bigImgUrls);
+            photoPagerBean.setBigImgUrls((ArrayList<String>) bigImgUrls);
             return this;
         }
 
@@ -131,11 +132,11 @@ public class PhotoPagerConfig {
 
         /**
          *  p:更名为small,不使用low了，感觉很不好
-         * @deprecated use {@link #setSmallImageUrls(ArrayList)}
+         * @deprecated use {@link #setSmallImageUrls(List)}
          * @param lowImgUrls 小图图片的url
          * @return Builder
          */
-        public Builder setLowImageUrls(ArrayList<String> lowImgUrls) {
+        public Builder setLowImageUrls(List<String> lowImgUrls) {
             setSmallImageUrls(lowImgUrls);
             return this;
         }
@@ -146,11 +147,11 @@ public class PhotoPagerConfig {
          * @param smallImgUrls 小图图片的url
          * @return Builder
          */
-        public Builder setSmallImageUrls(ArrayList<String> smallImgUrls) {
+        public Builder setSmallImageUrls(List<String> smallImgUrls) {
             if (smallImgUrls == null || smallImgUrls.isEmpty()) {
                 throw new NullPointerException("smallImgUrls is null or size is 0");
             }
-            photoPagerBean.setSmallImgUrls(smallImgUrls);
+            photoPagerBean.setSmallImgUrls((ArrayList<String>) smallImgUrls);
             return this;
         }
 
