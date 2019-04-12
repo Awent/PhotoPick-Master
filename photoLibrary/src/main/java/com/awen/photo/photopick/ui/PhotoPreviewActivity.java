@@ -373,6 +373,14 @@ public class PhotoPreviewActivity extends FrescoBaseActivity implements ViewPage
             return view == object;
         }
 
+         @Override
+        public void finishUpdate(ViewGroup container) {
+            try {
+                super.finishUpdate(container);
+            } catch (NullPointerException nullPointerException) {
+                Log.d("finishUpdate","Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
+            }
+        }
     }
 
     /**
