@@ -222,6 +222,7 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putInt(STATE_POSITION, viewPager.getCurrentItem());
     }
 
@@ -487,11 +488,7 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
 //        Log.e(TAG, "sd card image path = " + (saveImageLocalPath == null ? AppPathUtil.getBigBitmapCachePath() : saveImageLocalPath));
         //保存图片到本地
         String bigImgUrl = photoPagerBean.getBigImgUrls().get(currentPosition);
-        String fileName = bigImgUrl.substring(bigImgUrl.lastIndexOf("/") + 1, bigImgUrl.length());
-        if (!fileName.contains(".jpg") && !fileName.contains(".png") && !fileName.contains(".jpeg") && !fileName.contains(".gif") && !fileName.contains(".webp")) {
-            //防止有些图片没有后缀名
-            fileName = fileName + ".jpg";
-        }
+        String fileName = AppPathUtil.getFileName(bigImgUrl.substring(bigImgUrl.lastIndexOf("/") + 1, bigImgUrl.length()));
         String filePath = (Awen.getSaveImageLocalPath() == null ? AppPathUtil.getBigBitmapCachePath() : Awen.getSaveImageLocalPath()) + fileName;
         if (saveImageLocalPath != null) {
             filePath = saveImageLocalPath + fileName;

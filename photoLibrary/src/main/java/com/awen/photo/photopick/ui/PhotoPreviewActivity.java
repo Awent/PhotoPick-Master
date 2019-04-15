@@ -219,7 +219,13 @@ public class PhotoPreviewActivity extends FrescoBaseActivity implements ViewPage
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.ok && !selectPhotos.isEmpty()) {
+        if (item.getItemId() == R.id.ok) {
+            if (selectPhotos.isEmpty()) {
+                String path = photos.get(pos).getPath();
+                selectPhotos.add(path);
+                checkbox.setChecked(true);
+            }
+
             Intent intent = new Intent();
             intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, selectPhotos);
             setResult(Activity.RESULT_OK, intent);
@@ -373,12 +379,12 @@ public class PhotoPreviewActivity extends FrescoBaseActivity implements ViewPage
             return view == object;
         }
 
-         @Override
+        @Override
         public void finishUpdate(ViewGroup container) {
             try {
                 super.finishUpdate(container);
             } catch (NullPointerException nullPointerException) {
-                Log.d("finishUpdate","Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
+                Log.d("finishUpdate", "Catch the NullPointerException in FragmentPagerAdapter.finishUpdate");
             }
         }
     }

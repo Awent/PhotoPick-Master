@@ -57,4 +57,13 @@ public class AppPathUtil {
             file.mkdirs();
         }
     }
+
+    public static String getFileName(String url) {
+        String fileName = url.substring(url.lastIndexOf("/") + 1, url.length());
+        if (!fileName.endsWith(".jpg") && !fileName.endsWith(".png") && !fileName.endsWith(".jpeg") && !fileName.endsWith(".gif") && !fileName.endsWith(".webp")) {
+            //防止有些图片没有后缀名
+            fileName = fileName + ".jpg";
+        }
+        return fileName;
+    }
 }
