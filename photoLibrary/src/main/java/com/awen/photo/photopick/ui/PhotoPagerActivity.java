@@ -488,7 +488,8 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
 //        Log.e(TAG, "sd card image path = " + (saveImageLocalPath == null ? AppPathUtil.getBigBitmapCachePath() : saveImageLocalPath));
         //保存图片到本地
         String bigImgUrl = photoPagerBean.getBigImgUrls().get(currentPosition);
-        String fileName = AppPathUtil.getFileName(bigImgUrl.substring(bigImgUrl.lastIndexOf("/") + 1, bigImgUrl.length()));
+        String lastName = bigImgUrl.substring(bigImgUrl.lastIndexOf("/") + 1, bigImgUrl.length());
+        String fileName = AppPathUtil.getFileName(lastName);
         String filePath = (Awen.getSaveImageLocalPath() == null ? AppPathUtil.getBigBitmapCachePath() : Awen.getSaveImageLocalPath()) + fileName;
         if (saveImageLocalPath != null) {
             filePath = saveImageLocalPath + fileName;
