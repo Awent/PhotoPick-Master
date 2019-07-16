@@ -87,6 +87,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .setSavaImage(true)
 //                        .setPosition(2)
 //                        .setSaveImageLocalPath("这里是你想保存的图片地址")
+                        .setOnPhotoSaveCallback(new PhotoPagerConfig.Builder.OnPhotoSaveCallback() {//保存网络图片到本地图库的回调
+                            @Override
+                            public void onSaveImageResult(String localFilePath) {
+                                if (localFilePath != null) {
+                                    Toast.makeText(MainActivity.this, "图片保存成功，本地地址：" + localFilePath, Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(MainActivity.this, "图片保存失败", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        })
                         .build();
                 break;
             case R.id.button5://大图展示前先显示小图
@@ -129,12 +139,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 /**
                  * 1、传递数据：实现Parcelable接口，把你想传递的数据封装进Bundle，然后.setBundle(bundle)即可
                  * 2、获取数据：Bundle bundle = getBundle();
-                                if(bundle != null) {
-                                    list = bundle.getParcelableArrayList("test_bundle");
-                                    if (list != null && !list.isEmpty()){
-                                        //you can do something
-                                    }
-                                }
+                 if(bundle != null) {
+                 list = bundle.getParcelableArrayList("test_bundle");
+                 if (list != null && !list.isEmpty()){
+                 //you can do something
+                 }
+                 }
                  */
                 ArrayList<MyPhotoBean> list = new ArrayList<>();
                 for (int i = 0; i < ImageProvider.getImageUrls().size(); i++) {

@@ -18,6 +18,9 @@ public class ImageProvider {
 //        list.add(FrescoImageLoader.getFileUrl("/storage/emulated/0/Pictures/Screenshots/Screenshot_20170919-203120.png"));
 //        list.add(FrescoImageLoader.getFileUrl("/storage/emulated/0/tencent/MicroMsg/WeiXin/mmexport1505817817979.jpg"));
         //网络长图,包括横向和纵向的长图
+        list.add("https://user-images.githubusercontent.com/39898537/61259085-3449aa80-a7ab-11e9-90bb-0359971e3d15.jpg");
+        list.add("https://user-images.githubusercontent.com/39898537/61259086-34e24100-a7ab-11e9-9643-2ad2f50dee6f.jpg");
+        list.add("https://user-images.githubusercontent.com/39898537/61259087-34e24100-a7ab-11e9-9c6c-6b2d8ffa43a1.jpg");
         list.add("https://wx2.sinaimg.cn/mw690/005MctNqgy1fx674gpkbvj30gf4k2wzp.jpg");
         list.add("https://wx2.sinaimg.cn/mw690/0062Xesrgy1fx8uu4ltdyj30j635g47x.jpg");
         list.add("https://wx1.sinaimg.cn/mw690/0062Xesrgy1fx8uu5d856j30j64v0h7z.jpg");

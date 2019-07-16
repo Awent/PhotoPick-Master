@@ -5,6 +5,8 @@ import android.os.Parcelable;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.View;
 
+import com.awen.photo.photopick.controller.PhotoPagerConfig;
+
 import java.util.ArrayList;
 
 /**
@@ -36,6 +38,8 @@ public class PhotoPagerBean implements Parcelable {
      * 是否开启下滑关闭activity，默认开启。类似微信的图片浏览，可下滑关闭一样，但是没有图片归位效果
      */
     private boolean isOpenDownAnimate;
+
+    private PhotoPagerConfig.Builder.OnPhotoSaveCallback onPhotoSaveCallback;
 
     public PhotoPagerBean() {
     }
@@ -177,5 +181,13 @@ public class PhotoPagerBean implements Parcelable {
 
     public void setOpenDownAnimate(boolean openDownAnimate) {
         isOpenDownAnimate = openDownAnimate;
+    }
+
+    public PhotoPagerConfig.Builder.OnPhotoSaveCallback getOnPhotoSaveCallback() {
+        return onPhotoSaveCallback;
+    }
+
+    public void setOnPhotoSaveCallback(PhotoPagerConfig.Builder.OnPhotoSaveCallback onPhotoSaveCallback) {
+        this.onPhotoSaveCallback = onPhotoSaveCallback;
     }
 }

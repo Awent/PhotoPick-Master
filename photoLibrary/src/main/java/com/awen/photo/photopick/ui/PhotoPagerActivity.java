@@ -55,6 +55,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
 import kr.co.namee.permissiongen.PermissionFail;
@@ -101,6 +102,8 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
     private FrameLayout rootLayout;
     private View customView;
 
+    private static PhotoPagerConfig.Builder.OnPhotoSaveCallback onPhotoSaveCallback;
+
     /**
      * 设置自定义view layout
      *
@@ -137,10 +140,11 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
 
     /**
      * 获取当前position的ImageRequest
+     *
      * @return ImageRequest
      */
-    protected ImageRequest getCurrentImageRequest(){
-        if(wkRequest != null && wkRequest.containsKey(currentPosition)){
+    protected ImageRequest getCurrentImageRequest() {
+        if (wkRequest != null && wkRequest.containsKey(currentPosition)) {
             return wkRequest.get(currentPosition);
         }
         return null;
@@ -196,7 +200,7 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
         setCustomView(-1);//设置用户自定义的view
 
         //类似微信图片下拉关闭
-         scalePhotoView = (ScalePhotoView) content.findViewById(R.id.scalePhotoView);
+        scalePhotoView = (ScalePhotoView) content.findViewById(R.id.scalePhotoView);
         scalePhotoView.setOpenDownAnimate(photoPagerBean.isOpenDownAnimate());
         if (photoPagerBean.isOpenDownAnimate()) {
             scalePhotoView.setOnViewTouchListener(new ScalePhotoView.onViewTouchListener() {
@@ -246,7 +250,7 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
      * 图片单击回调
      */
     protected boolean onSingleClick() {
-        if(!hasStop) {
+        if (!hasStop) {
             onBackPressed();
         }
         return false;
@@ -396,6 +400,7 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
         }
         float offsetW = (imageInfo.getWidth() / imageInfo.getHeight()) - (screenWith / screenHeight);
         float offsetH = (imageInfo.getHeight() / imageInfo.getWidth()) - (screenHeight / screenWith);
+//        Log.e(TAG,"offsetW = " + offsetW + ",offsetH = " + offsetH);
         if (offsetW > 1.0f) {//横向长图
             return loadLongPhoto(0, uri, screenHeight / imageInfo.getHeight());
         } else if (offsetH > 0.8f) {//纵向长图
@@ -441,11 +446,11 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
             imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP);
             imageView.setImage(imageSource, new ImageViewState(0, new PointF(0, 0), SubsamplingScaleImageView.ORIENTATION_0));
         } else {//横向长图
-            if (file != null) {
-                //因为这里展示的是原图，不是经过fresco压缩的bitmap，这里拿到图片的原始宽高，从新计算最大缩放比
-                hScale = screenHeight / BitmapUtil.getImageSize(file.getAbsolutePath())[1];
-            }
-            imageView.setMaxScale(hScale);
+//            if (file != null) {
+//                //因为这里展示的是原图，不是经过fresco压缩的bitmap，这里拿到图片的原始宽高，从新计算最大缩放比
+//                hScale = screenHeight / BitmapUtil.getImageSize(file.getAbsolutePath())[1];
+//            }
+//            imageView.setMaxScale(hScale);
             imageView.setImage(imageSource);
         }
         imageView.setOnClickListener(onClickListener);
@@ -497,8 +502,12 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
 //        Log.e(TAG, "save image fileName = " + fileName);
 //        Log.e(TAG, "save image path = " + filePath);
         boolean state = saveImage(filePath);
-        String tips = state ? getString(R.string.save_image_aready, filePath) : getString(R.string.saved_faild);
-        Toast.makeText(PhotoPagerActivity.this, tips, Toast.LENGTH_SHORT).show();
+        if (onPhotoSaveCallback != null) {
+            onPhotoSaveCallback.onSaveImageResult(state ? filePath : null);
+        } else {
+            String tips = state ? getString(R.string.save_image_aready, filePath) : getString(R.string.saved_faild);
+            Toast.makeText(PhotoPagerActivity.this, tips, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @PermissionFail(requestCode = REQUEST_CODE)
@@ -546,7 +555,12 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
         return state;
     }
 
+    public static void setOnPhotoSaveCallback(PhotoPagerConfig.Builder.OnPhotoSaveCallback onPhotoSaveCallback) {
+        PhotoPagerActivity.onPhotoSaveCallback = onPhotoSaveCallback;
+    }
+
     private boolean hasStop;
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -568,7 +582,8 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
             viewPager = null;
         }
         photoPagerBean = null;
-        hasStop=true;
+        hasStop = true;
+        onPhotoSaveCallback = null;
     }
 
     @Override

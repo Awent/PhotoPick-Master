@@ -45,6 +45,7 @@ public class PhotoPagerConfig {
         if (photoPagerBean.getPagePosition() > photoPagerBean.getBigImgUrls().size()) {
             throw new IndexOutOfBoundsException("show position out bigImageUrls size,position = " + photoPagerBean.getPagePosition() + ",bigImageUrls size = " + photoPagerBean.getBigImgUrls().size());
         }
+        PhotoPagerActivity.setOnPhotoSaveCallback(builder.photoPagerBean.getOnPhotoSaveCallback());
         Bundle bundle = new Bundle();
         bundle.putParcelable(EXTRA_PAGER_BEAN, photoPagerBean);
         Intent intent = new Intent(activity, builder.clazz);
@@ -131,10 +132,11 @@ public class PhotoPagerConfig {
         }
 
         /**
-         *  p:更名为small,不使用low了，感觉很不好
-         * @deprecated use {@link #setSmallImageUrls(List)}
+         * p:更名为small,不使用low了，感觉很不好
+         *
          * @param lowImgUrls 小图图片的url
          * @return Builder
+         * @deprecated use {@link #setSmallImageUrls(List)}
          */
         public Builder setLowImageUrls(List<String> lowImgUrls) {
             setSmallImageUrls(lowImgUrls);
@@ -188,6 +190,7 @@ public class PhotoPagerConfig {
 
         /**
          * 设置用户想传递的bundle
+         *
          * @param bundle
          * @return
          */
@@ -198,6 +201,7 @@ public class PhotoPagerConfig {
 
         /**
          * 是否开启下滑关闭activity，默认开启。类似微信的图片浏览，可下滑关闭一样，但是没有图片归位效果
+         *
          * @param isOpenDownAnimate default true
          * @return
          */
@@ -220,8 +224,29 @@ public class PhotoPagerConfig {
             return this;
         }
 
+        /**
+         * 保存图片到图库的回调
+         * @param onPhotoSaveCallback
+         * @return
+         */
+        public Builder setOnPhotoSaveCallback(OnPhotoSaveCallback onPhotoSaveCallback){
+            photoPagerBean.setOnPhotoSaveCallback(onPhotoSaveCallback);
+            return this;
+        }
+
         public PhotoPagerConfig build() {
             return new PhotoPagerConfig(context, this);
+        }
+
+        /**
+         * 保存图片到本地图库的回调
+         */
+        public interface OnPhotoSaveCallback {
+            /**
+             * 成功则返回路径，失败返回null
+             * @param localFilePath
+             */
+            void onSaveImageResult(String localFilePath);
         }
     }
 

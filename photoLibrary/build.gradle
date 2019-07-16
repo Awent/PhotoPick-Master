@@ -37,6 +37,6 @@ dependencies {
     //android6.0权限工具类
     implementation 'com.lovedise:permissiongen:0.1.1'
     //加载超长图必备库
-    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.9.0'
+    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     implementation "com.android.support:support-v4:${rootProject.ext.android.supportVersion}"
 }
