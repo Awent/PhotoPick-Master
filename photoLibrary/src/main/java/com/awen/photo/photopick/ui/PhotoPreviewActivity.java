@@ -422,7 +422,7 @@ public class PhotoPreviewActivity extends FrescoBaseActivity implements ViewPage
      */
     private SubsamplingScaleImageView loadLongPhoto(File file, int orientation, int hScale) {
         SubsamplingScaleImageView imageView = new SubsamplingScaleImageView(this);
-        imageView.setDebug(true);
+//        imageView.setDebug(true);
         imageView.setOnClickListener(onClickListener);
         imageView.setBackgroundColor(getResources().getColor(android.R.color.black));
         if (file != null && file.exists()) {
