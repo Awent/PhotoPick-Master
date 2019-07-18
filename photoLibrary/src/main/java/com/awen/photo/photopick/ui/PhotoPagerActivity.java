@@ -512,28 +512,32 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
 
     @PermissionFail(requestCode = REQUEST_CODE)
     private void startPermissionSDFaild() {
-        new android.app.AlertDialog.Builder(this)
-                .setMessage(getString(R.string.permission_tip_SD))
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                }).setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                PermissionUtil.startSystemSettingActivity(PhotoPagerActivity.this);
-            }
-        }).setCancelable(false).show();
+        if (!isFinishing()) {
+            new android.app.AlertDialog.Builder(this)
+                    .setMessage(getString(R.string.permission_tip_SD))
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    }).setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    PermissionUtil.startSystemSettingActivity(PhotoPagerActivity.this);
+                }
+            }).setCancelable(false).show();
+        }
     }
 
     private void saveImageDialog() {
-        new AlertDialog.Builder(this)
-                .setItems(new String[]{getString(R.string.save_big_image)}, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        saveImage();
-                    }
-                }).show();
+        if (!isFinishing()) {
+            new AlertDialog.Builder(PhotoPagerActivity.this)
+                    .setItems(new String[]{getString(R.string.save_big_image)}, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            saveImage();
+                        }
+                    }).show();
+        }
     }
 
     /**
