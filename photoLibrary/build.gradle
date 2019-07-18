@@ -9,7 +9,7 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion rootProject.ext.android.targetSdkVersion
-        versionCode 22
+        versionCode 23
         versionName "2.06"
     }
     buildTypes {
