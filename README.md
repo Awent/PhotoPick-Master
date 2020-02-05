@@ -51,7 +51,25 @@ ext {
 2、然后在module gradle dependencies 添加以下依赖，如果添加失败，请打开vpn后重试
 
 ```
-implementation 'com.github.Awent:PhotoPick-Master:v2.4'
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.android.supportVersion}"
+    implementation "com.android.support:recyclerview-v7:${rootProject.ext.android.supportVersion}"
+    implementation "com.facebook.fresco:fresco:${rootProject.ext.android.frescoVersion}"
+    // 支持 GIF 动图，需要添加
+    implementation "com.facebook.fresco:animated-gif:${rootProject.ext.android.frescoVersion}"
+    // 支持 WebP （静态图+动图），需要添加
+    implementation "com.facebook.fresco:animated-webp:${rootProject.ext.android.frescoVersion}"
+    implementation "com.facebook.fresco:webpsupport:${rootProject.ext.android.frescoVersion}"
+    //跟随viewpager的点
+    implementation 'me.relex:circleindicator:1.1.8@aar'
+    //上滑控制面板,项目中的potopick中有使用案例
+    implementation 'com.sothree.slidinguppanel:library:3.3.0'
+    //android6.0权限工具类
+    implementation 'com.lovedise:permissiongen:0.1.1'
+    //加载超长图必备库
+    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
+    implementation "com.android.support:support-v4:${rootProject.ext.android.supportVersion}"
+    //图库
+    implementation 'com.github.Awent:PhotoPick-Master:v2.8'
 ```
 
 3、然后在你的Application的onCreate()方法里初始化即可使用
@@ -166,9 +184,9 @@ new PhotoPagerConfig.Builder(this,Class<?> clazz)       //这里传入你自定�
 ```
 
 
-### v2.4
+### v2.8
 2019-07-19
-implementation 'com.github.Awent:PhotoPick-Master:v2.4'
+implementation 'com.github.Awent:PhotoPick-Master:v2.8'
 修复优化:
 1、fix bug
 2、使用aip导入依赖包，已经导入的包不用再导入一次
