@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+
 import com.awen.photo.R;
 import com.awen.photo.photopick.bean.Photo;
 import com.awen.photo.photopick.bean.PhotoPickBean;
@@ -25,8 +26,10 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import kr.co.namee.permissiongen.PermissionGen;
 
 /**
@@ -64,7 +67,7 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo_pick, parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo_pick, parent, false);
         return new ViewHolder(view);
     }
 
@@ -218,9 +221,15 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
     }
 
     public void destroy() {
-        photos.clear();
-        selectPhotos.clear();
-        previewPhotos.clear();
+        if (photos != null) {
+            photos.clear();
+        }
+        if (selectPhotos != null) {
+            selectPhotos.clear();
+        }
+        if (previewPhotos != null) {
+            previewPhotos.clear();
+        }
         photos = null;
         selectPhotos = null;
         previewPhotos = null;

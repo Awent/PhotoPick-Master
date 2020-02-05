@@ -239,22 +239,28 @@ public class PhotoPickActivity extends FrescoBaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.ok) {
-            if (adapter != null && !adapter.getSelectPhotos().isEmpty()) {
-                Intent intent = new Intent();
-                intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, adapter.getSelectPhotos());
-                setResult(Activity.RESULT_OK, intent);
+            if(adapter != null){
+                ArrayList<String> photos = adapter.getSelectPhotos();
+                if(photos != null && !photos.isEmpty()){
+                    Intent intent = new Intent();
+                    intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, photos);
+                    setResult(Activity.RESULT_OK, intent);
 //                String s = "已选择的图片大小 = " + adapter.getSelectPhotos().size() + "\n" + adapter.getSelectPhotos().toString();
 //                Toast.makeText(this, s, Toast.LENGTH_LONG).show();
-                onPhotoResultBack(adapter.getSelectPhotos(),false);
+                    onPhotoResultBack(photos,false);
+                }
             }
             return true;
         }else if(item.getItemId() == R.id.preview){//图片预览
-            if (adapter != null && !adapter.getSelectPhotos().isEmpty()) {
-                new PhotoPreviewConfig.Builder(this)
-                        .setMaxPickSize(pickBean.getMaxPickSize())
-                        .setOriginalPicture(pickBean.isOriginalPicture())
-                        .setPreview(true)
-                        .build();
+            if(adapter != null){
+                ArrayList<String> photos = adapter.getSelectPhotos();
+                if(photos != null && !photos.isEmpty()){
+                    new PhotoPreviewConfig.Builder(this)
+                            .setMaxPickSize(pickBean.getMaxPickSize())
+                            .setOriginalPicture(pickBean.isOriginalPicture())
+                            .setPreview(true)
+                            .build();
+                }
             }
             return true;
         }

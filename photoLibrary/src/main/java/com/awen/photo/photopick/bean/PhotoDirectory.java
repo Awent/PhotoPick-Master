@@ -1,5 +1,7 @@
 package com.awen.photo.photopick.bean;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class PhotoDirectory {
         if (!(o instanceof PhotoDirectory)) return false;
 
         PhotoDirectory directory = (PhotoDirectory) o;
-
+        if(TextUtils.isEmpty(id)) return false;
         if (!id.equals(directory.id)) return false;
         return name.equals(directory.name);
     }
