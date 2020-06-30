@@ -186,7 +186,7 @@ new PhotoPagerConfig.Builder(this,Class<?> clazz)       //这里传入你自定�
 ### v2.9
 2020-06-30
 implementation 'com.github.Awent:PhotoPick-Master:v2.9'
-适配android 10黑暗模式，根据系统切换
+适配android 10黑暗模式，跟随系统切换
 
 
 ### v2.8
