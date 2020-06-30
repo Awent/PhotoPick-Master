@@ -7,10 +7,10 @@ android {
     buildToolsVersion rootProject.ext.android.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion rootProject.ext.android.targetSdkVersion
-        versionCode 28
-        versionName "2.8"
+        versionCode 29
+        versionName "2.9"
     }
     buildTypes {
         release {

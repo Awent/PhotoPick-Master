@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.awen.photo.photopick.data.Data;
 import com.awen.photo.photopick.bean.PhotoDirectory;

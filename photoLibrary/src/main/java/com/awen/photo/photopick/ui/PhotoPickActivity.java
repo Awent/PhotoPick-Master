@@ -35,6 +35,7 @@ import com.awen.photo.photopick.loader.MediaStoreHelper;
 import com.awen.photo.photopick.util.PermissionUtil;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,12 +92,12 @@ public class PhotoPickActivity extends FrescoBaseActivity {
 
     private void startInit() {
         toolbar.setTitle(R.string.select_photo);
-        RecyclerView recyclerView = (RecyclerView) this.findViewById(R.id.recyclerView);
+        final RecyclerView recyclerView = (RecyclerView) this.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, pickBean.getSpanCount()));
         adapter = new PhotoPickAdapter(this, pickBean);
         recyclerView.setAdapter(adapter);
 
-        RecyclerView gallery_rv = (RecyclerView) this.findViewById(R.id.gallery_rv);
+        final RecyclerView gallery_rv = (RecyclerView) this.findViewById(R.id.gallery_rv);
         gallery_rv.setLayoutManager(new LinearLayoutManager(this));
         galleryAdapter = new PhotoGalleryAdapter(this);
         gallery_rv.setAdapter(galleryAdapter);
@@ -117,28 +118,15 @@ public class PhotoPickActivity extends FrescoBaseActivity {
                 }
             }
         });
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage(getString(R.string.loading));
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-        final long start = System.currentTimeMillis();
-//        MediaStoreHelper.getPhotoDirs(this, bundle, new MediaStoreHelper.PhotosResultCallback() {
-//            @Override
-//            public void onResultCallback(List<PhotoDirectory> directories) {
-//                DLog.e(TAG,"use time = " + (System.currentTimeMillis() - start));
-//                dismissProgressDialog();
-//                adapter.refresh(directories.get(0).getPhotos());
-//                galleryAdapter.refresh(directories);
-//            }
-//        });
         MediaStoreHelper.getPhotoDirs(this, pickBean.isShowGif(), new MediaStoreHelper.PhotosResultCallback() {
             @Override
             public void onResultCallback(final List<PhotoDirectory> directories) {
+                if(directories.isEmpty()){
+                    return;
+                }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e(TAG, "use time = " + (System.currentTimeMillis() - start));
-                        progressDialog.dismiss();
                         adapter.refresh(directories.get(0).getPhotos());
                         galleryAdapter.refresh(directories);
                     }
@@ -177,20 +165,20 @@ public class PhotoPickActivity extends FrescoBaseActivity {
 
     @PermissionSuccess(requestCode = REQUEST_CODE_PERMISSION_CAMERA)
     private void selectPicFromCameraSuccess() {
-        Log.e(TAG, "selectPicFromCameraSuccess");
+//        Log.e(TAG, "selectPicFromCameraSuccess");
         selectPicFromCamera();
     }
 
     @PermissionFail(requestCode = REQUEST_CODE_PERMISSION_CAMERA)
     private void selectPicFromCameraFailed() {
-        Log.e(TAG, "selectPicFromCameraFailed");
+//        Log.e(TAG, "selectPicFromCameraFailed");
         PermissionUtil.showSystemSettingDialog(this, getString(R.string.permission_tip_camera));
     }
 
     @PermissionSuccess(requestCode = REQUEST_CODE_PERMISSION_SD)
     private void startPermissionSDSuccess() {
         startInit();
-        Log.e(TAG, "startPermissionSuccess");
+//        Log.e(TAG, "startPermissionSuccess");
     }
 
     @PermissionFail(requestCode = REQUEST_CODE_PERMISSION_SD)
@@ -209,7 +197,7 @@ public class PhotoPickActivity extends FrescoBaseActivity {
                 finish();
             }
         }).setCancelable(false).show();
-        Log.e(TAG, "startPermissionFailed");
+//        Log.e(TAG, "startPermissionFailed");
     }
 
     /**
@@ -385,7 +373,7 @@ public class PhotoPickActivity extends FrescoBaseActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(0, R.anim.image_pager_exit_animation);
+        overridePendingTransition(0, R.anim.bottom_out);
     }
 
     @Override

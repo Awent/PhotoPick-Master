@@ -17,18 +17,6 @@ public class PhotoCursorLoader {
     private final static String IMAGE_GIF = "image/gif";
     private final static String IMAGE_WEBP = "image/webp";
 
-    private final String[] IMAGE_PROJECTION = {
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.DATA,
-            MediaStore.Images.Media.BUCKET_ID,
-            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-            MediaStore.Images.Media.DATE_ADDED,
-            MediaStore.Images.Media.SIZE,
-            MediaStore.Images.Media.MIME_TYPE
-//            MediaStore.Images.Media.WIDTH,
-//            MediaStore.Images.Media.HEIGHT
-    };
-
     @NonNull
     private Uri uri;
     @Nullable
@@ -43,6 +31,17 @@ public class PhotoCursorLoader {
     private boolean showGif;
 
     public PhotoCursorLoader() {
+        String[] IMAGE_PROJECTION = {
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATA,
+                MediaStore.Images.Media.BUCKET_ID,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.Media.WIDTH,
+                MediaStore.Images.Media.HEIGHT
+        };
         //default ，默认配置
         setShowGif(true);//展示gif
         setUri(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

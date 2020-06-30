@@ -17,8 +17,10 @@ import static android.provider.MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAM
 import static android.provider.MediaStore.Images.ImageColumns.BUCKET_ID;
 import static android.provider.MediaStore.MediaColumns.DATA;
 import static android.provider.MediaStore.MediaColumns.DATE_ADDED;
+import static android.provider.MediaStore.MediaColumns.HEIGHT;
 import static android.provider.MediaStore.MediaColumns.SIZE;
 import static android.provider.MediaStore.MediaColumns.MIME_TYPE;
+import static android.provider.MediaStore.MediaColumns.WIDTH;
 
 /**
  * Created by Awen <Awentljs@gmail.com>
@@ -39,15 +41,20 @@ public class Data {
             String path = data.getString(data.getColumnIndexOrThrow(DATA));
             long size = data.getLong(data.getColumnIndexOrThrow(SIZE));
             String mimeType = data.getString(data.getColumnIndexOrThrow(MIME_TYPE));
+            int width = data.getInt(data.getColumnIndexOrThrow(WIDTH));
+            int height = data.getInt(data.getColumnIndexOrThrow(HEIGHT));
+
             Photo photo = new Photo();
 
-            if(size <= 0 || BitmapUtil.checkImgCorrupted(photo,path)){
+            if(size <= 0/**  || BitmapUtil.checkImgCorrupted(photo,path) */){
                 continue;
             }
             photo.setId(imageId);
             photo.setPath(path);
             photo.setSize(size);
             photo.setMimeType(mimeType);
+            photo.setWidth(width);
+            photo.setHeight(height);
             PhotoDirectory photoDirectory = new PhotoDirectory();
             photoDirectory.setId(bucketId);
             photoDirectory.setName(name);

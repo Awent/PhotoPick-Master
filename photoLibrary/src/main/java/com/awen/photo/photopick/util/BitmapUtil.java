@@ -28,6 +28,7 @@ public class BitmapUtil {
      *
      * @return false为不损坏，true为损坏
      */
+    @Deprecated
     public static boolean checkImgCorrupted(Photo photo, String filePath) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;

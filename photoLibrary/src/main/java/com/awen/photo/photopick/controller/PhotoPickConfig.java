@@ -27,7 +27,7 @@ import com.awen.photo.photopick.ui.PhotoPickActivity;
  */
 public class PhotoPickConfig {
 
-    public static int MODE_SINGLE_PICK = 1;//单选模式
+    public static int MODE_SINGLE_PICK = 1;//default 单选模式
 
     public static int MODE_MULTIP_PICK = 2;//多选
 
@@ -73,7 +73,7 @@ public class PhotoPickConfig {
         intent.putExtra(EXTRA_PICK_BUNDLE, bundle);
         intent.setClass(context, PhotoPickActivity.class);
         context.startActivityForResult(intent, PICK_REQUEST_CODE);
-        context.overridePendingTransition(R.anim.image_pager_enter_animation, 0);
+        context.overridePendingTransition(R.anim.bottom_in, 0);
     }
 
     public static class Builder {

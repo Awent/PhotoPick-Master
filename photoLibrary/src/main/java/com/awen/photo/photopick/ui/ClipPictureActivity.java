@@ -79,4 +79,10 @@ public class ClipPictureActivity extends FrescoBaseActivity {
             bitmap.recycle();
         }
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.bottom_out);
+    }
 }

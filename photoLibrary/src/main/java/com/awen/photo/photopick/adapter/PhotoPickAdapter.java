@@ -180,6 +180,7 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
         Intent intent = new Intent(context, ClipPictureActivity.class);
         intent.putExtra(ClipPictureActivity.USER_PHOTO_PATH, picPath);
         ((Activity) context).startActivityForResult(intent, PhotoPickActivity.REQUEST_CODE_CLIPIC);
+        ((Activity) context).overridePendingTransition(R.anim.bottom_in, 0);
     }
 
     /**

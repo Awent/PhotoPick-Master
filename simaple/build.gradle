@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.simaple"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode 1
         versionName "1.0"
