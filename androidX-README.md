@@ -1,24 +1,6 @@
-﻿### (由于本人时间跟精力有限，项目已停止维护)
-
-# PhotoPick-Master
-我把项目中做的图库抽了出来，本项目中包括了以下内容：1、图库选图，可多选，单选，可选完图片后进行裁剪，2、查看大图(包括sd卡，res，网络图)，并可以保存到手机图库,3、适配沉浸式状态栏 ,4 、使用fresco加载图片(图片是随便网上找的，性感吧- -!)
-
-下面来看几张效果图：
-
-![image](https://github.com/Awent/PhotoPick-Master/blob/master/pictrue/304079-052c8fd0c9d22efd.gif)
-
-![image](https://github.com/Awent/PhotoPick-Master/blob/master/pictrue/304079-8d726553c6c0b6ba.gif)
-
-![image](https://github.com/Awent/PhotoPick-Master/blob/master/pictrue/304079-e4c819f695ed83c0.gif)
-
-![image](https://github.com/Awent/PhotoPick-Master/blob/master/pictrue/device-2017-10-25-033458.png)
-
-你可以先[下载apk](https://github.com/Awent/PhotoPick-Master/blob/master/simaple/simaple-release.apk)运行看下，apk比较大，里面有几张很大的长图
 
 
-![tips.png](http://upload-images.jianshu.io/upload_images/304079-2344f7ec6b950a05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
-项目我已经挂载在[github](https://github.com/Awent/PhotoPick-Master)，如果有需要的朋友，欢迎fork，项目有什么issue可以在这里留言，也可以[点击这里](https://github.com/Awent/PhotoPick-Master/issues)进行commit。希望能帮到你。
+# 下面讲解如何导入到你的项目中
 
 
 1、在你的root gradle(也就是项目最外层的gradle)添加如下代码
