@@ -7,9 +7,10 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 
 import com.awen.photo.R;
 
@@ -43,7 +44,7 @@ public class PermissionUtil {
                 PermissionUtil.REQUEST_CODE_ASK_PERMISSIONS);
     }
 
-    public static void showSystemSettingDialog(@NonNull final Activity activity,@NonNull String tips){
+    public static void showSystemSettingDialog(@NonNull final Activity activity, @NonNull String tips){
         new AlertDialog.Builder(activity)
                 .setMessage(tips)
                 .setNegativeButton(R.string.cancel, null)

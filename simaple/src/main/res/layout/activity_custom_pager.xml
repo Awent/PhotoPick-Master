@@ -50,7 +50,7 @@
             android:layout_alignParentRight="true"
             android:text="确定" />
 
-        <android.support.v7.widget.AppCompatEditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

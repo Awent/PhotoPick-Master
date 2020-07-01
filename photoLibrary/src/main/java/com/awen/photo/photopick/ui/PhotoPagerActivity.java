@@ -7,12 +7,6 @@ import android.graphics.PointF;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,13 +15,19 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import com.awen.photo.Awen;
 import com.awen.photo.FrescoBaseActivity;
 import com.awen.photo.FrescoImageLoader;
 import com.awen.photo.R;
 import com.awen.photo.photopick.bean.PhotoPagerBean;
 import com.awen.photo.photopick.util.AppPathUtil;
-import com.awen.photo.photopick.util.BitmapUtil;
 import com.awen.photo.photopick.util.ImageUtils;
 import com.awen.photo.photopick.util.PermissionUtil;
 import com.awen.photo.photopick.controller.PhotoPagerConfig;
@@ -55,7 +55,6 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
 import kr.co.namee.permissiongen.PermissionFail;

@@ -22,5 +22,5 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':photoLibrary')
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.android.supportVersion}"
+    implementation "androidx.appcompat:appcompat:${rootProject.ext.android.androidxVersion}"
 }

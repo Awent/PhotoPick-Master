@@ -1,11 +1,11 @@
 package com.awen.photo.photopick.widget;
 
 import android.content.Context;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.ViewParent;
+
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * Hacky fix for Issue #4 and

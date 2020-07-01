@@ -4,11 +4,12 @@ import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.widget.ScrollerCompat;
-import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.widget.ScrollerCompat;
+
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;

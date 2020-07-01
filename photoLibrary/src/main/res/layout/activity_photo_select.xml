@@ -26,7 +26,7 @@
             android:paddingLeft="@dimen/layout_padding_16dp"
             android:paddingRight="@dimen/layout_padding_16dp">
 
-            <android.support.v7.widget.AppCompatRadioButton
+            <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/radioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
                 android:textColor="@android:color/white"
                 android:theme="@style/PhoCheckBox" />
 
-            <android.support.v7.widget.AppCompatCheckBox
+            <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

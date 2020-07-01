@@ -1,8 +1,9 @@
 package com.awen.photo;
 
 import android.content.Context;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 
 import com.awen.photo.photopick.util.FileSizeUtil;
 import com.awen.photo.photopick.util.ImagePipelineConfigFactory;

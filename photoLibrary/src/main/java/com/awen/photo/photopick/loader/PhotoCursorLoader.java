@@ -2,8 +2,9 @@ package com.awen.photo.photopick.loader;
 
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import static android.provider.MediaStore.MediaColumns.MIME_TYPE;
 

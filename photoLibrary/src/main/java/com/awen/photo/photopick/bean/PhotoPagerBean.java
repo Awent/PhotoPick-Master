@@ -2,8 +2,6 @@ package com.awen.photo.photopick.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v7.widget.GridLayoutManager;
-import android.view.View;
 
 import com.awen.photo.photopick.controller.PhotoPagerConfig;
 

@@ -2,10 +2,11 @@ package com.awen.photo.photopick.widget.photodraweeview;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+
+import androidx.annotation.NonNull;
 
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;

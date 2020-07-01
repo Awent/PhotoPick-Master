@@ -3,9 +3,6 @@ package com.awen.photo.photopick.controller;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.view.View;
-
 import com.awen.photo.Awen;
 import com.awen.photo.R;
 import com.awen.photo.photopick.bean.PhotoPagerBean;
