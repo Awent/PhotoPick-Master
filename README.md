@@ -69,7 +69,7 @@ ext {
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     implementation "com.android.support:support-v4:${rootProject.ext.android.supportVersion}"
     //图库
-    implementation 'com.github.Awent:PhotoPick-Master:v2.8'
+    implementation 'com.github.Awent:PhotoPick-Master:v2.9'
 ```
 
 3、然后在你的Application的onCreate()方法里初始化即可使用
@@ -182,6 +182,11 @@ new PhotoPagerConfig.Builder(this,Class<?> clazz)       //这里传入你自定�
 参考simple中的proguard-rules文件
 
 ```
+
+### v2.9
+2020-06-30
+implementation 'com.github.Awent:PhotoPick-Master:v2.9'
+适配android 10黑暗模式，跟随系统切换
 
 
 ### v2.8
