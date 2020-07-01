@@ -20,8 +20,6 @@
 
 项目我已经挂载在[github](https://github.com/Awent/PhotoPick-Master)，如果有需要的朋友，欢迎fork，项目有什么issue可以在这里留言，也可以[点击这里](https://github.com/Awent/PhotoPick-Master/issues)进行commit。希望能帮到你。
 
-##下面讲解如何引入到你的项目中
-以下是implementation引入方式，如果是compile引入，请参考[v1.096](https://github.com/Awent/PhotoPick-Master/blob/master/v1.096-README.md)
 
 1、在你的root gradle(也就是项目最外层的gradle)添加如下代码
 
