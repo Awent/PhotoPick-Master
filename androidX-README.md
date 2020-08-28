@@ -175,7 +175,7 @@ FrescoImageLoader.setToolbarBackGround(R.color.black);
 2020-08-28
 implementation 'com.github.Awent:PhotoPick-Master:v3.1'
 
-解决由于BaseBitmapDataSubscriber导致的内存泄漏问题，提交的问题跟官方给出的解决方案是不行的
+解决由于BaseBitmapDataSubscriber导致的内存泄漏问题，提交的问题跟官方给出的解决方案是不行的,只能自己去解决，有用到查看网络大图功能的都建议更新此版本
 https://github.com/facebook/fresco/issues/2530
 
 
