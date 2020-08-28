@@ -1,4 +1,4 @@
-﻿### (由于本人时间跟精力有限，项目已停止维护)
+﻿
 # [已适配androidX的点这里](https://github.com/Awent/PhotoPick-Master/blob/master/androidX-README.md)
 
 # PhotoPick-Master
