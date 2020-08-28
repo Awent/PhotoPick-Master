@@ -49,7 +49,7 @@ ext {
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     implementation "androidx.legacy:legacy-support-v4:${rootProject.ext.android.androidxVersion}"
     //图库
-    implementation 'com.github.Awent:PhotoPick-Master:v3.0'
+    implementation 'com.github.Awent:PhotoPick-Master:v3.1'
 ```
 
 3、然后在你的Application的onCreate()方法里初始化即可使用
@@ -171,11 +171,19 @@ FrescoImageLoader.setToolbarBackGround(R.color.black);
 ```
 
 
+### v3.1
+2020-08-28
+implementation 'com.github.Awent:PhotoPick-Master:v3.1'
+
+解决由于BaseBitmapDataSubscriber导致的内存泄漏问题，提交的问题跟官方给出的解决方案是不行的
+https://github.com/facebook/fresco/issues/2530
+
 
 
 ### v3.0
 2020-07-01
 implementation 'com.github.Awent:PhotoPick-Master:v3.0'
+
 适配androidX，如果自己项目不适配androidX的请使用v2.9版本
 
 
