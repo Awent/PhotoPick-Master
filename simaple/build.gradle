@@ -23,4 +23,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':photoLibrary')
     implementation "androidx.appcompat:appcompat:${rootProject.ext.android.androidxVersion}"
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.1'
 }

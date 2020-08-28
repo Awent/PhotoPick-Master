@@ -26,6 +26,7 @@ import com.awen.photo.Awen;
 import com.awen.photo.FrescoBaseActivity;
 import com.awen.photo.FrescoImageLoader;
 import com.awen.photo.R;
+import com.awen.photo.photopick.bean.PageReferenceBean;
 import com.awen.photo.photopick.bean.PhotoPagerBean;
 import com.awen.photo.photopick.util.AppPathUtil;
 import com.awen.photo.photopick.util.ImageUtils;
@@ -55,6 +56,11 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 import kr.co.namee.permissiongen.PermissionFail;
@@ -94,6 +100,7 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
     private WeakHashMap<Integer, ImageRequest> wkRequest;
     protected int currentPosition;
     //-end
+    private SamplePagerAdapter pagerAdapter;
 
     private ScalePhotoView scalePhotoView;
     private int screenWith, screenHeight;
@@ -170,7 +177,8 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
 
         indicator = (CircleIndicator) content.findViewById(R.id.indicator);
         viewPager = (ViewPager) content.findViewById(R.id.pager);
-        viewPager.setAdapter(new SamplePagerAdapter());
+        pagerAdapter = new SamplePagerAdapter();
+        viewPager.setAdapter(pagerAdapter);
         setIndicatorVisibility(true);
         if (savedInstanceState != null) {
             photoPagerBean.setPagePosition(savedInstanceState.getInt(STATE_POSITION));
@@ -284,17 +292,25 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
     }
 
     private class SamplePagerAdapter extends PagerAdapter {
+        private Map<Integer,PageReferenceBean> rfMap;
+
+        public void clear() {
+            if(rfMap != null){
+                rfMap.clear();
+                rfMap = null;
+            }
+        }
 
         @Override
         public int getCount() {
             return photoPagerBean.getBigImgUrls() == null ? 0 : photoPagerBean.getBigImgUrls().size();
         }
 
+        @NonNull
         @Override
-        public View instantiateItem(ViewGroup container, final int position) {
+        public View instantiateItem(@NonNull ViewGroup container, final int position) {
             final FrameLayout parent = new FrameLayout(container.getContext());
             parent.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
             final PhotoDraweeView mPhotoDraweeView = new PhotoDraweeView(container.getContext());
             mPhotoDraweeView.setOnViewTapListener(onViewTapListener);
             mPhotoDraweeView.setOnTouchEventAndScaleChangeListener(scalePhotoView.getOnTouchEventAndScaleChangeListener());
@@ -307,7 +323,8 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
             //大图,包括长图，gif
             final String bigImgUrl = photoPagerBean.getBigImgUrls().get(position);
             //小图，可在大图前进行展示
-            String smallImgUrl = (photoPagerBean.getSmallImgUrls() == null || photoPagerBean.getSmallImgUrls().isEmpty()) ? "" : photoPagerBean.getSmallImgUrls().get(position);
+            String smallImgUrl = (photoPagerBean.getSmallImgUrls() == null
+                    || photoPagerBean.getSmallImgUrls().isEmpty()) ? "" : photoPagerBean.getSmallImgUrls().get(position);
             final Uri uri = Uri.parse(bigImgUrl);
             final ImageRequest request = ImageRequestBuilder
                     .newBuilderWithSource(uri)
@@ -340,28 +357,11 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
             ImagePipeline imagePipeline = Fresco.getImagePipeline();
             DataSource<CloseableReference<CloseableImage>>
                     dataSource = imagePipeline.fetchDecodedImage(request, null);
-            dataSource.subscribe(new BaseBitmapDataSubscriber() {
-
-                                     @Override
-                                     public void onNewResultImpl(@Nullable Bitmap bitmap) {
-                                         // You can use the bitmap in only limited ways
-                                         // No need to do any cleanup.
-                                         if (wkRequest == null) {
-                                             wkRequest = new WeakHashMap<>();
-                                         }
-                                         wkRequest.put(position, request);
-                                         if (saveImage) {
-                                             //图片下载完成并且开启图片保存才给长按保存
-                                             mPhotoDraweeView.setOnLongClickListener(PhotoPagerActivity.this);
-                                         }
-                                     }
-
-                                     @Override
-                                     public void onFailureImpl(DataSource dataSource) {
-                                         // No cleanup required here.
-                                     }
-                                 },
-                    CallerThreadExecutor.getInstance());
+            if (rfMap == null) {
+                rfMap = new HashMap<>(getCount());
+            }
+            rfMap.put(position,new PageReferenceBean(request, mPhotoDraweeView));
+            dataSource.subscribe(new MyBaseBitmapDataSubscriber(this,position),CallerThreadExecutor.getInstance());
             mPhotoDraweeView.setController(controller);
             parent.addView(mPhotoDraweeView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 //            container.addView(subsamplingScaleImageView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -370,11 +370,13 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             if (wkRequest != null && wkRequest.containsKey(position)) {
                 wkRequest.remove(position);
             }
-            if (photoPagerBean != null && photoPagerBean.getBigImgUrls().size() > 0 && position < photoPagerBean.getBigImgUrls().size()) {
+            if (photoPagerBean != null
+                    && photoPagerBean.getBigImgUrls().size() > 0
+                    && position < photoPagerBean.getBigImgUrls().size()) {
                 View view = ((FrameLayout) object).findViewWithTag(position);
                 if (view != null && view instanceof SubsamplingScaleImageView) {
                     SubsamplingScaleImageView imageView = (SubsamplingScaleImageView) view;
@@ -386,10 +388,53 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
             return view == object;
         }
 
+        public void onBitmapDel(int position) {
+            if (wkRequest == null) {
+                wkRequest = new WeakHashMap<>();
+            }
+            PageReferenceBean bean = rfMap.get(position);
+            if(bean != null) {
+                wkRequest.put(position, bean.getRequest());
+                if (saveImage) {
+                    //图片下载完成并且开启图片保存才给长按保存
+                    bean.getPhotoDraweeView().setOnLongClickListener(PhotoPagerActivity.this);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * 解决由于BaseBitmapDataSubscriber导致的内存泄漏问题，提交的问题跟官方给出的解决方案是不行的，只能自己搞
+     * https://github.com/facebook/fresco/issues/2530
+     */
+    private static class MyBaseBitmapDataSubscriber extends BaseBitmapDataSubscriber {
+        private WeakReference<SamplePagerAdapter> rf;
+        private int position;
+
+        public MyBaseBitmapDataSubscriber(SamplePagerAdapter adapter,int position) {
+            rf = new WeakReference<>(adapter);
+            this.position = position;
+        }
+
+        @Override
+        protected void onNewResultImpl(Bitmap bitmap) {
+            if (rf != null) {
+                SamplePagerAdapter adapter = rf.get();
+                if (adapter != null) {
+                    adapter.onBitmapDel(position);
+                }
+            }
+        }
+
+        @Override
+        protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
+
+        }
     }
 
     private SubsamplingScaleImageView loadLargerLongPhoto(ImageInfo imageInfo, String url, Uri uri) {
@@ -572,7 +617,9 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        if (pagerAdapter != null) {
+            pagerAdapter.clear();
+        }
         if (wkRequest != null) {
             wkRequest.clear();
             wkRequest = null;
@@ -587,6 +634,7 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
         photoPagerBean = null;
         hasStop = true;
         onPhotoSaveCallback = null;
+        super.onDestroy();
     }
 
     @Override
