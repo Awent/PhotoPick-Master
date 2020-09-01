@@ -1,5 +1,8 @@
-﻿### (由于本人时间跟精力有限，项目已停止维护)
-# [已适配androidX的点这里](https://github.com/Awent/PhotoPick-Master/blob/master/androidX-README.md)
+﻿
+ 
+### 注意事项：如果sdk>=29,需要在自己的**AndroidManifest.xml**的  `application`节点添加适配代码：`android:requestLegacyExternalStorage="true"`才可正常使用图库选图和保存网络大图功能，[issues](https://github.com/Awent/PhotoPick-Master/issues/13)
+ 
+# [已适配androidX的点这里，不用继续往下看了](https://github.com/Awent/PhotoPick-Master/blob/master/androidX-README.md)
 
 # PhotoPick-Master
 我把项目中做的图库抽了出来，本项目中包括了以下内容：1、图库选图，可多选，单选，可选完图片后进行裁剪，2、查看大图(包括sd卡，res，网络图)，并可以保存到手机图库,3、适配沉浸式状态栏 ,4 、使用fresco加载图片(图片是随便网上找的，性感吧- -!)
