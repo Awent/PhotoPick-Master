@@ -35,6 +35,14 @@ class CustomPhotoPageActivity : PhotoPagerActivity() {
         indicator.text = "1/$size"
     }
 
+    override fun onStart() {
+        super.onStart()
+        AlertDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage("1、可长按保存图片\n\np：前两张为res和asset图片，会保存失败\n\n2、这是继承PhotoPagerActivity的自定义界面，在这里只展示自定义下标、长按保存功能、下滑关闭界面功能，更多功能需要自己去实现")
+                .show()
+    }
+
     override fun onPageSelected(position: Int) {
         super.onPageSelected(position)
         indicator.text = "${currentPosition + 1}/$size"
