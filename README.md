@@ -1,7 +1,18 @@
 ﻿
  
-### 注意事项：如果sdk>=29,需要在自己的**AndroidManifest.xml**的  `application`节点添加适配代码：`android:requestLegacyExternalStorage="true"`才可正常使用图库选图和保存网络大图功能，[issues](https://github.com/Awent/PhotoPick-Master/issues/13)
+### 注意事项：
+1、如果`sdk>=29`,需要在自己`AndroidManifest.xml`的  `application`节点添加适配代码：`android:requestLegacyExternalStorage="true"`才可正常使用图库选图和保存网络大图功能，[issues](https://github.com/Awent/PhotoPick-Master/issues/13)
+
+2、如果自定义`activity`（必须继承`PhotoPagerActivity`）开启了下滑关闭功能，记得自定义`activity`的`Theme`要引用`{@style/PhoAppTheme.Transparent}`
+ * 例子如下：
+ `<activity
+            android:theme="@style/PhoAppTheme.Transparent"
+            android:name=".activity.CustomPhotoPageActivity"/>`
+            
  
+[更多使用方法参考点这里](https://github.com/Awent/PhotoPick-Master/blob/master/simaple/src/main/java/com/simaple/activity/MainActivity.java)
+
+[demo-apk下载](https://github.com/Awent/PhotoPick-Master/blob/master/simaple/simaple-release.apk)
 # [已适配androidX的点这里，不用继续往下看了](https://github.com/Awent/PhotoPick-Master/blob/master/androidX-README.md)
 
 # PhotoPick-Master
