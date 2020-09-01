@@ -1,4 +1,7 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -21,7 +24,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation project(':photoLibrary')
     implementation "androidx.appcompat:appcompat:${rootProject.ext.android.androidxVersion}"
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.1'
+    //android6.0权限工具类
+    implementation 'com.lovedise:permissiongen:0.1.1'
 }

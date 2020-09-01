@@ -15,12 +15,17 @@ import com.awen.photo.photopick.bean.PhotoResultBean;
 import com.awen.photo.photopick.controller.PhotoPagerConfig;
 import com.awen.photo.photopick.controller.PhotoPickConfig;
 import com.awen.photo.photopick.controller.PhotoPreviewConfig;
+import com.awen.photo.photopick.ui.PhotoPagerActivity;
 import com.simaple.ImageProvider;
 import com.simaple.MyPhotoBean;
 import com.simaple.R;
+import com.simaple.UserBean;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 图片归版权者所有
@@ -39,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button6).setOnClickListener(this);
         findViewById(R.id.button7).setOnClickListener(this);
         findViewById(R.id.button8).setOnClickListener(this);
+        findViewById(R.id.button9).setOnClickListener(this);
+        findViewById(R.id.button10).setOnClickListener(this);
     }
 
     @Override
@@ -53,16 +60,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                        .showGif(false)
                         .build();
 
-
-                //方法2
-//                PhotoPickBean bean = new PhotoPickBean();
-//                bean.setMaxPickSize(15);
-//                bean.setShowCamera(false);
-//                bean.setSpanCount(3);
-//                bean.setPickMode(PhotoPickConfig.MODE_MULTIP_PICK);
-//                new PhotoPickConfig.Builder(this)
-//                        .setPhotoPickBean(bean)
-//                        .build();
                 break;
             case R.id.button4://图库(可以启动拍照)
                 new PhotoPickConfig.Builder(this)
@@ -84,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .build();
                 break;
             case R.id.button3://查看(网络)大图
-                new PhotoPagerConfig.Builder(this)
+                new PhotoPagerConfig.Builder<String>(this)
                         .setBigImageUrls(ImageProvider.getImageUrls())
                         .setSavaImage(true)
 //                        .setPosition(2)
@@ -103,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button5://大图展示前先显示小图
                 //方法1
-                new PhotoPagerConfig.Builder(this)
+                new PhotoPagerConfig.Builder<String>(this)
                         .setBigImageUrls(ImageProvider.getBigImgUrls())
                         .setSmallImageUrls(ImageProvider.getSmallImgUrls())
                         .setSavaImage(true)
@@ -158,14 +155,78 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("test_bundle", list);
 
-                new PhotoPagerConfig.Builder(this, MyPhotoPagerActivity.class)
+                new PhotoPagerConfig.Builder<String>(this, MyPhotoPagerActivity.class)
                         .setBigImageUrls(ImageProvider.getImageUrls())
                         .setSavaImage(true)
                         .setBundle(bundle) //传递自己的数据，如果数据中包含java bean，必须实现Parcelable接口
                         .setOpenDownAnimate(false)
                         .build();
                 break;
+            case R.id.button9://跳到自定义的PhotoPagerActivity(kotlin写法)
+                new PhotoPagerConfig.Builder<String>(this, CustomPhotoPageActivity.class)
+                        .setBigImageUrls(ImageProvider.getImageUrls())
+                        .setSavaImage(true)
+                        .build();
+                break;
+            case R.id.button10://实际开发常用写法（查看网络大图）
+                //fromList的使用
+                List<UserBean.User> userList = initUserData().getList();
+                new PhotoPagerConfig.Builder<UserBean.User>(this, PhotoPagerActivity.class /**或者这里传入你自定义的CustomPhotoPageActivity*/)
+                        .fromList(userList, new PhotoPagerConfig.Builder.OnItemCallBack<UserBean.User>() {
+                            @Override
+                            public void nextItem(UserBean.User item, PhotoPagerConfig.Builder<UserBean.User> builder) {
+                                //一定要在这里获取你的图片字段，然后设置进去即可
+                                builder.addSingleBigImageUrl(item.getAvatar());
+                                builder.addSingleSmallImageUrl(item.getSmallAvatar());
+                            }
+                        })
+                        .setSavaImage(true)
+                        .build();
+
+                //或者是以下的fromMap使用
+//                Map<Integer, UserBean.User> map = initUserDataMap();
+//                new PhotoPagerConfig.Builder<UserBean.User>(this, PhotoPageActivity.class)
+//                        .fromMap(map, new PhotoPagerConfig.Builder.OnItemCallBack<UserBean.User>() {
+//                            @Override
+//                            public void nextItem(UserBean.User item, PhotoPagerConfig.Builder<UserBean.User> builder) {
+//                                //在这里获取你的图片字段，然后设置进去即可
+//                                builder.addSingleBigImageUrl(item.getAvatar());
+//                            }
+//                        })
+//                        .setSavaImage(true)
+//                        .build();
+                break;
         }
+    }
+
+    private UserBean initUserData() {
+        UserBean bean = new UserBean();
+        bean.setCode(200);
+        bean.setMsg("success");
+        List<UserBean.User> list = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            UserBean.User user = new UserBean.User();
+            user.setAvatar("https://wx1.sinaimg.cn/mw690/7325792bly1fx9oma87k1j21900u04jf.jpg");
+            user.setSmallAvatar("https://wx1.sinaimg.cn/mw690/7325792bly1fx9oma87k1j21900u04jf.jpg");
+            user.setName("name = " + i);
+            user.setAge(i);
+            list.add(user);
+        }
+        bean.setList(list);
+        return bean;
+    }
+
+    private Map<Integer, UserBean.User> initUserDataMap() {
+        Map<Integer, UserBean.User> map = new HashMap<>();
+        for (int i = 0; i < 100; i++) {
+            UserBean.User user = new UserBean.User();
+            user.setAvatar("https://wx1.sinaimg.cn/mw690/7325792bly1fx9oma87k1j21900u04jf.jpg");
+            user.setSmallAvatar("https://wx1.sinaimg.cn/mw690/7325792bly1fx9oma87k1j21900u04jf.jpg");
+            user.setName("name = " + i);
+            user.setAge(i);
+            map.put(i, user);
+        }
+        return map;
     }
 
     @Override

@@ -8,9 +8,9 @@ import com.awen.photo.R;
 import com.awen.photo.photopick.bean.PhotoPagerBean;
 import com.awen.photo.photopick.ui.PhotoPagerActivity;
 import com.awen.photo.photopick.util.AppPathUtil;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 默认不开启保存图片功能，但是会有默认的保存图片地址,默认展示第一张图片<br>
@@ -54,7 +54,7 @@ public class PhotoPagerConfig {
         activity.overridePendingTransition(R.anim.image_pager_enter_animation, 0);
     }
 
-    public static class Builder {
+    public static class Builder<T> {
         private Activity context;
         private PhotoPagerBean photoPagerBean;
         private Class<?> clazz;
@@ -79,12 +79,107 @@ public class PhotoPagerConfig {
         }
 
         /**
+         * 为了方便开发者能快速调用查看大图功能，提供了此方法
+         *
+         * 使用场景：
+         * 图片url存在于集合实体类里，例如：Map<Integer, UserBean.User> 或 List<UserBean.User> userList
+         * 这时候不需要自己循环这些集合取出图片url了，本方法会提供内部循环，你只需关注你的图片url字段就行
+         *
+         * 使用示例：用户头像avatar存在于User实体类里面，是通过服务器返回来的
+         * <pre>{@code
+         * List<UserBean.User> list = getUserInfo();
+         * java写法：
+         *                 new PhotoPagerConfig.Builder<UserBean.User>(this)
+         *                         .fromList(list, new PhotoPagerConfig.Builder.OnItemCallBack<UserBean.User>() {
+         *                             @Override
+         *                             public void nextItem(UserBean.User item, PhotoPagerConfig.Builder<UserBean.User> builder) {
+         *                                 builder.addSingleBigImageUrl(item.getAvatar());
+         *                             }
+         *                         })
+         *                         .setOnPhotoSaveCallback(new PhotoPagerConfig.Builder.OnPhotoSaveCallback() {
+         *                             @Override
+         *                             public void onSaveImageResult(String localFilePath) {
+         *                                 Toast(localFilePath != null ? "保存成功" : "保存失败");
+         *                             }
+         *                         })
+         *                         .build();
+         *
+         * kotlin写法：
+         * list?.let { it ->
+         *                 PhotoPagerConfig.Builder<ListBean.User>(this)
+         *                         .fromList(it, PhotoPagerConfig.Builder.OnItemCallBack { item, builder ->
+         *                             builder!!.addSingleBigImageUrl(item.avatar)
+         *                         }).build()
+         * }</pre>
+         * @see #fromMap(Map, OnListItemCallBack)
+         * @param iterable
+         * @param listener
+         * @return
+         */
+        public Builder<T> fromList(Iterable<? extends T> iterable, OnItemCallBack<T> listener) {
+            if(iterable == null){
+                throw new NullPointerException("list must not null");
+            }
+            if(listener == null){
+                throw new NullPointerException("OnItemCallBack must not null");
+            }
+            for (T t : iterable) {
+                listener.nextItem(t, this);
+            }
+            return this;
+        }
+
+        /**
+         * 为了方便开发者能快速调用查看大图功能，提供了此方法
+         *
+         * 使用场景：
+         * 图片url存在于集合实体类里，例如：Map<Integer, UserBean.User> 或 List<UserBean.User> userList
+         * 这时候不需要自己循环这些集合取出url了，本方法会提供内部循环，你只需关注你的图片url字段就行
+         *
+         * 使用示例：用户头像avatar存在于User实体类里面，是通过服务器返回来的
+         * <pre>{@code
+         * Map<Integer, UserBean.User> map = new HashMap<>();
+         *                 new PhotoPagerConfig.Builder<UserBean.User>(this)
+         *                         .fromMap(map, new PhotoPagerConfig.Builder.OnItemCallBack<UserBean.User>() {
+         *                             @Override
+         *                             public void nextItem(UserBean.User item, PhotoPagerConfig.Builder<UserBean.User> builder) {
+         *                                 builder.addSingleBigImageUrl(item.getAvatar());
+         *                             }
+         *                         })
+         *                         .setOnPhotoSaveCallback(new PhotoPagerConfig.Builder.OnPhotoSaveCallback() {
+         *                             @Override
+         *                             public void onSaveImageResult(String localFilePath) {
+         *                                 Toast(localFilePath != null ? "保存成功" : "保存失败");
+         *                             }
+         *                         })
+         *                         .build();
+         * }</pre>
+         *
+         * @see #fromList(Iterable, OnItemCallBack)
+         * @param map
+         * @param listener
+         * @return
+         */
+        public Builder<T> fromMap(Map<?, T> map, OnItemCallBack<T> listener) {
+            if(map == null){
+                throw new NullPointerException("map must not null");
+            }
+            if(listener == null){
+                throw new NullPointerException("OnItemCallBack must not null");
+            }
+            for (T t : map.values()) {
+                listener.nextItem(t, this);
+            }
+            return this;
+        }
+
+        /**
          * 默认展示第一张图片
          *
          * @param position 默认展示第一张图片
          * @return Builder
          */
-        public Builder setPosition(int position) {
+        public Builder<T> setPosition(int position) {
             if (position < 0) {
                 position = 0;
             }
@@ -98,7 +193,7 @@ public class PhotoPagerConfig {
          * @param bigImgUrls 图片的url
          * @return Builder
          */
-        public Builder setBigImageUrls(List<String> bigImgUrls) {
+        public Builder<T> setBigImageUrls(List<String> bigImgUrls) {
             if (bigImgUrls == null || bigImgUrls.isEmpty()) {
                 throw new NullPointerException("imageUrls is null or size is 0");
             }
@@ -112,7 +207,7 @@ public class PhotoPagerConfig {
          * @param savaImage true is open,false is close, default false;
          * @return Builder
          */
-        public Builder setSavaImage(boolean savaImage) {
+        public Builder<T> setSavaImage(boolean savaImage) {
             photoPagerBean.setSaveImage(savaImage);
             return this;
         }
@@ -123,7 +218,7 @@ public class PhotoPagerConfig {
          * @param saveImageLocalPath 保存图片到本地的地址
          * @return Builder
          */
-        public Builder setSaveImageLocalPath(String saveImageLocalPath) {
+        public Builder<T> setSaveImageLocalPath(String saveImageLocalPath) {
             photoPagerBean.setSaveImageLocalPath(saveImageLocalPath);
             return this;
         }
@@ -135,7 +230,7 @@ public class PhotoPagerConfig {
          * @return Builder
          * @deprecated use {@link #setSmallImageUrls(List)}
          */
-        public Builder setLowImageUrls(List<String> lowImgUrls) {
+        public Builder<T> setLowImageUrls(List<String> lowImgUrls) {
             setSmallImageUrls(lowImgUrls);
             return this;
         }
@@ -146,7 +241,7 @@ public class PhotoPagerConfig {
          * @param smallImgUrls 小图图片的url
          * @return Builder
          */
-        public Builder setSmallImageUrls(List<String> smallImgUrls) {
+        public Builder<T> setSmallImageUrls(List<String> smallImgUrls) {
             if (smallImgUrls == null || smallImgUrls.isEmpty()) {
                 throw new NullPointerException("smallImgUrls is null or size is 0");
             }
@@ -160,7 +255,7 @@ public class PhotoPagerConfig {
          * @param bigImageUrl 大图url
          * @return Builder
          */
-        public Builder addSingleBigImageUrl(String bigImageUrl) {
+        public Builder<T> addSingleBigImageUrl(String bigImageUrl) {
             photoPagerBean.addSingleBigImageUrl(bigImageUrl);
             return this;
         }
@@ -171,7 +266,7 @@ public class PhotoPagerConfig {
          * @param smallImageUrl 小图url
          * @return Builder
          */
-        public Builder addSingleSmallImageUrl(String smallImageUrl) {
+        public Builder<T> addSingleSmallImageUrl(String smallImageUrl) {
             photoPagerBean.addSingleSmallImageUrl(smallImageUrl);
             return this;
         }
@@ -179,7 +274,7 @@ public class PhotoPagerConfig {
         /**
          * @deprecated use {@link #addSingleSmallImageUrl(String)}
          */
-        public Builder addSingleLowImageUrl(String lowImageUrl) {
+        public Builder<T> addSingleLowImageUrl(String lowImageUrl) {
             photoPagerBean.addSingleLowImageUrl(lowImageUrl);
             return this;
         }
@@ -191,7 +286,7 @@ public class PhotoPagerConfig {
          * @param bundle
          * @return
          */
-        public Builder setBundle(Bundle bundle) {
+        public Builder<T> setBundle(Bundle bundle) {
             this.bundle = bundle;
             return this;
         }
@@ -202,7 +297,7 @@ public class PhotoPagerConfig {
          * @param isOpenDownAnimate default true
          * @return
          */
-        public Builder setOpenDownAnimate(boolean isOpenDownAnimate) {
+        public Builder<T> setOpenDownAnimate(boolean isOpenDownAnimate) {
             photoPagerBean.setOpenDownAnimate(isOpenDownAnimate);
             return this;
         }
@@ -213,7 +308,7 @@ public class PhotoPagerConfig {
          * @param photoPagerBean PhotoPagerBean
          * @return Builder
          */
-        public Builder setPhotoPagerBean(PhotoPagerBean photoPagerBean) {
+        public Builder<T> setPhotoPagerBean(PhotoPagerBean photoPagerBean) {
             if (photoPagerBean == null) {
                 throw new NullPointerException("photoPagerBean is null");
             }
@@ -223,10 +318,14 @@ public class PhotoPagerConfig {
 
         /**
          * 保存图片到图库的回调
+         *
          * @param onPhotoSaveCallback
          * @return
          */
-        public Builder setOnPhotoSaveCallback(OnPhotoSaveCallback onPhotoSaveCallback){
+        public Builder<T> setOnPhotoSaveCallback(OnPhotoSaveCallback onPhotoSaveCallback) {
+            if (onPhotoSaveCallback != null) {
+                setSavaImage(true);
+            }
             photoPagerBean.setOnPhotoSaveCallback(onPhotoSaveCallback);
             return this;
         }
@@ -241,9 +340,14 @@ public class PhotoPagerConfig {
         public interface OnPhotoSaveCallback {
             /**
              * 成功则返回路径，失败返回null
+             *
              * @param localFilePath
              */
             void onSaveImageResult(String localFilePath);
+        }
+
+        public interface OnItemCallBack<T> {
+            void nextItem(T item, Builder<T> builder);
         }
     }
 

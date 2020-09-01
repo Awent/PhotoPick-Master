@@ -226,6 +226,7 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
 
                 @Override
                 public void onMoving(float deltaX, float deltaY) {
+
                 }
             });
         }
@@ -272,6 +273,9 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
         return false;
     }
 
+    protected String getCurrentImageUrl(){
+        return photoPagerBean.getBigImgUrls().get(currentPosition);
+    }
     /**
      * 保存图片到图库
      */
@@ -529,12 +533,13 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        Log.e(TAG, "onRequestPermissionsResult");
         PermissionGen.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
     @PermissionSuccess(requestCode = REQUEST_CODE)
-    private void startPermissionSDSuccess() {//获取读写sd卡权限成功回调
-//        Log.e(TAG, "sd card image path = " + (saveImageLocalPath == null ? AppPathUtil.getBigBitmapCachePath() : saveImageLocalPath));
+    public void startPermissionSDSuccess() {//获取读写sd卡权限成功回调
+//        Log.e(TAG, "startPermissionSDSuccess");
         //保存图片到本地
         String bigImgUrl = photoPagerBean.getBigImgUrls().get(currentPosition);
         String lastName = bigImgUrl.substring(bigImgUrl.lastIndexOf("/") + 1, bigImgUrl.length());
@@ -555,7 +560,8 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
     }
 
     @PermissionFail(requestCode = REQUEST_CODE)
-    private void startPermissionSDFaild() {
+    public void startPermissionSDFaild() {
+//        Log.e(TAG, "startPermissionSDFaild");
         if (!isFinishing()) {
             new android.app.AlertDialog.Builder(this)
                     .setMessage(getString(R.string.permission_tip_SD))

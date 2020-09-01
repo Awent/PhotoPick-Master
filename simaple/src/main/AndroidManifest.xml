@@ -21,6 +21,9 @@
             android:theme="@style/PhoAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:name=".activity.MyPhotoPagerActivity"/>
+        <activity
+            android:theme="@style/PhoAppTheme.Transparent"
+            android:name=".activity.CustomPhotoPageActivity"/>
     </application>
 
 </manifest>
