@@ -69,7 +69,7 @@ public class App extends Application {
 
 ```
 
-##下面讲解如何使用
+## 下面讲解如何使用
 - Hao to use(可进行动态设置参数，不用的可以不设置)
 
 - 图库
@@ -135,8 +135,8 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 ```
 new PhotoPagerConfig.Builder(this)
-    .fromList(Iterable<? extends T> iterable, OnItemCallBack<T> listener)
-    .fromMap(Map<?, T> map, OnItemCallBack<T> listener)
+    .fromList(Iterable<? extends T> iterable, OnItemCallBack<T> listener)//接收集合数据并提供内循环返回所有item
+    .fromMap(Map<?, T> map, OnItemCallBack<T> listener)                  //接收集合数据并提供内循环返回所有item
     .setBigImageUrls(ImageProvider.getImageUrls())      //大图片url,可以是sd卡res，asset，网络图片.
     .setSmallImageUrls(ArrayList<String> smallImgUrls)  //小图图片的url,用于大图展示前展示的
     .addSingleBigImageUrl(String bigImageUrl)           //一张一张大图add进ArrayList
@@ -174,11 +174,11 @@ FrescoImageLoader.setToolbarBackGround(R.color.black);
 
 - 开发中常用的查看网络大图`fromList`和`fromMap`用法介绍
 
-使用场景：
-图片`url`存在于集合实体类里，例如：`Map<Integer, UserBean.User>` 或 `List<UserBean.User> userList`，
-这时候不需要自己循环这些集合取出图片url了，本方法会提供内部循环，你只需关注你的图片`url`字段就行
+    1、使用场景：
+    图片`url`存在于集合实体类里，例如：`Map<Integer, UserBean.User>` 或 `List<UserBean.User> userList`，
+    这时候不需要自己循环这些集合取出图片url了，本方法会提供内部循环，你只需关注你的图片`url`字段就行
 
-使用示例：用户头像`avatar`存在于`User`实体类里面，是通过服务器返回来的
+    2、使用示例：用户头像`avatar`存在于`User`实体类里面，是通过服务器返回来的
 
 ```
 List<UserBean.User> list = getUserInfo();           //使用fromList
@@ -186,27 +186,29 @@ or
 Map<Integer, UserBean.User> map = new HashMap<>();  //使用fromMap
 
 java写法：
-                          new PhotoPagerConfig.Builder<UserBean.User>(this)
-                                  .fromList(list, new PhotoPagerConfig.Builder.OnItemCallBack<UserBean.User>() {
-                                      @Override
-                                      public void nextItem(UserBean.User item, PhotoPagerConfig.Builder<UserBean.User> builder) {
-                                          builder.addSingleBigImageUrl(item.getAvatar());
-                                      }
-                                  })
-                                  .setOnPhotoSaveCallback(new PhotoPagerConfig.Builder.OnPhotoSaveCallback() {
-                                      @Override
-                                      public void onSaveImageResult(String localFilePath) {
-                                          Toast(localFilePath != null ? "保存成功" : "保存失败");
-                                      }
-                                  })
-                                  .build();
+            new PhotoPagerConfig.Builder<UserBean.User>(this)
+                        .fromList(list, new PhotoPagerConfig.Builder.OnItemCallBack<UserBean.User>() {
+                            @Override
+                            public void nextItem(UserBean.User item, PhotoPagerConfig.Builder<UserBean.User> builder) {
+                                builder.addSingleBigImageUrl(item.getAvatar());
+                            }
+                        })
+                        .setOnPhotoSaveCallback(new PhotoPagerConfig.Builder.OnPhotoSaveCallback() {
+                            @Override
+                            public void onSaveImageResult(String localFilePath) {
+                                Toast(localFilePath != null ? "保存成功" : "保存失败");
+                            }
+                        })
+                        .build();
+                                  
                                   
 kotlin写法：
-          list?.let { it ->
-                          PhotoPagerConfig.Builder<ListBean.User>(this)
-                                  .fromList(it, PhotoPagerConfig.Builder.OnItemCallBack { item, builder ->
-                                      builder!!.addSingleBigImageUrl(item.avatar)
-                                  }).build()  
+              list?.let {
+                PhotoPagerConfig.Builder<UserBean.User>(this)
+                        .fromList(it) { item, builder ->
+                            builder.addSingleBigImageUrl(item.avatar)//这个avatar就是你需要关注的字段，在这里设置进去即可
+                        }.build()
+              }
                                   
 ```
 
@@ -218,9 +220,9 @@ implementation 'com.github.Awent:PhotoPick-Master:v3.2'
 新增查看网络大图时开发常用写法和使用kotlin实现自定义界面教程
 查看网络大图新增方法：
 
-1、`fromList(Iterable<? extends T> iterable, OnItemCallBack<T> listener)`
+1、`fromList(Iterable<? extends T> iterable, OnItemCallBack<T> listener)`//接收集合数据并提供内循环返回所有item
 
-2、`fromMap(Map<?, T> map, OnItemCallBack<T> listener)`
+2、`fromMap(Map<?, T> map, OnItemCallBack<T> listener)`                  //接收集合数据并提供内循环返回所有item
 
 ### v3.1
 2020-08-28
