@@ -16,29 +16,21 @@ allprojects {
     }
 }
 
-ext {
-    android = [
-            compileSdkVersion : 29,        //根据自己项目的来配置
-            buildToolsVersion : '29.0.3',  //根据自己项目的来配置
-            targetSdkVersion  : 29,        //根据自己项目的来配置
-            androidxVersion    : '1.0.0',  //android X version
-            frescoVersion     : '2.2.0'   //fresco的版本，可自行修改
-    ]
-}
 
 ```
 
 2、然后在module gradle dependencies 添加以下依赖，如果添加失败，请打开vpn后重试
 
 ```
-    implementation "androidx.appcompat:appcompat:${rootProject.ext.android.androidxVersion}"
-    implementation "androidx.recyclerview:recyclerview:${rootProject.ext.android.androidxVersion}"
-    implementation "com.facebook.fresco:fresco:${rootProject.ext.android.frescoVersion}"
+    implementation "androidx.appcompat:appcompat:1.2.0"
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation "androidx.legacy:legacy-support-v4:1.0.0"
+    implementation "com.facebook.fresco:fresco:2.3.0"
     // 支持 GIF 动图，需要添加
-    implementation "com.facebook.fresco:animated-gif:${rootProject.ext.android.frescoVersion}"
+    implementation "com.facebook.fresco:animated-gif:2.3.0"
     // 支持 WebP （静态图+动图），需要添加
-    implementation "com.facebook.fresco:animated-webp:${rootProject.ext.android.frescoVersion}"
-    implementation "com.facebook.fresco:webpsupport:${rootProject.ext.android.frescoVersion}"
+    implementation "com.facebook.fresco:animated-webp:2.3.0"
+    implementation "com.facebook.fresco:webpsupport:2.3.0"
     //跟随viewpager的点
     implementation 'me.relex:circleindicator:1.1.8@aar'
     //上滑控制面板,项目中的potopick中有使用案例
@@ -47,9 +39,8 @@ ext {
     implementation 'com.lovedise:permissiongen:0.1.1'
     //加载超长图必备库
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
-    implementation "androidx.legacy:legacy-support-v4:${rootProject.ext.android.androidxVersion}"
     //图库
-    implementation 'com.github.Awent:PhotoPick-Master:v3.2'
+    implementation 'com.github.Awent:PhotoPick-Master:v3.3'
 ```
 
 3、然后在你的Application的onCreate()方法里初始化即可使用
@@ -76,7 +67,10 @@ public class App extends Application {
 
 ```
 new PhotoPickConfig.Builder(this)
-    .pickMode(PhotoPickConfig.MODE_MULTIP_PICK) //多选，这里有单选和多选，可不设置此参数，只设置maxPickSize()就行，maxPickSize(0)代表单选，>0代表多选
+    .pickModeMulti()                            //多选
+    .pickModeSingle()                           //单选
+    .onlyImage()                                //只显示图片,不包含视频，默认是图片跟视频都展示,如果showCamera(true)，只会启动系统拍照，并返回图片路径
+    .onlyVideo()                                //只显示视频,不包含图片，默认是图片跟视频都展示,如果showCamera(true)，只会启动系统视频录制，并返回视频路径
     .maxPickSize(15)                            //最多可选15张
     .showCamera(false)                          //是否展示拍照icon,默认展示
     .clipPhoto(true)                            //是否选完图片进行图片裁剪，默认是false,如果这里设置成true,就算设置了是多选也会被配置成单选
@@ -92,7 +86,7 @@ new PhotoPickConfig.Builder(this)
 ```
 方法一：
 new PhotoPickConfig.Builder(this)
-    .pickMode(PhotoPickConfig.MODE_MULTIP_PICK)
+    .pickModeMulti()
     .maxPickSize(15)
     .showCamera(true)
     .setOriginalPicture(true)//让用户可以选择原图
@@ -134,7 +128,7 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 - 查看大图
 
 ```
-new PhotoPagerConfig.Builder(this)
+new PhotoPagerConfig.Builder<T>(this)
     .fromList(Iterable<? extends T> iterable, OnItemCallBack<T> listener)//接收集合数据并提供内循环返回所有item
     .fromMap(Map<?, T> map, OnItemCallBack<T> listener)                  //接收集合数据并提供内循环返回所有item
     .setBigImageUrls(ImageProvider.getImageUrls())      //大图片url,可以是sd卡res，asset，网络图片.
@@ -211,6 +205,24 @@ kotlin写法：
               }
                                   
 ```
+
+### v3.3
+2020-09-06
+implementation 'com.github.Awent:PhotoPick-Master:v3.3'
+
+新增本地视频预览和选择，默认是图片跟视频都展示
+
+1、onlyImage():只显示图片,不包含视频
+
+2、onlyVideo():只显示视频,不包含图片
+
+注意:
+
+1、如果设置onlyVideo()和showCamera(true)，只会启动系统视频录制，并返回视频路径
+
+2、如果onlyImage()和showCamera(true)，只会启动系统拍照，并返回图片路径
+
+3、如果图片跟视频都显示，并且showCamera(true)，只是启动拍照，而不是录制视频
 
 
 ### v3.2
