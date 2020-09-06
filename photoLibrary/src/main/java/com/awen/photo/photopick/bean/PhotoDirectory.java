@@ -15,6 +15,7 @@ public class PhotoDirectory {
     private String name;
     private long dateAdded;
     private List<Photo> photos = new ArrayList<>();
+    private boolean isVideo;
 
     @Override
     public boolean equals(Object o) {
@@ -74,16 +75,15 @@ public class PhotoDirectory {
         this.photos = photos;
     }
 
-    public List<String> getPhotoPaths() {
-        List<String> paths = new ArrayList<>(photos.size());
-        for (Photo photo : photos) {
-            paths.add(photo.getPath());
-        }
-        return paths;
-    }
-
     public void addPhoto(Photo photo) {
         photos.add(photo);
     }
 
+    public boolean isVideo() {
+        return isVideo;
+    }
+
+    public void setVideo(boolean video) {
+        isVideo = video;
+    }
 }

@@ -436,7 +436,7 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
         }
 
         @Override
-        protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
+        protected void onFailureImpl(@NonNull DataSource<CloseableReference<CloseableImage>> dataSource) {
 
         }
     }
@@ -446,11 +446,11 @@ public class PhotoPagerActivity extends FrescoBaseActivity implements ViewPager.
         if (fileName.contains(".webp") || fileName.contains(".gif")) {
             return null;
         }
-        float offsetW = (imageInfo.getWidth() / imageInfo.getHeight()) - (screenWith / screenHeight);
-        float offsetH = (imageInfo.getHeight() / imageInfo.getWidth()) - (screenHeight / screenWith);
+        float offsetW = (float)((imageInfo.getWidth() / imageInfo.getHeight()) - (screenWith / screenHeight));
+        float offsetH = (float)((imageInfo.getHeight() / imageInfo.getWidth()) - (screenHeight / screenWith));
 //        Log.e(TAG,"offsetW = " + offsetW + ",offsetH = " + offsetH);
         if (offsetW > 1.0f) {//横向长图
-            return loadLongPhoto(0, uri, screenHeight / imageInfo.getHeight());
+            return loadLongPhoto(0, uri, (float)(screenHeight / imageInfo.getHeight()));
         } else if (offsetH > 0.8f) {//纵向长图
             return loadLongPhoto(uri);
         }

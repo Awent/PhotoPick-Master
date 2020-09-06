@@ -26,8 +26,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation project(':photoLibrary')
-    implementation "androidx.appcompat:appcompat:${rootProject.ext.android.androidxVersion}"
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.1'
+    implementation "androidx.appcompat:appcompat:1.2.0"
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
     //android6.0权限工具类
     implementation 'com.lovedise:permissiongen:0.1.1'
 }

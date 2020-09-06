@@ -20,6 +20,7 @@ public class PhotoPickBean implements Parcelable {
     private boolean clipPhoto; //是否启动裁剪图片
     private boolean originalPicture;//是否选择的是原图
     private boolean showGif;//是否展示gif图片
+    private int mediaType;//默认0，显示所有图片跟视频，1：只显示图片，2：只显示视频
     private PhotoPickConfig.Builder.OnPhotoResultCallback onPhotoResultCallback;
 
     public PhotoPickBean(){}
@@ -32,6 +33,7 @@ public class PhotoPickBean implements Parcelable {
         clipPhoto = in.readByte() != 0;
         originalPicture = in.readByte() != 0;
         showGif = in.readByte() != 0;
+        mediaType = in.readInt();
     }
 
     @Override
@@ -43,6 +45,7 @@ public class PhotoPickBean implements Parcelable {
         dest.writeByte((byte) (clipPhoto ? 1 : 0));
         dest.writeByte((byte) (originalPicture ? 1 : 0));
         dest.writeByte((byte) (showGif ? 1 : 0));
+        dest.writeInt(mediaType);
     }
 
     public static final Creator<PhotoPickBean> CREATOR = new Creator<PhotoPickBean>() {
@@ -125,5 +128,13 @@ public class PhotoPickBean implements Parcelable {
 
     public void setOnPhotoResultCallback(PhotoPickConfig.Builder.OnPhotoResultCallback onPhotoResultCallback) {
         this.onPhotoResultCallback = onPhotoResultCallback;
+    }
+
+    public int getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(int mediaType) {
+        this.mediaType = mediaType;
     }
 }

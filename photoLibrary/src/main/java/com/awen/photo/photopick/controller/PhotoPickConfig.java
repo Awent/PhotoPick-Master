@@ -9,6 +9,7 @@ import com.awen.photo.Awen;
 import com.awen.photo.R;
 import com.awen.photo.photopick.bean.PhotoPickBean;
 import com.awen.photo.photopick.bean.PhotoResultBean;
+import com.awen.photo.photopick.loader.MediaType;
 import com.awen.photo.photopick.ui.PhotoPickActivity;
 
 /**
@@ -31,15 +32,9 @@ public class PhotoPickConfig {
 
     public static int MODE_MULTIP_PICK = 2;//多选
 
-    private static int DEFAULT_PICKSIZE = 9;//默认可以选择的图片数目
-
     private static int DEFAULT_SPANCOUNT = 3;//gridview列数
 
-    private static boolean DEFAULT_SHOW_CAMERA = true;//默认展示拍照那个icon
-
     private static boolean DEFAULT_START_CLIP = false;//默认不开启图片裁剪
-
-    private static boolean DEFAULT_SHOW_GIF = true;//默认展示gif图片
 
     public final static String EXTRA_STRING_ARRAYLIST = "extra_string_array_list";
     public final static String EXTRA_PICK_BUNDLE = "extra_pick_bundle";
@@ -87,12 +82,28 @@ public class PhotoPickConfig {
             }
             this.context = context;
             pickBean = new PhotoPickBean();
-            pickBean.setSpanCount(DEFAULT_SPANCOUNT);//gridview列数
-            pickBean.setMaxPickSize(DEFAULT_PICKSIZE);//默认可以选择的图片数目
-            pickBean.setPickMode(MODE_SINGLE_PICK);
-            pickBean.setShowCamera(DEFAULT_SHOW_CAMERA);//默认展示拍照那个icon
+            pickBean.setSpanCount(DEFAULT_SPANCOUNT);//列数
+            pickBean.setMaxPickSize(9);//默认可以选择的图片数目,9张
+            pickBean.setShowCamera(true);//默认展示拍照那个icon
             pickBean.setClipPhoto(DEFAULT_START_CLIP);//默认不开启图片裁剪
-            pickBean.setShowGif(DEFAULT_SHOW_GIF);//默认展示gif
+            pickBean.setShowGif(true);//默认展示gif
+            pickModeMulti();//默认多选
+        }
+
+        /**
+         * 多选
+         */
+        public PhotoPickConfig.Builder pickModeMulti() {
+            pickBean.setPickMode(MODE_MULTIP_PICK);
+            return this;
+        }
+
+        /**
+         * 单选
+         */
+        public PhotoPickConfig.Builder pickModeSingle() {
+            pickBean.setPickMode(MODE_SINGLE_PICK);
+            return this;
         }
 
         /**
@@ -164,6 +175,7 @@ public class PhotoPickConfig {
          * @return
          */
         public PhotoPickConfig.Builder clipPhoto(boolean clipPhoto) {
+            onlyImage();//裁剪头像只显示图片，不显示视频
             pickBean.setClipPhoto(clipPhoto);
             return this;
         }
@@ -187,6 +199,28 @@ public class PhotoPickConfig {
          */
         public PhotoPickConfig.Builder showGif(boolean showGif) {
             pickBean.setShowGif(showGif);
+            return this;
+        }
+
+        /**
+         * 只显示图片,不包含视频，默认是图片跟视频都展示
+         * p:如果启动了拍照，只会启动系统拍照，并返回图片路径
+         *
+         * 如果图片跟视频都显示，只是启动拍照，而不是录制视频
+         */
+        public PhotoPickConfig.Builder onlyImage() {
+            pickBean.setMediaType(MediaType.ONLY_IMAGE);
+            return this;
+        }
+
+        /**
+         * 只显示视频,不包含图片，默认是图片跟视频都展示
+         * p:如果启动了拍照，只会启动系统视频录制，并返回视频路径
+         *
+         * 如果图片跟视频都显示，只是启动拍照，而不是录制视频
+         */
+        public PhotoPickConfig.Builder onlyVideo() {
+            pickBean.setMediaType(MediaType.ONLY_VIDEO);
             return this;
         }
 

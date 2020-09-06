@@ -43,6 +43,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.awen.photo.photopick.ui.VideoPlayActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/PhoAppTheme.AppTheme">
+            <intent-filter>
+                <action android:name="com.awen.photo.photopick.ui.PhotoPreviewActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

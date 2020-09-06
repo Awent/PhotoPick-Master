@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button://图库
                 //方法1
                 new PhotoPickConfig.Builder(this)
-                        .pickMode(PhotoPickConfig.MODE_MULTIP_PICK)
+                        .pickModeMulti()
                         .maxPickSize(15)
                         .showCamera(false)
 //                        .showGif(false)
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button4://图库(可以启动拍照)
                 new PhotoPickConfig.Builder(this)
-                        .pickMode(PhotoPickConfig.MODE_MULTIP_PICK)
+                        .pickModeMulti()
                         .maxPickSize(15)
                         .showCamera(true)
                         .setOriginalPicture(true)//让用户可以选择原图
@@ -163,9 +163,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .build();
                 break;
             case R.id.button9://跳到自定义的PhotoPagerActivity(kotlin写法)
+                Bundle mBundle = new Bundle();
+                mBundle.putLong("user_id",100000L);
                 new PhotoPagerConfig.Builder<String>(this, CustomPhotoPageActivity.class)
                         .setBigImageUrls(ImageProvider.getImageUrls())
                         .setSavaImage(true)
+                        .setBundle(mBundle)
                         .build();
                 break;
             case R.id.button10://实际开发常用写法（查看网络大图）

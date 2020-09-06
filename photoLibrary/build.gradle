@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion rootProject.ext.android.targetSdkVersion
-        versionCode 29
-        versionName "2.9"
+        versionCode 33
+        versionName "3.3"
     }
     buildTypes {
         release {
@@ -22,14 +22,14 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.appcompat:appcompat:${rootProject.ext.android.androidxVersion}"
-    implementation "androidx.recyclerview:recyclerview:${rootProject.ext.android.androidxVersion}"
-    implementation "com.facebook.fresco:fresco:${rootProject.ext.android.frescoVersion}"
+    implementation "androidx.appcompat:appcompat:1.2.0"
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation "com.facebook.fresco:fresco:2.3.0"
     // 支持 GIF 动图，需要添加
-    implementation "com.facebook.fresco:animated-gif:${rootProject.ext.android.frescoVersion}"
+    implementation "com.facebook.fresco:animated-gif:2.3.0"
     // 支持 WebP （静态图+动图），需要添加
-    implementation "com.facebook.fresco:animated-webp:${rootProject.ext.android.frescoVersion}"
-    implementation "com.facebook.fresco:webpsupport:${rootProject.ext.android.frescoVersion}"
+    implementation "com.facebook.fresco:animated-webp:2.3.0"
+    implementation "com.facebook.fresco:webpsupport:2.3.0"
     //跟随viewpager的点
     implementation 'me.relex:circleindicator:1.1.8@aar'
     //上滑控制面板,项目中的potopick中有使用案例
@@ -38,5 +38,5 @@ dependencies {
     implementation 'com.lovedise:permissiongen:0.1.1'
     //加载超长图必备库
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
-    implementation "androidx.legacy:legacy-support-v4:${rootProject.ext.android.androidxVersion}"
+    implementation "androidx.legacy:legacy-support-v4:1.0.0"
 }

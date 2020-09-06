@@ -1,16 +1,20 @@
 package com.awen.photo.photopick.adapter;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.awen.photo.R;
@@ -36,7 +40,7 @@ import kr.co.namee.permissiongen.PermissionGen;
 /**
  * Created by Awen <Awentljs@gmail.com>
  */
-public class PhotoPickAdapter extends RecyclerView.Adapter {
+public class PhotoPickAdapter extends RecyclerView.Adapter<PhotoPickAdapter.ViewHolder> {
     private final String TAG = getClass().getSimpleName();
     private Context context;
     public static ArrayList<Photo> photos;//图库
@@ -60,12 +64,13 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public void refresh(List<Photo> photos) {
-        PhotoPickAdapter.photos.clear();
-        PhotoPickAdapter.photos.addAll(photos);
+    public void refresh(List<Photo> list) {
+        photos.clear();
+        photos.addAll(list);
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo_pick, parent, false);
@@ -73,8 +78,8 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ViewHolder) holder).setData(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.setData(position);
     }
 
     @Override
@@ -86,16 +91,19 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
         return pickBean.isShowCamera() ? photos.get(position - 1) : photos.get(position);
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private SimpleDraweeView imageView;
         private CheckBox checkbox;
-        private ImageView gifIcon;
+        private ImageView gifIcon, videoIcon;
+        private TextView duration;
 
         ViewHolder(View itemView) {
             super(itemView);
-            gifIcon = (ImageView) itemView.findViewById(R.id.gifIcon);
-            imageView = (SimpleDraweeView) itemView.findViewById(R.id.imageView);
-            checkbox = (CheckBox) itemView.findViewById(R.id.checkbox);
+            videoIcon = itemView.findViewById(R.id.videoIcon);
+            gifIcon = itemView.findViewById(R.id.gifIcon);
+            imageView = itemView.findViewById(R.id.imageView);
+            checkbox = itemView.findViewById(R.id.checkbox);
+            duration = itemView.findViewById(R.id.duration);
             itemView.getLayoutParams().height = imageSize;
             itemView.getLayoutParams().width = imageSize;
             checkbox.setOnClickListener(this);
@@ -107,6 +115,8 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
             if (pickBean.isShowCamera() && position == 0) {
                 checkbox.setVisibility(View.GONE);
                 gifIcon.setVisibility(View.GONE);
+                videoIcon.setVisibility(View.GONE);
+                duration.setText(null);
                 uri = new Uri.Builder()
                         .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
                         .path(String.valueOf(R.mipmap.take_photo))
@@ -114,6 +124,9 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
             } else {
                 Photo photo = getItem(position);
                 gifIcon.setVisibility(photo.isGif() ? View.VISIBLE : View.GONE);
+                videoIcon.setVisibility(photo.isVideo() ? View.VISIBLE : View.GONE);
+                duration.setText(photo.isVideo() ? generateTime(photo.getDuration()) : null);
+
                 if (pickBean.isClipPhoto()) {
                     checkbox.setVisibility(View.GONE);
                 } else {
@@ -160,7 +173,7 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
                 if (onUpdateListener != null) {
                     onUpdateListener.updataToolBarTitle(getTitle());
                 }
-            } else if (v.getId() == R.id.photo_pick_rl) {
+            } else if (v.getId() == R.id.photo_pick_layout) {
                 if (pickBean.isShowCamera() && position == 0) {
                     //以下操作会回调Activity中的#selectPicFromCameraSuccess()或selectPicFromCameraFailed()
                     PermissionGen.needPermission((Activity) context, PhotoPickActivity.REQUEST_CODE_PERMISSION_CAMERA, Manifest.permission.CAMERA);
@@ -175,6 +188,16 @@ public class PhotoPickAdapter extends RecyclerView.Adapter {
                 }
             }
         }
+    }
+
+    @SuppressLint("DefaultLocale")
+    public static String generateTime(long time) {
+        int totalSeconds = (int) (time / 1000);
+        int seconds = totalSeconds % 60;
+        int minutes = (totalSeconds / 60) % 60;
+        int hours = totalSeconds / 3600;
+
+        return hours > 0 ? String.format("%02d:%02d:%02d", hours, minutes, seconds) : String.format("%02d:%02d", minutes, seconds);
     }
 
     public void startClipPic(String picPath) {

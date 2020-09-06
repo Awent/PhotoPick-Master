@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.awen.photo.R;
@@ -20,13 +21,14 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Awen <Awentljs@gmail.com>
  */
-public class PhotoGalleryAdapter extends RecyclerView.Adapter {
+public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapter.ViewHolder> {
     private final String TAG = getClass().getSimpleName();
     private Context context;
     private int selected;
@@ -44,15 +46,16 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo_gallery, null);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo_gallery, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ViewHolder) holder).setData(getItem(position), position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.setData(getItem(position), position);
     }
 
     @Override
@@ -69,17 +72,17 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
         notifyDataSetChanged();
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private SimpleDraweeView imageView;
         private ImageView photo_gallery_select;
         private TextView name, num;
 
         ViewHolder(View itemView) {
             super(itemView);
-            imageView = (SimpleDraweeView) itemView.findViewById(R.id.imageView);
-            name = (TextView) itemView.findViewById(R.id.name);
-            num = (TextView) itemView.findViewById(R.id.num);
-            photo_gallery_select = (ImageView) itemView.findViewById(R.id.photo_gallery_select);
+            imageView = itemView.findViewById(R.id.imageView);
+            name = itemView.findViewById(R.id.name);
+            num = itemView.findViewById(R.id.num);
+            photo_gallery_select = itemView.findViewById(R.id.photo_gallery_select);
             imageView.getLayoutParams().height = imageSize;
             imageView.getLayoutParams().width = imageSize;
             itemView.setOnClickListener(this);
@@ -95,7 +98,8 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
                 photo_gallery_select.setImageBitmap(null);
             }
             name.setText(directory.getName());
-            num.setText(context.getString(R.string.gallery_num, String.valueOf(directory.getPhotoPaths().size())));
+            num.setText(context.getString(directory.isVideo() ? R.string.gallery_video_num : R.string.gallery_num,
+                    String.valueOf(directory.getPhotos().size())));
             //不设置.setResizeOptions(new ResizeOptions(imageSize, imageSize))会显示有问题
             ImageRequest imageRequest = ImageRequestBuilder
                     .newBuilderWithSource(new Uri.Builder().scheme(UriUtil.LOCAL_FILE_SCHEME).path(directory.getCoverPath()).build())
@@ -111,7 +115,7 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            if(v.getId() == R.id.photo_gallery_rl){
+            if (v.getId() == R.id.photo_gallery_rl) {
                 if (onItemClickListener != null) {
                     changeSelect(position);
                     onItemClickListener.onClick(getItem(position).getPhotos());
@@ -130,7 +134,7 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter {
         void onClick(List<Photo> photos);
     }
 
-    public void destroy(){
+    public void destroy() {
         directories.clear();
         directories = null;
         onItemClickListener = null;

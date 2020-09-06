@@ -1,10 +1,13 @@
 package com.awen.photo;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.awen.photo.photopick.ui.VideoPlayActivity;
 import com.awen.photo.photopick.util.FileSizeUtil;
 import com.facebook.binaryresource.BinaryResource;
 import com.facebook.binaryresource.FileBinaryResource;
@@ -155,5 +158,16 @@ public final class FrescoImageLoader extends Awen {
 
     public static String getAssetUrl(String assetId) {
         return UriUtil.LOCAL_ASSET_SCHEME + ":///" + assetId;
+    }
+
+    /**
+     * 启动一个视频播放
+     * @param activity
+     * @param videoUrl 本地视频地址或网络视频地址
+     */
+    public static void startVideoActivity(Activity activity, String videoUrl){
+        activity.startActivity(new Intent(activity, VideoPlayActivity.class)
+                .putExtra("videoUrl", videoUrl));
+        activity.overridePendingTransition(R.anim.image_pager_enter_animation, 0);
     }
 }

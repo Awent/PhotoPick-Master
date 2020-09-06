@@ -15,16 +15,21 @@ public class Photo implements Parcelable {
     private int width; //图片真实宽度
     private int height;//图片真实高度
     private String mimeType;//图片类型：image/webp、image/jpeg、image/png、image/gif
+    private long dateAdd;//添加的时间,用作视频跟图片组合后的排序
+    private long duration;//视频的时长，毫秒
 
     public Photo(){}
 
-    public Photo(int id, String path, long size,int width,int height,String mimeType) {
+    public Photo(int id, String path, long size, boolean isLongPhoto, int width, int height, String mimeType, long dateAdd, long duration) {
         this.id = id;
         this.path = path;
         this.size = size;
+        this.isLongPhoto = isLongPhoto;
         this.width = width;
         this.height = height;
         this.mimeType = mimeType;
+        this.dateAdd = dateAdd;
+        this.duration = duration;
     }
 
     protected Photo(Parcel in) {
@@ -35,6 +40,8 @@ public class Photo implements Parcelable {
         width = in.readInt();
         height = in.readInt();
         mimeType = in.readString();
+        dateAdd = in.readLong();
+        duration = in.readLong();
     }
 
     @Override
@@ -46,6 +53,8 @@ public class Photo implements Parcelable {
         dest.writeInt(width);
         dest.writeInt(height);
         dest.writeString(mimeType);
+        dest.writeLong(dateAdd);
+        dest.writeLong(duration);
     }
 
     public static final Creator<Photo> CREATOR = new Creator<Photo>() {
@@ -134,6 +143,26 @@ public class Photo implements Parcelable {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    public long getDateAdd() {
+        return dateAdd;
+    }
+
+    public void setDateAdd(long dateAdd) {
+        this.dateAdd = dateAdd;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public boolean isVideo(){
+        return mimeType.startsWith("video");
     }
 
     /**

@@ -14,9 +14,12 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.PagerAdapter;
@@ -159,7 +162,8 @@ public class PhotoPreviewActivity extends FrescoBaseActivity implements ViewPage
         });
 
         if (originalPicture) {
-            radioButton.setText(getString(R.string.image_size, FileSizeUtil.formatFileSize(photos.get(beginPosition).getSize())));
+            Photo photo = photos.get(beginPosition);
+            radioButton.setText(getString(photo.isVideo() ? R.string.video_size : R.string.image_size, FileSizeUtil.formatFileSize(photo.getSize())));
             radioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -287,7 +291,8 @@ public class PhotoPreviewActivity extends FrescoBaseActivity implements ViewPage
             checkbox.setChecked(false);
         }
         if (originalPicture) {
-            radioButton.setText(getString(R.string.image_size, FileSizeUtil.formatFileSize(photos.get(pos).getSize())));
+            Photo photo = photos.get(pos);
+            radioButton.setText(getString(photo.isVideo() ? R.string.video_size : R.string.image_size, FileSizeUtil.formatFileSize(photo.getSize())));
         }
     }
 
@@ -303,22 +308,23 @@ public class PhotoPreviewActivity extends FrescoBaseActivity implements ViewPage
             return photos == null ? 0 : photos.size();
         }
 
+        @NonNull
         @Override
-        public View instantiateItem(ViewGroup container, final int position) {
+        public View instantiateItem(@NonNull ViewGroup container, final int position) {
             Photo photo = photos.get(position);
             final String bigImgUrl = photo.getPath();
             float offsetW = 0.0f, offsetH = 0.0f;
             if (photo.getWidth() > 0 && photo.getHeight() > 0) {
-                offsetW = (photo.getWidth() / photo.getHeight()) - (screenWith / screenHeight);
-                offsetH = (photo.getHeight() / photo.getWidth()) - (screenHeight / screenWith);
+                offsetW = (float) ((photo.getWidth() / photo.getHeight()) - (screenWith / screenHeight));
+                offsetH = (float) ((photo.getHeight() / photo.getWidth()) - (screenHeight / screenWith));
             }
 //            Log.e(TAG,"offsetW = " + offsetW + ",offsetH = " + offsetH);
-            if (offsetW > 1.0f && !photo.isGif() && !photo.isWebp()) {//横向长图
+            if (offsetW > 1.0f && !photo.isGif() && !photo.isWebp() && !photo.isVideo()) {//横向长图
                 photos.get(position).setLongPhoto(true);
                 SubsamplingScaleImageView subsamplingScaleImageView = loadLongPhoto(new File(bigImgUrl), 0, screenHeight / photo.getHeight());
                 container.addView(subsamplingScaleImageView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 return subsamplingScaleImageView;
-            } else if (offsetH > 0.8f && !photo.isGif() && !photo.isWebp()) {//纵向长图
+            } else if (offsetH > 0.8f && !photo.isGif() && !photo.isWebp() && !photo.isVideo()) {//纵向长图
                 photos.get(position).setLongPhoto(true);
                 SubsamplingScaleImageView subsamplingScaleImageView = loadLongPhoto(new File(bigImgUrl), 1);
                 container.addView(subsamplingScaleImageView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -355,13 +361,20 @@ public class PhotoPreviewActivity extends FrescoBaseActivity implements ViewPage
                         .setOldController(mPhotoDraweeView.getController())
                         .build();
                 mPhotoDraweeView.setController(controller);
+
+                if (photo.isVideo()) {
+                    VideoPlayLayout videoPlayLayout = new VideoPlayLayout(container.getContext());
+                    videoPlayLayout.setData(mPhotoDraweeView,photo.getPath());
+                    container.addView(videoPlayLayout, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                    return videoPlayLayout;
+                }
                 container.addView(mPhotoDraweeView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 return mPhotoDraweeView;
             }
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
             if (photos != null && photos.size() > 0 && position < photos.size()) {
                 Photo photo = photos.get(position);
                 if (photo.isLongPhoto()) {
@@ -376,12 +389,12 @@ public class PhotoPreviewActivity extends FrescoBaseActivity implements ViewPage
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
             return view == object;
         }
 
         @Override
-        public void finishUpdate(ViewGroup container) {
+        public void finishUpdate(@NonNull ViewGroup container) {
             try {
                 super.finishUpdate(container);
             } catch (NullPointerException nullPointerException) {

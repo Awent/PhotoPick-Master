@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,8 +35,10 @@ import com.awen.photo.photopick.bean.PhotoResultBean;
 import com.awen.photo.photopick.controller.PhotoPickConfig;
 import com.awen.photo.photopick.controller.PhotoPreviewConfig;
 import com.awen.photo.photopick.loader.MediaStoreHelper;
+import com.awen.photo.photopick.loader.MediaType;
 import com.awen.photo.photopick.util.PermissionUtil;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -63,6 +66,7 @@ public class PhotoPickActivity extends FrescoBaseActivity {
     private final String TAG = getClass().getSimpleName();
     public static final int REQUEST_CODE_CAMERA = 0;// 拍照
     public static final int REQUEST_CODE_CLIPIC = 1;//裁剪头像
+    public static final int REQUEST_CODE_VIDEO = 2;//拍视频
     public static final int REQUEST_CODE_PERMISSION_SD = 200;//获取sd卡读写权限
     public static final int REQUEST_CODE_PERMISSION_CAMERA = 100;//获取拍照权限
 
@@ -71,6 +75,7 @@ public class PhotoPickActivity extends FrescoBaseActivity {
     private PhotoPickAdapter adapter;
     private PhotoPickBean pickBean;
     private Uri cameraUri;
+    private Uri cameraVideoUri;
     private static PhotoPickConfig.Builder.OnPhotoResultCallback onPhotoResultCallback;
 
     @Override
@@ -87,19 +92,27 @@ public class PhotoPickActivity extends FrescoBaseActivity {
             finish();
             return;
         }
+
 //        onPhotoResultCallback = pickBean.getOnPhotoResultCallback();
         //以下操作会回调这两个方法:#startPermissionSDSuccess(), #startPermissionSDFaild()
         PermissionGen.needPermission(this, REQUEST_CODE_PERMISSION_SD, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     private void startInit() {
-        toolbar.setTitle(R.string.select_photo);
-        final RecyclerView recyclerView = (RecyclerView) this.findViewById(R.id.recyclerView);
+        if(pickBean.getMediaType() == MediaType.ONLY_VIDEO){
+            toolbar.setTitle(R.string.video);
+        }else if(pickBean.getMediaType() == MediaType.ONLY_IMAGE){
+            toolbar.setTitle(R.string.photo);
+        }else {
+            toolbar.setTitle(R.string.select_photo);
+        }
+
+        final RecyclerView recyclerView = this.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, pickBean.getSpanCount()));
         adapter = new PhotoPickAdapter(this, pickBean);
         recyclerView.setAdapter(adapter);
 
-        final RecyclerView gallery_rv = (RecyclerView) this.findViewById(R.id.gallery_rv);
+        final RecyclerView gallery_rv = this.findViewById(R.id.gallery_rv);
         gallery_rv.setLayoutManager(new LinearLayoutManager(this));
         galleryAdapter = new PhotoGalleryAdapter(this);
         gallery_rv.setAdapter(galleryAdapter);
@@ -120,10 +133,10 @@ public class PhotoPickActivity extends FrescoBaseActivity {
                 }
             }
         });
-        MediaStoreHelper.getPhotoDirs(this, pickBean.isShowGif(), new MediaStoreHelper.PhotosResultCallback() {
+        MediaStoreHelper.getPhotoDirs(this, pickBean, new MediaStoreHelper.PhotosResultCallback() {
             @Override
             public void onResultCallback(final List<PhotoDirectory> directories) {
-                if(directories.isEmpty()){
+                if (directories.isEmpty()) {
                     return;
                 }
                 runOnUiThread(new Runnable() {
@@ -137,7 +150,7 @@ public class PhotoPickActivity extends FrescoBaseActivity {
             }
         });
 
-        slidingUpPanelLayout = (SlidingUpPanelLayout) this.findViewById(R.id.slidingUpPanelLayout);
+        slidingUpPanelLayout = this.findViewById(R.id.slidingUpPanelLayout);
         slidingUpPanelLayout.setAnchorPoint(0.5f);
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
@@ -161,14 +174,16 @@ public class PhotoPickActivity extends FrescoBaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.e(TAG, "notifyPermissionsChange");
         PermissionGen.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
     @PermissionSuccess(requestCode = REQUEST_CODE_PERMISSION_CAMERA)
     private void selectPicFromCameraSuccess() {
-//        Log.e(TAG, "selectPicFromCameraSuccess");
-        selectPicFromCamera();
+        if (pickBean.getMediaType() == MediaType.ONLY_VIDEO) {//只显示视频，那就启动的是视频录像
+            selectVideoFromCamera();
+        } else {//拍照
+            selectPicFromCamera();
+        }
     }
 
     @PermissionFail(requestCode = REQUEST_CODE_PERMISSION_CAMERA)
@@ -203,6 +218,22 @@ public class PhotoPickActivity extends FrescoBaseActivity {
     }
 
     /**
+     * 启动Camera录制视频
+     */
+    public void selectVideoFromCamera() {
+        if (!android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+            Toast.makeText(this, R.string.cannot_take_pic, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // 直接将拍到的视频存到手机默认的文件夹
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        ContentValues values = new ContentValues();
+        cameraVideoUri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraVideoUri);
+        startActivityForResult(intent, REQUEST_CODE_VIDEO);
+    }
+
+    /**
      * 启动Camera拍照
      */
     public void selectPicFromCamera() {
@@ -229,22 +260,22 @@ public class PhotoPickActivity extends FrescoBaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.ok) {
-            if(adapter != null){
+            if (adapter != null) {
                 ArrayList<String> photos = adapter.getSelectPhotos();
-                if(photos != null && !photos.isEmpty()){
+                if (photos != null && !photos.isEmpty()) {
                     Intent intent = new Intent();
                     intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, photos);
                     setResult(Activity.RESULT_OK, intent);
 //                String s = "已选择的图片大小 = " + adapter.getSelectPhotos().size() + "\n" + adapter.getSelectPhotos().toString();
 //                Toast.makeText(this, s, Toast.LENGTH_LONG).show();
-                    onPhotoResultBack(photos,false);
+                    onPhotoResultBack(photos, false);
                 }
             }
             return true;
-        }else if(item.getItemId() == R.id.preview){//图片预览
-            if(adapter != null){
+        } else if (item.getItemId() == R.id.preview) {//图片预览
+            if (adapter != null) {
                 ArrayList<String> photos = adapter.getSelectPhotos();
-                if(photos != null && !photos.isEmpty()){
+                if (photos != null && !photos.isEmpty()) {
                     new PhotoPreviewConfig.Builder(this)
                             .setMaxPickSize(pickBean.getMaxPickSize())
                             .setOriginalPicture(pickBean.isOriginalPicture())
@@ -275,8 +306,11 @@ public class PhotoPickActivity extends FrescoBaseActivity {
             return;
         }
         switch (requestCode) {
-            case REQUEST_CODE_CAMERA://相机
-                findPhoto();
+            case REQUEST_CODE_CAMERA://相机拍照
+                findPhotoOrVideo(cameraUri);
+                break;
+            case REQUEST_CODE_VIDEO://相机录视频
+                findPhotoOrVideo(cameraVideoUri);
                 break;
             case REQUEST_CODE_CLIPIC://头像裁剪
                 if (data != null) {
@@ -288,7 +322,7 @@ public class PhotoPickActivity extends FrescoBaseActivity {
                         intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, pic);
                         setResult(Activity.RESULT_OK, intent);
 //                        Toast.makeText(this, "已裁剪的图片地址 = \n" + photPath, Toast.LENGTH_LONG).show();
-                        onPhotoResultBack(pic,false);
+                        onPhotoResultBack(pic, false);
                     } else {
                         Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
                     }
@@ -301,8 +335,8 @@ public class PhotoPickActivity extends FrescoBaseActivity {
                 if (!isBackPressed) {//如果上个activity不是按了返回键的，就是按了"发送"按钮
                     setResult(Activity.RESULT_OK, data);
                     ArrayList<String> photoLists = data.getStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST);
-                    boolean isOriginalPicture = data.getBooleanExtra(PhotoPreviewConfig.EXTRA_ORIGINAL_PIC,false);
-                    onPhotoResultBack(photoLists,isOriginalPicture);
+                    boolean isOriginalPicture = data.getBooleanExtra(PhotoPreviewConfig.EXTRA_ORIGINAL_PIC, false);
+                    onPhotoResultBack(photoLists, isOriginalPicture);
                 } else {//用户按了返回键，合并用户选择的图片集合
                     adapter.notifyDataSetChanged();
                     toolbar.setTitle(adapter.getTitle());
@@ -311,9 +345,8 @@ public class PhotoPickActivity extends FrescoBaseActivity {
         }
     }
 
-    private void findPhoto() {
+    private void findPhotoOrVideo(Uri uri) {
         String picturePath = null;
-        Uri uri = cameraUri;
         Cursor cursor = null;
         try {
             cursor = getContentResolver().query(uri, null, null, null, null);
@@ -322,9 +355,13 @@ public class PhotoPickActivity extends FrescoBaseActivity {
                 int columnIndex = cursor.getColumnIndex("_data");
                 picturePath = cursor.getString(columnIndex);
             } else {
+                if(TextUtils.isEmpty(uri.getPath())){
+                    toastTakeMediaError();
+                    return;
+                }
                 File file = new File(uri.getPath());
                 if (!file.exists()) {
-                    Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
+                    toastTakeMediaError();
                     return;
                 }
                 picturePath = uri.getPath();
@@ -337,7 +374,7 @@ public class PhotoPickActivity extends FrescoBaseActivity {
             }
         }
         if (picturePath == null) {
-            Toast.makeText(this, R.string.unable_find_pic, Toast.LENGTH_LONG).show();
+            toastTakeMediaError();
         } else {
             if (pickBean.isClipPhoto()) {//拍完照之后，如果要启动头像裁剪，则去裁剪再吧地址传回来
                 adapter.startClipPic(picturePath);
@@ -348,21 +385,27 @@ public class PhotoPickActivity extends FrescoBaseActivity {
                 intent.putStringArrayListExtra(PhotoPickConfig.EXTRA_STRING_ARRAYLIST, pic);
                 setResult(Activity.RESULT_OK, intent);
 //                Toast.makeText(this, "已返回的拍照图片地址 = \n" + picturePath, Toast.LENGTH_LONG).show();
-                onPhotoResultBack(pic,false);
+                onPhotoResultBack(pic, false);
             }
         }
     }
 
+    private void toastTakeMediaError(){
+        Toast.makeText(this, (pickBean.getMediaType() == MediaType.ONLY_VIDEO) ?
+                R.string.unable_find_pic : R.string.unable_find_pic, Toast.LENGTH_LONG).show();
+    }
+
     /**
      * 数据的回传
+     *
      * @param photos
      * @param originalPicture
      */
-    private void onPhotoResultBack(ArrayList<String> photos,boolean originalPicture){
+    private void onPhotoResultBack(ArrayList<String> photos, boolean originalPicture) {
         PhotoResultBean bean = new PhotoResultBean();
         bean.setOriginalPicture(originalPicture);
         bean.setPhotoLists(photos);
-        if(onPhotoResultCallback != null){
+        if (onPhotoResultCallback != null) {
             onPhotoResultCallback.onResult(bean);
         }
         finish();
@@ -381,16 +424,17 @@ public class PhotoPickActivity extends FrescoBaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(adapter != null){
+        if (adapter != null) {
             adapter.destroy();
             adapter = null;
         }
 
-        if(galleryAdapter != null){
+        if (galleryAdapter != null) {
             galleryAdapter.destroy();
             galleryAdapter = null;
         }
         onPhotoResultCallback = null;
         slidingUpPanelLayout = null;
     }
+
 }
