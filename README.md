@@ -1,7 +1,7 @@
 ﻿
  
 ### 注意事项：
-1、如果`sdk>=29`,需要在自己`AndroidManifest.xml`的  `application`节点添加适配代码：`android:requestLegacyExternalStorage="true"`才可正常使用图库选图和保存网络大图功能，[issues](https://github.com/Awent/PhotoPick-Master/issues/13)
+1、如果`sdk>=29`,需要在自己`AndroidManifest.xml`的  `application`节点添加适配代码：`android:requestLegacyExternalStorage="true"`才可正常使用图库选图和保存网络大图功能，以上适配方案是临时的,是给之前就在项目中使用了Fresco的开发者提供的，个人推荐使用glide，此lib并没有真正适配android Q，因为我发现适配后加载本地图库特别慢，还有些bug官方并未解决，加载图片特别慢的原因我也还在寻找，找到后我会更新一版适配android Q版本库的。
 
 2、如果自定义`activity`（必须继承`PhotoPagerActivity`）开启了下滑关闭功能，记得自定义`activity`的`Theme`要引用`{@style/PhoAppTheme.Transparent}`
  * 例子如下：
