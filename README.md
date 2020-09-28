@@ -1,6 +1,10 @@
 ﻿
 ## [PhotoUtil，Glide实现，（强烈推荐）](https://github.com/Awent/PhotoUtil)我用Glide重新实现了当前项目，由于Glide跟Fresco加载图片的方式不一样，所有改动比较大，功能和使用方面，在原来的基础上做了更多的改进和更友好了，并支持android Q
  
+ 
+# PhotoPick-Master
+我把项目中做的图库抽了出来，本项目中包括了以下内容：1、图库选图，可多选，单选，可选完图片后进行裁剪，2、查看大图(包括sd卡，res，网络图)，并可以保存到手机图库,3、适配沉浸式状态栏 ,4 、使用fresco加载图片
+
 ### 注意事项：
 1、如果`sdk>=29`,需要在自己`AndroidManifest.xml`的  `application`节点添加适配代码：`android:requestLegacyExternalStorage="true"`才可正常使用图库选图和保存网络大图功能，以上适配方案是临时的,是给之前就在项目中使用了Fresco的开发者提供的，个人推荐使用glide，此lib并没有真正适配android Q，因为我发现适配后加载本地图库特别慢，还有些bug官方并未解决，加载图片特别慢的原因我也还在寻找，找到后我会更新一版适配android Q版本库的。
 
@@ -16,8 +20,6 @@
 [demo-apk下载](https://github.com/Awent/PhotoPick-Master/blob/master/simaple/simaple-release.apk)
 # [已适配androidX的点这里，不用继续往下看了](https://github.com/Awent/PhotoPick-Master/blob/master/androidX-README.md)
 
-# PhotoPick-Master
-我把项目中做的图库抽了出来，本项目中包括了以下内容：1、图库选图，可多选，单选，可选完图片后进行裁剪，2、查看大图(包括sd卡，res，网络图)，并可以保存到手机图库,3、适配沉浸式状态栏 ,4 、使用fresco加载图片(图片是随便网上找的，性感吧- -!)
 
 下面来看几张效果图：
 
